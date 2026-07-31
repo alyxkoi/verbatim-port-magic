@@ -221,6 +221,8 @@ export default function Index() {
       if(idx===active)return;
       active=idx;
       nlinks.forEach((l,i)=>l.classList.toggle('on',i===idx));
+      document.querySelectorAll('.lrow').forEach((r,i)=>r.classList.toggle('on',i===idx));
+
       if(idx>-1&&nlinksEl.scrollWidth>nlinksEl.clientWidth+4){
         const l=nlinks[idx];
         nlinksEl.scrollTo({left:l.offsetLeft-(nlinksEl.clientWidth-l.offsetWidth)/2,behavior:'smooth'});
