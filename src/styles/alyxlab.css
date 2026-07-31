@@ -19,13 +19,14 @@ button{font-family:inherit}
    NAV
 ============================================================ */
 nav{position:fixed;top:0;left:0;right:0;z-index:60;padding:14px clamp(12px,3vw,26px);
-  transition:padding .5s var(--ease)}
+  transition:padding .5s var(--ease),transform .45s var(--ease)}
 .navbar{position:relative;max-width:1160px;margin:0 auto;display:flex;align-items:center;
   padding:11px 12px 11px 22px;border-radius:999px;
   background:rgba(18,18,23,.52);border:1px solid rgba(255,255,255,.14);
   -webkit-backdrop-filter:blur(22px) saturate(190%);backdrop-filter:blur(22px) saturate(190%);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 10px 34px rgba(8,8,12,.28);
   transition:background .5s var(--ease),box-shadow .5s var(--ease),border-color .5s var(--ease)}
+nav.hid{transform:translateY(-140%)}
 nav.stuck .navbar{background:rgba(14,14,18,.72);border-color:rgba(255,255,255,.2);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 14px 44px rgba(8,8,12,.44)}
 .markwrap b{font-weight:800;font-size:19px;letter-spacing:-.035em;color:#fff}
@@ -118,6 +119,34 @@ h2{font-size:clamp(32px,5.6vw,74px);font-weight:900;letter-spacing:-.048em;line-
 ============================================================ */
 .atoms{position:sticky;top:0;min-height:100svh;display:flex;align-items:center;
   padding:80px clamp(20px,5vw,64px);text-align:center;z-index:2}
+/* the hero's light, broken into disconnected pieces */
+.shards{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.shards i{position:absolute;display:block;border-radius:50%;filter:blur(70px);
+  will-change:transform}
+.shards i:nth-child(1){left:16%;top:6%;width:30vw;height:30vw;opacity:.24;
+  background:radial-gradient(circle,rgba(0,255,135,1) 0%,rgba(0,255,135,0) 68%);
+  animation:sh1 19s var(--ease) infinite alternate}
+.shards i:nth-child(2){left:38%;top:-4%;width:26vw;height:26vw;opacity:.2;
+  background:radial-gradient(circle,rgba(34,229,255,1) 0%,rgba(34,229,255,0) 68%);
+  animation:sh2 23s var(--ease) -4s infinite alternate}
+.shards i:nth-child(3){left:60%;top:8%;width:28vw;height:28vw;opacity:.22;
+  background:radial-gradient(circle,rgba(255,45,120,1) 0%,rgba(255,45,120,0) 68%);
+  animation:sh3 21s var(--ease) -9s infinite alternate}
+.shards i:nth-child(4){left:14%;top:46%;width:27vw;height:27vw;opacity:.26;
+  background:radial-gradient(circle,rgba(177,75,255,1) 0%,rgba(177,75,255,0) 68%);
+  animation:sh4 25s var(--ease) -6s infinite alternate}
+.shards i:nth-child(5){left:40%;top:58%;width:24vw;height:24vw;opacity:.2;
+  background:radial-gradient(circle,rgba(255,160,40,1) 0%,rgba(255,160,40,0) 68%);
+  animation:sh5 18s var(--ease) -12s infinite alternate}
+.shards i:nth-child(6){left:62%;top:44%;width:29vw;height:29vw;opacity:.23;
+  background:radial-gradient(circle,rgba(0,255,135,1) 0%,rgba(0,255,135,0) 68%);
+  animation:sh6 27s var(--ease) -3s infinite alternate}
+@keyframes sh1{to{transform:translate(6%,-5%) scale(1.12)}}
+@keyframes sh2{to{transform:translate(-7%,6%) scale(.9)}}
+@keyframes sh3{to{transform:translate(5%,7%) scale(1.08)}}
+@keyframes sh4{to{transform:translate(-6%,-7%) scale(1.15)}}
+@keyframes sh5{to{transform:translate(8%,4%) scale(.92)}}
+@keyframes sh6{to{transform:translate(-5%,-6%) scale(1.1)}}
 /* restless static behind the problem */
 .noise{position:absolute;inset:-8%;z-index:0;pointer-events:none;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='180' height='180' filter='url(%23n)'/></svg>");
@@ -752,23 +781,26 @@ footer span{margin-left:auto}
   .fl1,.fl2,.fl3{right:-104px}.rail{right:10px}
 }
 @media(max-width:700px){
+  html{scroll-snap-type:y proximity}
+  .runway{height:50vh}
+  .rvb{opacity:1;transform:none;filter:none;transition:none}
   /* one step per swipe in the theater, no matter how hard you fling */
   .snap{scroll-snap-align:start;scroll-snap-stop:always}
 
   /* quotes swipe too */
   .strack{display:flex}
   .sgrid{display:flex;grid-template-columns:none;gap:12px;margin-top:22px;
-    overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+    overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
     scrollbar-width:none;padding:4px 20px 10px;margin-left:-20px;margin-right:-20px}
   .sgrid::-webkit-scrollbar{display:none}
-  .say{flex:0 0 84%;scroll-snap-align:center;padding:24px 22px 22px}
+  .say{flex:0 0 80%;scroll-snap-align:center;padding:20px 18px}
   .say:hover{transform:none}
-  .say p{font-size:16px}
+  .say p{font-size:15px}
 
   /* plans become a swipeable rail */
   .ptrack{display:flex}
   .tiers{display:flex;grid-template-columns:none;gap:12px;margin-top:22px;
-    overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+    overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
     scrollbar-width:none;padding:4px 20px 10px;margin-left:-20px;margin-right:-20px}
   .tiers::-webkit-scrollbar{display:none}
   .tier{flex:0 0 82%;scroll-snap-align:center;padding:28px 24px 30px}
@@ -789,7 +821,7 @@ footer span{margin-left:auto}
   .atom:nth-child(1){left:10%;top:10%}.atom:nth-child(2){left:40%;top:0%}
   .atom:nth-child(3){left:70%;top:13%}.atom:nth-child(4){left:9%;top:52%}
   .atom:nth-child(5){left:40%;top:63%}.atom:nth-child(6){left:70%;top:50%}
-  .work{margin-top:-5vh}
+  .work{margin-top:-5vh;padding-top:110px}
   .result{flex-direction:column;align-items:flex-start}
   .result .cta{width:100%}
   .f2{grid-template-columns:1fr}
