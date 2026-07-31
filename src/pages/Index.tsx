@@ -478,7 +478,7 @@ export default function Index() {
       <nav id="nav">
         <div className="navbar">
           <div className="markwrap">
-            <button className="mark" id="mark" aria-expanded="false" aria-haspopup="true" aria-controls="lmenu"><b>Alyxlab</b><i aria-hidden="true"></i></button>
+            <button className="mark" id="mark" aria-expanded="false" aria-haspopup="true" aria-controls="lmenu" aria-label="Alyxlab menu"><span className="mkico" role="img" aria-label="Alyxlab"></span><i aria-hidden="true"></i></button>
             <div className="lmenu" id="lmenu">
               <button className="lrow" data-sec="#problem">The problem</button>
               <button className="lrow" data-sec="#does">The system</button>
