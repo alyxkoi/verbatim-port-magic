@@ -787,13 +787,17 @@ export default function Index() {
           <div className="est rv">
             <div className="eslabel">What should it do?</div>
             <div className="mods" id="mods">
-              <button className="mod" aria-pressed="true" data-m="60" data-s="100"><span className="sw"></span><b>Answers every lead</b></button>
-              <button className="mod" aria-pressed="true" data-m="30" data-s="50"><span className="sw"></span><b>Asks for reviews</b></button>
-              <button className="mod" aria-pressed="false" data-m="40" data-s="100"><span className="sw"></span><b>Sends email and texts</b></button>
-              <button className="mod" aria-pressed="false" data-m="120" data-s="200"><span className="sw"></span><b>Books 24/7 with AI</b></button>
-              <button className="mod" aria-pressed="false" data-m="80" data-s="150"><span className="sw"></span><b>Takes payments</b></button>
-              <button className="mod" aria-pressed="false" data-m="70" data-s="100"><span className="sw"></span><b>Logins for the team</b></button>
+              <button className="mod" aria-pressed="true" data-m="60" data-s="100"><span className="sw"></span><b>Instant reply to every lead</b></button>
+              <button className="mod" aria-pressed="false" data-m="55" data-s="90"><span className="sw"></span><b>Your own business phone line</b></button>
+              <button className="mod" aria-pressed="false" data-m="110" data-s="160"><span className="sw"></span><b>AI assistant that books</b></button>
+              <button className="mod" aria-pressed="true" data-m="30" data-s="50"><span className="sw"></span><b>Review requests after each visit</b></button>
+              <button className="mod" aria-pressed="false" data-m="50" data-s="90"><span className="sw"></span><b>Payments and deposits</b></button>
+              <button className="mod" aria-pressed="false" data-m="45" data-s="80"><span className="sw"></span><b>Rules and routing</b></button>
+              <button className="mod" aria-pressed="false" data-m="32" data-s="60"><span className="sw"></span><b>Team logins and roles</b></button>
+              <button className="mod" aria-pressed="false" data-m="20" data-s="70"><span className="sw"></span><b>Affiliate and referral links</b></button>
             </div>
+            <p className="modnote">We build and run the system. Writing your marketing content stays with you, or we can quote it separately.</p>
+
 
             <div className="result">
               <div className="rnum"><b id="rSetup">$447</b><span>setup, one time</span></div>
