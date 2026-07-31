@@ -51,44 +51,21 @@ export default function Index() {
       on(fld,'pointerleave',()=>fld.querySelectorAll('.px').forEach(p=>p.style.translate='0px 0px'));
     }
 
-    /* ---------- problem section: two phases ---------- */
+    /* ---------- nav auto hide ---------- */
     (function(){
-      const dz=document.querySelector('.darkzone'),at=document.getElementById('problem'),
-            st=document.getElementById('stats');
-      if(!dz||!at||!st)return;
-      const nums=[...st.querySelectorAll('.num')];
-      let phase=0,ran=false;
-      function runNums(){
-        if(ran)return;ran=true;
-        st.classList.add('go');
-        nums.forEach(n=>{
-          const to=+n.dataset.to,suf=n.dataset.suf||'';
-          if(matchMedia('(prefers-reduced-motion:reduce)').matches){n.textContent=to+suf;return}
-          const t0=performance.now(),dur=1400;
-          (function step(t){
-            const p=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-p,3);
-            n.textContent=Math.round(to*e)+suf;
-            if(p<1)requestAnimationFrame(step);
-          })(t0);
-        });
-      }
-      function phaseTick(){
-        const lock=absTop(at);
-        /* step A sits at the lock, step B sits 25vh past it. The flip lives between them,
-           so landing on A shows the tabs and landing on B shows the stats. */
-        const trigger=lock+innerHeight*.10;
-        const release=lock+innerHeight*.05;
-        const want=phase===0?(scrollY>trigger?1:0):(scrollY<release?0:1);
-        if(want===phase)return;
-        phase=want;at.dataset.phase=want;
-        if(want===1)runNums();
-      }
-      let pf=null;
+      const nv=document.getElementById('nav');
+      if(!nv)return;
+      let last=scrollY,nf=null;
       on(window,'scroll',()=>{
-        if(pf)return;
-        pf=requestAnimationFrame(()=>{phaseTick();pf=null});
+        if(nf)return;
+        nf=requestAnimationFrame(()=>{
+          const y=scrollY;
+          if(y<80)nv.classList.remove('hid');
+          else if(y>last)nv.classList.add('hid');
+          else if(y<last)nv.classList.remove('hid');
+          last=y;nf=null;
+        });
       },{passive:true});
-      phaseTick();
     })();
 
     /* ---------- theater ---------- */
@@ -418,8 +395,6 @@ export default function Index() {
       {/* ============ 1 + 2 · DARK WORLD ============ */}
       <div className="darkzone">
         <div className="grain" aria-hidden="true"></div>
-        <b className="pstep a" aria-hidden="true"></b>
-        <b className="pstep b" aria-hidden="true"></b>
 
         <header className="hero">
           <div className="rise" aria-hidden="true"></div>
@@ -431,11 +406,10 @@ export default function Index() {
           </div>
         </header>
 
-        <section className="atoms" id="problem" data-phase="0">
+        <section className="atoms" id="problem">
+          <div className="shards" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
           <div className="noise" aria-hidden="true"></div>
           <div className="inner">
-           <div className="phases">
-            <div className="ph p1">
             <h2 className="rv">Right now it lives in <em className="glitch" data-t="six different tabs.">six different tabs.</em></h2>
             <p className="sub rv">Bookings in one app. Reviews in another. Leads going cold in between.</p>
             <div className="field" id="field">
@@ -458,43 +432,6 @@ export default function Index() {
                 <svg viewBox="0 0 48 48"><rect x="5" y="7" width="38" height="34" rx="7" fill="url(#tw)" stroke="rgba(255,255,255,.62)" strokeWidth="1.6" /><rect x="5" y="7" width="38" height="12" rx="7" fill="url(#hl)" /><path d="M5 19h38M5 29h38M18 7v34M31 7v34" stroke="rgba(255,255,255,.8)" strokeWidth="1.8" /></svg>
               </div></div></div>
             </div>
-            </div>
-
-            {/* PLACEHOLDER FIGURES. Slot 3 is invented for layout. Verify or replace all before launch. */}
-            <div className="ph p2">
-              <h2>And it is costing you <em>every week.</em></h2>
-              <p className="sub">Not because you are bad at this. Because nobody can answer a phone at nine on a Saturday night.</p>
-              <div className="stats" id="stats">
-                <div className="stat">
-                  <div className="viz"><div className="ring">
-                    <div className="rglow" aria-hidden="true"></div>
-                    <svg viewBox="0 0 120 120" aria-hidden="true">
-                      <circle className="rbg" cx="60" cy="60" r="52" />
-                      <circle className="rfg" cx="60" cy="60" r="52" />
-                    </svg>
-                  </div></div>
-                  <b className="num" data-to="73" data-suf="%">0%</b>
-                  <h4>of the week nobody is answering</h4>
-                  <p>Open 45 hours out of 168. The other 123 go to voicemail.</p>
-                </div>
-                <div className="stat">
-                  <div className="viz"><div className="bar"><i></i></div></div>
-                  <b className="num" data-to="42" data-suf="h">0h</b>
-                  <h4>average wait for a first reply</h4>
-                  <p>Across 2,241 US firms audited by Harvard Business Review.</p>
-                </div>
-                <div className="stat">
-                  <div className="viz"><div className="dgrid">
-                    <s className="hit"></s><s className="hit"></s><s className="hit"></s><s></s><s></s><s></s><s></s><s></s><s></s><s></s><s></s><s></s><s></s>
-                  </div></div>
-                  <b className="num" data-to="23" data-suf="%">0%</b>
-                  <h4>never get a reply at all</h4>
-                  <p>Nearly one in four people who reach out hear nothing back, ever.</p>
-                </div>
-              </div>
-              <p className="src">Response figures from the Harvard Business Review audit of 2,241 US firms. Coverage figure is arithmetic.</p>
-            </div>
-           </div>
           </div>
         </section>
         <div className="runway" aria-hidden="true"></div>
@@ -794,7 +731,7 @@ export default function Index() {
       <h3 className="sayhead rv">What the owners <em>actually say.</em></h3>
           <div className="strack" id="strack" aria-hidden="true"><i className="on"></i><i></i><i></i></div>
           <div className="sgrid" id="sgrid">
-            <div className="say rv" data-placeholder="true">
+            <div className="say" data-placeholder="true">
               <div className="stars" aria-label="Five out of five">
                 <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
                 <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
@@ -805,7 +742,7 @@ export default function Index() {
               <p>We were losing people every night after close. Now I wake up to appointments instead of missed calls.</p>
               <div className="who"><div className="av">MT</div><div><b>Marcus Tolbert</b><span>Fade Theory Barbers</span></div></div>
             </div>
-            <div className="say rv" data-placeholder="true">
+            <div className="say" data-placeholder="true">
               <div className="stars" aria-label="Five out of five">
                 <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
                 <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
@@ -816,7 +753,7 @@ export default function Index() {
               <p>I ran everything out of three apps and a notebook. Now it is one screen, and my crew actually uses it.</p>
               <div className="who"><div className="av">DR</div><div><b>Danielle Reyes</b><span>Reyes Home Services</span></div></div>
             </div>
-            <div className="say rv" data-placeholder="true">
+            <div className="say" data-placeholder="true">
               <div className="stars" aria-label="Five out of five">
                 <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
                 <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
