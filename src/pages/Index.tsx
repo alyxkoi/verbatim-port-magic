@@ -427,22 +427,22 @@ export default function Index() {
             <div className="field" id="field">
               <div className="atom" data-d="1.3"><div className="px"><div className="ic g1">
                 <svg viewBox="0 0 48 48"><rect x="5" y="9" width="38" height="34" rx="11" fill="url(#tg)" stroke="rgba(255,255,255,.6)" strokeWidth="1.6" /><rect x="5" y="9" width="38" height="15" rx="11" fill="url(#hl)" /><path d="M15 4.5v8M33 4.5v8" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" /><path d="M13 27h6M21 27h6M29 27h6M13 34h6M21 34h6" stroke="rgba(255,255,255,.9)" strokeWidth="2.4" strokeLinecap="round" /></svg>
-              </div></div></div>
+              </div></div><div className="apop" role="status"><b>Booking app</b><p>Three double bookings this month. Two people showed up for the same slot.</p></div></div>
               <div className="atom" data-d=".8"><div className="px"><div className="ic g2">
                 <svg viewBox="0 0 48 48"><rect x="4" y="10" width="40" height="28" rx="9" fill="url(#tc)" stroke="rgba(255,255,255,.6)" strokeWidth="1.6" /><rect x="4" y="10" width="40" height="12" rx="9" fill="url(#hl)" /><path d="M6.5 14.5 24 26l17.5-11.5" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </div></div></div>
+              </div></div><div className="apop" role="status"><b>Inbox</b><p>Forty seven unread. The newest one is six days old.</p></div></div>
               <div className="atom" data-d="1.6"><div className="px"><div className="ic g3">
                 <svg viewBox="0 0 48 48"><path d="M24 3.5l6 12.2 13.5 2-9.7 9.4 2.3 13.4L24 34.2l-12.1 6.3 2.3-13.4-9.7-9.4 13.5-2z" fill="url(#tp)" stroke="rgba(255,255,255,.62)" strokeWidth="1.6" strokeLinejoin="round" /><path d="M24 3.5l6 12.2 13.5 2-4.6 4.4H13.1l-4.6-4.4 13.5-2z" fill="url(#hl)" opacity=".8" /></svg>
-              </div></div></div>
+              </div></div><div className="apop" role="status"><b>Reviews</b><p>Last review request sent: never. Twelve happy customers walked out this week.</p></div></div>
               <div className="atom" data-d="1.1"><div className="px"><div className="ic g4">
                 <svg viewBox="0 0 48 48"><path d="M42 22a17 15.5 0 0 1-17 15.5H7l4.2-5.8A15.5 15.5 0 1 1 42 22z" fill="url(#tv)" stroke="rgba(255,255,255,.6)" strokeWidth="1.6" strokeLinejoin="round" /><path d="M42 22a17 15.5 0 0 0-32-7.5h26.5A15.4 15.4 0 0 1 42 22z" fill="url(#hl)" opacity=".75" /><path d="M17 20.5h14M17 27h9" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" /></svg>
-              </div></div></div>
+              </div></div><div className="apop" role="status"><b>Messages</b><p>Nine unread. Four asked about pricing. Two already booked somewhere else.</p></div></div>
               <div className="atom" data-d=".9"><div className="px"><div className="ic g5">
                 <svg viewBox="0 0 48 48"><rect x="4" y="10" width="40" height="28" rx="8" fill="url(#to)" stroke="rgba(255,255,255,.6)" strokeWidth="1.6" /><rect x="4" y="10" width="40" height="10" rx="8" fill="url(#hl)" /><rect x="4" y="17" width="40" height="6" fill="rgba(255,255,255,.85)" /><path d="M9 31h9" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" /></svg>
-              </div></div></div>
+              </div></div><div className="apop" role="status"><b>Payments</b><p>Three hundred forty dollars in unpaid deposits and three no shows you could not charge.</p></div></div>
               <div className="atom" data-d="1.4"><div className="px"><div className="ic g6">
                 <svg viewBox="0 0 48 48"><rect x="5" y="7" width="38" height="34" rx="7" fill="url(#tw)" stroke="rgba(255,255,255,.62)" strokeWidth="1.6" /><rect x="5" y="7" width="38" height="12" rx="7" fill="url(#hl)" /><path d="M5 19h38M5 29h38M18 7v34M31 7v34" stroke="rgba(255,255,255,.8)" strokeWidth="1.8" /></svg>
-              </div></div></div>
+              </div></div><div className="apop" role="status"><b>The spreadsheet</b><p>Last updated three weeks ago. Nobody knows which leads are still live.</p></div></div>
             </div>
           </div>
         </section>
