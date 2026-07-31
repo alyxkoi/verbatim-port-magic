@@ -917,3 +917,13 @@ footer span{margin-left:auto}
   .apop p{font-size:12px}
   .modnote{margin:-18px 0 26px;font-size:12px}
 }
+
+/* bottom row: the card opens upward so the rising light section never clips it */
+.atom:nth-child(4) .apop,.atom:nth-child(5) .apop,.atom:nth-child(6) .apop{
+  top:auto;bottom:calc(100% + 10px)}
+.atom:nth-child(5) .apop{transform:translate(-50%,-10px) scale(.96) rotate(calc(-1 * var(--fr)))}
+.atom:nth-child(5).open .apop{transform:translate(-50%,0) scale(1) rotate(calc(-1 * var(--fr)))}
+.atom:nth-child(4) .apop{transform:translate(-10%,-10px) scale(.96) rotate(calc(-1 * var(--fr)))}
+.atom:nth-child(4).open .apop{transform:translate(-10%,0) scale(1) rotate(calc(-1 * var(--fr)))}
+.atom:nth-child(6) .apop{transform:translate(10%,-10px) scale(.96) rotate(calc(-1 * var(--fr)))}
+.atom:nth-child(6).open .apop{transform:translate(10%,0) scale(1) rotate(calc(-1 * var(--fr)))}
