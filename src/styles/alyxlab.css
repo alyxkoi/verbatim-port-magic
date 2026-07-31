@@ -927,3 +927,11 @@ footer span{margin-left:auto}
 .atom:nth-child(4).open .apop{transform:translate(-10%,0) scale(1) rotate(calc(-1 * var(--fr)))}
 .atom:nth-child(6) .apop{transform:translate(10%,-10px) scale(.96) rotate(calc(-1 * var(--fr)))}
 .atom:nth-child(6).open .apop{transform:translate(10%,0) scale(1) rotate(calc(-1 * var(--fr)))}
+
+/* nav mark: the A glyph, tinted to the site palette */
+.mkico{display:block;width:30px;height:30px;background:#fff;
+  -webkit-mask:url("/__l5e/assets-v1/110424ba-b924-4c8c-90c3-19075cc6502a/alyxmark.png") center/contain no-repeat;
+  mask:url("/__l5e/assets-v1/110424ba-b924-4c8c-90c3-19075cc6502a/alyxmark.png") center/contain no-repeat;
+  transition:background .45s var(--ease)}
+.mark:hover .mkico,.mark[aria-expanded="true"] .mkico{background:var(--pulse)}
+@media(max-width:700px){.mkico{width:27px;height:27px}}
