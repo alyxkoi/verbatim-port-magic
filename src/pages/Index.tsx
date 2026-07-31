@@ -347,7 +347,12 @@ export default function Index() {
       const mark=document.getElementById('mark'),menu=document.getElementById('lmenu');
       if(!mark||!menu)return;
       const rows=[...menu.querySelectorAll('.lrow')];
-      function setOpen(v){menu.classList.toggle('open',v);mark.setAttribute('aria-expanded',String(v))}
+      function setOpen(v){
+        menu.classList.toggle('open',v);
+        mark.setAttribute('aria-expanded',String(v));
+        if(v)document.getElementById('nav').classList.remove('hid');
+      }
+      on(window,'scroll',()=>{if(menu.classList.contains('open')&&document.getElementById('nav').classList.contains('hid'))setOpen(false)},{passive:true});
       on(mark,'click',ev=>{ev.stopPropagation();setOpen(!menu.classList.contains('open'))});
       on(menu,'click',ev=>ev.stopPropagation());
       rows.forEach(r=>on(r,'click',()=>{
