@@ -221,6 +221,8 @@ export default function Index() {
       if(idx===active)return;
       active=idx;
       nlinks.forEach((l,i)=>l.classList.toggle('on',i===idx));
+      document.querySelectorAll('.lrow').forEach((r,i)=>r.classList.toggle('on',i===idx));
+
       if(idx>-1&&nlinksEl.scrollWidth>nlinksEl.clientWidth+4){
         const l=nlinks[idx];
         nlinksEl.scrollTo({left:l.offsetLeft-(nlinksEl.clientWidth-l.offsetWidth)/2,behavior:'smooth'});
@@ -315,7 +317,103 @@ export default function Index() {
       }));
     }
     railTracker('tiers','ptrack','.tier');
-    railTracker('sgrid','strack','.say');
+
+    /* ---------- problem icons: notification popups ---------- */
+    (function(){
+      const atoms=[...document.querySelectorAll('.atom')];
+      if(!atoms.length)return;
+      const fine=matchMedia('(pointer:fine)').matches;
+      function closeAll(except){atoms.forEach(a=>{if(a!==except)a.classList.remove('open')})}
+      atoms.forEach(a=>{
+        a.setAttribute('tabindex','0');
+        on(a,'click',ev=>{
+          ev.stopPropagation();
+          const open=a.classList.contains('open');
+          closeAll(a);
+          a.classList.toggle('open',!open);
+        });
+        on(a,'keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();a.click()}});
+        if(fine){
+          on(a,'pointerenter',()=>{closeAll(a);a.classList.add('open')});
+          on(a,'pointerleave',()=>a.classList.remove('open'));
+        }
+      });
+      on(document,'click',()=>closeAll(null));
+      on(document,'keydown',ev=>{if(ev.key==='Escape')closeAll(null)});
+    })();
+
+    /* ---------- logo menu ---------- */
+    (function(){
+      const mark=document.getElementById('mark'),menu=document.getElementById('lmenu');
+      if(!mark||!menu)return;
+      const rows=[...menu.querySelectorAll('.lrow')];
+      function setOpen(v){
+        menu.classList.toggle('open',v);
+        mark.setAttribute('aria-expanded',String(v));
+        if(v)document.getElementById('nav').classList.remove('hid');
+      }
+      on(window,'scroll',()=>{if(menu.classList.contains('open')&&document.getElementById('nav').classList.contains('hid'))setOpen(false)},{passive:true});
+      on(mark,'click',ev=>{ev.stopPropagation();setOpen(!menu.classList.contains('open'))});
+      on(menu,'click',ev=>ev.stopPropagation());
+      rows.forEach(r=>on(r,'click',()=>{
+        const sec=document.querySelector(r.dataset.sec);
+        setOpen(false);
+        if(!sec)return;
+        const pad=innerWidth<=860?104:88;
+        let y=0,el=sec;while(el){y+=el.offsetTop;el=el.offsetParent}
+        scrollTo({top:Math.max(0,y-pad),behavior:reduce?'auto':'smooth'});
+      }));
+      menu.querySelectorAll('.nbtn').forEach(b=>on(b,'click',()=>setOpen(false)));
+      on(document,'click',()=>setOpen(false));
+      on(document,'keydown',ev=>{if(ev.key==='Escape')setOpen(false)});
+    })();
+
+    /* ---------- reviews depth carousel (mobile) ---------- */
+    (function(){
+      const rail=document.getElementById('sgrid'),trk=document.getElementById('strack');
+      if(!rail||!trk)return;
+      const cards=[...rail.querySelectorAll('.say')],marks=[...trk.children],N=cards.length;
+      const mq=matchMedia('(max-width:700px)');
+      let idx=0,live=false;
+      function place(){
+        cards.forEach((c,i)=>{
+          let d=i-idx;
+          if(d>N/2)d-=N;
+          if(d<-N/2)d+=N;
+          c.dataset.pos=(d===0||d===1||d===-1)?String(d):'9';
+        });
+        marks.forEach((m,i)=>m.classList.toggle('on',i===idx));
+        const h=Math.max(...cards.map(c=>c.offsetHeight));
+        rail.style.height=(h+18)+'px';
+      }
+      function go(step){idx=(idx+step+N)%N;place()}
+      function enable(){
+        if(live)return;live=true;
+        rail.classList.add('car');
+        idx=0;place();
+        requestAnimationFrame(place);
+      }
+      function disable(){
+        if(!live)return;live=false;
+        rail.classList.remove('car');
+        rail.style.height='';
+        cards.forEach(c=>{delete c.dataset.pos});
+      }
+      let sx=0,dragging=false;
+      on(rail,'pointerdown',ev=>{if(!live)return;dragging=true;sx=ev.clientX});
+      on(rail,'pointerup',ev=>{
+        if(!live||!dragging)return;dragging=false;
+        const dx=ev.clientX-sx;
+        if(Math.abs(dx)>40)go(dx<0?1:-1);
+      });
+      on(rail,'pointercancel',()=>{dragging=false});
+      marks.forEach((m,i)=>on(m,'click',()=>{if(live){idx=i;place()}}));
+      on(window,'resize',()=>{if(live)place()});
+      const sync=()=>mq.matches?enable():disable();
+      on(mq,'change',sync);
+      sync();
+    })();
+
 
     /* ---------- estimator ---------- */
     const MODS=document.getElementById('mods');
@@ -379,7 +477,19 @@ export default function Index() {
 
       <nav id="nav">
         <div className="navbar">
-          <div className="markwrap"><b>Alyxlab</b></div>
+          <div className="markwrap">
+            <button className="mark" id="mark" aria-expanded="false" aria-haspopup="true" aria-controls="lmenu"><b>Alyxlab</b><i aria-hidden="true"></i></button>
+            <div className="lmenu" id="lmenu">
+              <button className="lrow" data-sec="#problem">The problem</button>
+              <button className="lrow" data-sec="#does">The system</button>
+              <button className="lrow" data-sec="#track">See it work</button>
+              <button className="lrow" data-sec="#work">Projects</button>
+              <button className="lrow" data-sec="#plans">Plans</button>
+              <button className="lrow" data-sec="#talk">Contact</button>
+              <button className="nbtn" data-go="#close">Get my estimate</button>
+            </div>
+          </div>
+
           <div className="nlinks" id="nlinks">
             <a className="nlink" href="#problem">The problem</a>
             <a className="nlink" href="#does">The system</a>
@@ -415,22 +525,22 @@ export default function Index() {
             <div className="field" id="field">
               <div className="atom" data-d="1.3"><div className="px"><div className="ic g1">
                 <svg viewBox="0 0 48 48"><rect x="5" y="9" width="38" height="34" rx="11" fill="url(#tg)" stroke="rgba(255,255,255,.6)" strokeWidth="1.6" /><rect x="5" y="9" width="38" height="15" rx="11" fill="url(#hl)" /><path d="M15 4.5v8M33 4.5v8" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" /><path d="M13 27h6M21 27h6M29 27h6M13 34h6M21 34h6" stroke="rgba(255,255,255,.9)" strokeWidth="2.4" strokeLinecap="round" /></svg>
-              </div></div></div>
+              </div></div><div className="apop" role="status"><b>Booking app</b><p>Three double bookings this month. Two people showed up for the same slot.</p></div></div>
               <div className="atom" data-d=".8"><div className="px"><div className="ic g2">
                 <svg viewBox="0 0 48 48"><rect x="4" y="10" width="40" height="28" rx="9" fill="url(#tc)" stroke="rgba(255,255,255,.6)" strokeWidth="1.6" /><rect x="4" y="10" width="40" height="12" rx="9" fill="url(#hl)" /><path d="M6.5 14.5 24 26l17.5-11.5" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </div></div></div>
+              </div></div><div className="apop" role="status"><b>Inbox</b><p>Forty seven unread. The newest one is six days old.</p></div></div>
               <div className="atom" data-d="1.6"><div className="px"><div className="ic g3">
                 <svg viewBox="0 0 48 48"><path d="M24 3.5l6 12.2 13.5 2-9.7 9.4 2.3 13.4L24 34.2l-12.1 6.3 2.3-13.4-9.7-9.4 13.5-2z" fill="url(#tp)" stroke="rgba(255,255,255,.62)" strokeWidth="1.6" strokeLinejoin="round" /><path d="M24 3.5l6 12.2 13.5 2-4.6 4.4H13.1l-4.6-4.4 13.5-2z" fill="url(#hl)" opacity=".8" /></svg>
-              </div></div></div>
+              </div></div><div className="apop" role="status"><b>Reviews</b><p>Last review request sent: never. Twelve happy customers walked out this week.</p></div></div>
               <div className="atom" data-d="1.1"><div className="px"><div className="ic g4">
                 <svg viewBox="0 0 48 48"><path d="M42 22a17 15.5 0 0 1-17 15.5H7l4.2-5.8A15.5 15.5 0 1 1 42 22z" fill="url(#tv)" stroke="rgba(255,255,255,.6)" strokeWidth="1.6" strokeLinejoin="round" /><path d="M42 22a17 15.5 0 0 0-32-7.5h26.5A15.4 15.4 0 0 1 42 22z" fill="url(#hl)" opacity=".75" /><path d="M17 20.5h14M17 27h9" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" /></svg>
-              </div></div></div>
+              </div></div><div className="apop" role="status"><b>Messages</b><p>Nine unread. Four asked about pricing. Two already booked somewhere else.</p></div></div>
               <div className="atom" data-d=".9"><div className="px"><div className="ic g5">
                 <svg viewBox="0 0 48 48"><rect x="4" y="10" width="40" height="28" rx="8" fill="url(#to)" stroke="rgba(255,255,255,.6)" strokeWidth="1.6" /><rect x="4" y="10" width="40" height="10" rx="8" fill="url(#hl)" /><rect x="4" y="17" width="40" height="6" fill="rgba(255,255,255,.85)" /><path d="M9 31h9" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" /></svg>
-              </div></div></div>
+              </div></div><div className="apop" role="status"><b>Payments</b><p>Three hundred forty dollars in unpaid deposits and three no shows you could not charge.</p></div></div>
               <div className="atom" data-d="1.4"><div className="px"><div className="ic g6">
                 <svg viewBox="0 0 48 48"><rect x="5" y="7" width="38" height="34" rx="7" fill="url(#tw)" stroke="rgba(255,255,255,.62)" strokeWidth="1.6" /><rect x="5" y="7" width="38" height="12" rx="7" fill="url(#hl)" /><path d="M5 19h38M5 29h38M18 7v34M31 7v34" stroke="rgba(255,255,255,.8)" strokeWidth="1.8" /></svg>
-              </div></div></div>
+              </div></div><div className="apop" role="status"><b>The spreadsheet</b><p>Last updated three weeks ago. Nobody knows which leads are still live.</p></div></div>
             </div>
           </div>
         </section>
@@ -787,13 +897,17 @@ export default function Index() {
           <div className="est rv">
             <div className="eslabel">What should it do?</div>
             <div className="mods" id="mods">
-              <button className="mod" aria-pressed="true" data-m="60" data-s="100"><span className="sw"></span><b>Answers every lead</b></button>
-              <button className="mod" aria-pressed="true" data-m="30" data-s="50"><span className="sw"></span><b>Asks for reviews</b></button>
-              <button className="mod" aria-pressed="false" data-m="40" data-s="100"><span className="sw"></span><b>Sends email and texts</b></button>
-              <button className="mod" aria-pressed="false" data-m="120" data-s="200"><span className="sw"></span><b>Books 24/7 with AI</b></button>
-              <button className="mod" aria-pressed="false" data-m="80" data-s="150"><span className="sw"></span><b>Takes payments</b></button>
-              <button className="mod" aria-pressed="false" data-m="70" data-s="100"><span className="sw"></span><b>Logins for the team</b></button>
+              <button className="mod" aria-pressed="true" data-m="60" data-s="100"><span className="sw"></span><b>Instant reply to every lead</b></button>
+              <button className="mod" aria-pressed="false" data-m="55" data-s="90"><span className="sw"></span><b>Your own business phone line</b></button>
+              <button className="mod" aria-pressed="false" data-m="110" data-s="160"><span className="sw"></span><b>AI assistant that books</b></button>
+              <button className="mod" aria-pressed="true" data-m="30" data-s="50"><span className="sw"></span><b>Review requests after each visit</b></button>
+              <button className="mod" aria-pressed="false" data-m="50" data-s="90"><span className="sw"></span><b>Payments and deposits</b></button>
+              <button className="mod" aria-pressed="false" data-m="45" data-s="80"><span className="sw"></span><b>Rules and routing</b></button>
+              <button className="mod" aria-pressed="false" data-m="32" data-s="60"><span className="sw"></span><b>Team logins and roles</b></button>
+              <button className="mod" aria-pressed="false" data-m="20" data-s="70"><span className="sw"></span><b>Affiliate and referral links</b></button>
             </div>
+            <p className="modnote">We build and run the system. Writing your marketing content stays with you, or we can quote it separately.</p>
+
 
             <div className="result">
               <div className="rnum"><b id="rSetup">$447</b><span>setup, one time</span></div>
