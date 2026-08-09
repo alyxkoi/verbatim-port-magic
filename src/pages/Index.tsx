@@ -780,9 +780,9 @@ export default function Index() {
             </div>
           </div>
           <form className="form" onSubmit={(e) => e.preventDefault()}>
-            <input type="text" autocomplete="name" placeholder="Your name" />
-            <input type="text" autocomplete="organization" placeholder="Business name" />
-            <input type="tel" autocomplete="tel" placeholder="Phone" />
+            <input type="text" autoComplete="name" placeholder="Your name" />
+            <input type="text" autoComplete="organization" placeholder="Business name" />
+            <input type="tel" autoComplete="tel" placeholder="Phone" />
             <select>
               <option value="">What kind of business</option>
               <option>Barbershop or salon</option>
