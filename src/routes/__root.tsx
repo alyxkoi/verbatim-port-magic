@@ -103,6 +103,33 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: alyxlabCss },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": "https://alyxlab.com/#organization",
+              name: "Alyxlab",
+              url: "https://alyxlab.com",
+              email: "alyxlabwork@gmail.com",
+              areaServed: "Dallas, TX",
+              description:
+                "Complete business systems for local businesses: answering every call, booking the job, taking the deposit, and asking for the review.",
+            },
+            {
+              "@type": "WebSite",
+              "@id": "https://alyxlab.com/#website",
+              name: "Alyxlab",
+              url: "https://alyxlab.com",
+              publisher: { "@id": "https://alyxlab.com/#organization" },
+            },
+          ],
+        }),
+      },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,

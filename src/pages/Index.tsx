@@ -780,10 +780,10 @@ export default function Index() {
             </div>
           </div>
           <form className="form" onSubmit={(e) => e.preventDefault()}>
-            <input type="text" autoComplete="name" placeholder="Your name" />
-            <input type="text" autoComplete="organization" placeholder="Business name" />
-            <input type="tel" autoComplete="tel" placeholder="Phone" />
-            <select>
+            <input id="f-name" name="name" aria-label="Your name" type="text" autoComplete="name" placeholder="Your name" />
+            <input id="f-biz" name="business" aria-label="Business name" type="text" autoComplete="organization" placeholder="Business name" />
+            <input id="f-phone" name="phone" aria-label="Phone" type="tel" autoComplete="tel" placeholder="Phone" />
+            <select id="f-type" name="businessType" aria-label="What kind of business">
               <option value="">What kind of business</option>
               <option>Barbershop or salon</option>
               <option>Restaurant</option>
@@ -792,7 +792,7 @@ export default function Index() {
               <option>Home services</option>
               <option>Something else</option>
             </select>
-            <textarea placeholder="What is not working right now"></textarea>
+            <textarea id="f-msg" name="message" aria-label="What is not working right now" placeholder="What is not working right now"></textarea>
             <button className="btn" id="send" type="submit">Send it over</button>
           </form>
         </div>
