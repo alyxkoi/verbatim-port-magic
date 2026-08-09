@@ -4,17 +4,17 @@ import Index from "../pages/Index";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Alyxlab · Systems that run the business" },
+      { title: "Alyxlab · Complete business systems" },
       {
         name: "description",
         content:
-          "Not another website. A system that answers, books, and follows up for your business, working the hours you cannot.",
+          "One system that answers every call, books the job, takes the deposit, and asks for the review. Built and run for local businesses in Dallas.",
       },
-      { property: "og:title", content: "Alyxlab · Systems that run the business" },
+      { property: "og:title", content: "Alyxlab · Complete business systems" },
       {
         property: "og:description",
         content:
-          "Not another website. A system that answers, books, and follows up for your business, working the hours you cannot.",
+          "One system that answers every call, books the job, takes the deposit, and asks for the review. Built and run for local businesses in Dallas.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
