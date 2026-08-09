@@ -1,973 +1,837 @@
-// @ts-nocheck
 import { useEffect } from "react";
 
 export default function Index() {
   useEffect(() => {
-    /* ---------- cleanup registry (listeners, observers, intervals) ---------- */
-    const listeners = [];
-    const observers = [];
-    const intervals = [];
-    const on = (target, type, fn, opts) => {
+    document.documentElement.classList.add("js");
+
+    /* ---- cleanup tracking (StrictMode double invoke safe) ---- */
+    const offs: Array<() => void> = [];
+    const on = (
+      target: EventTarget,
+      type: string,
+      fn: EventListenerOrEventListenerObject,
+      opts?: boolean | AddEventListenerOptions,
+    ) => {
       target.addEventListener(type, fn, opts);
-      listeners.push([target, type, fn, opts]);
+      offs.push(() => target.removeEventListener(type, fn, opts));
     };
-    const mkIO = (cb, opts) => {
+    const frames = new Set<number>();
+    const raf = (fn: FrameRequestCallback) => {
+      const id = requestAnimationFrame((t) => {
+        frames.delete(id);
+        fn(t);
+      });
+      frames.add(id);
+      return id;
+    };
+    const cancelRaf = (id: number | null) => {
+      if (id != null) {
+        frames.delete(id);
+        cancelAnimationFrame(id);
+      }
+    };
+    const observers: IntersectionObserver[] = [];
+    const mkIO = (cb: IntersectionObserverCallback, opts?: IntersectionObserverInit) => {
       const o = new IntersectionObserver(cb, opts);
       observers.push(o);
       return o;
     };
-    const mkInterval = (fn, ms) => {
+    const intervals = new Set<ReturnType<typeof setInterval>>();
+    const mkInterval = (fn: () => void, ms: number) => {
       const id = setInterval(fn, ms);
-      intervals.push(id);
+      intervals.add(id);
       return id;
     };
+    const clear = (id: ReturnType<typeof setInterval> | null) => {
+      if (id) {
+        clearInterval(id);
+        intervals.delete(id);
+      }
+    };
 
-    /* ---------- shared reveals ---------- */
-    const io=mkIO(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}})},{threshold:.18});
-    document.querySelectorAll('.rv,.rvb').forEach(el=>io.observe(el));
+    const reduce = matchMedia("(prefers-reduced-motion:reduce)").matches;
 
-    /* ---------- smooth anchors ---------- */
-    document.querySelectorAll('[data-go]').forEach(b=>on(b,'click',()=>{
-      document.querySelector(b.dataset.go).scrollIntoView({behavior:'smooth'});
-    }));
+    const io = mkIO(
+      (e) => {
+        e.forEach((x) => {
+          if (x.isIntersecting) {
+            x.target.classList.add("in");
+            io.unobserve(x.target);
+          }
+        });
+      },
+      { threshold: 0.12 },
+    );
+    document.querySelectorAll<HTMLElement>(".rv").forEach((el, i) => {
+      el.style.transitionDelay = Math.min(i % 4, 3) * 60 + "ms";
+      io.observe(el);
+    });
 
-    /* ---------- atoms ---------- */
-    const fld=document.getElementById('field');
-    mkIO((e,o)=>{e.forEach(x=>{if(x.isIntersecting){fld.classList.add('in');o.unobserve(x.target)}})},{threshold:.3}).observe(fld);
-    if(matchMedia('(pointer:fine)').matches && !matchMedia('(prefers-reduced-motion:reduce)').matches){
-      let raf=null;
-      on(fld,'pointermove',ev=>{
-        if(raf)return;
-        raf=requestAnimationFrame(()=>{
-          const r=fld.getBoundingClientRect();
-          const nx=(ev.clientX-r.left)/r.width-.5, ny=(ev.clientY-r.top)/r.height-.5;
-          fld.querySelectorAll('.atom').forEach(a=>{
-            const d=+a.dataset.d;
-            a.querySelector('.px').style.translate=`${nx*16*d}px ${ny*14*d}px`;
+    /* image slots: fill data-src and the placeholder swaps out */
+    document.querySelectorAll<HTMLElement>(".shot").forEach((s) => {
+      const src = (s.dataset.src || "").trim(),
+        img = s.querySelector("img")!;
+      if (!src) return;
+      on(img, "load", () => s.classList.add("loaded"));
+      img.src = src;
+    });
+
+    /* shared spotlight for the glow cards, desktop only */
+    if (matchMedia("(pointer:fine)").matches && !reduce) {
+      const root = document.documentElement;
+      let pf: number | null = null,
+        px = 0,
+        py = 0;
+      on(
+        window,
+        "pointermove",
+        (ev) => {
+          const e = ev as PointerEvent;
+          px = e.clientX;
+          py = e.clientY;
+          if (pf) return;
+          pf = raf(() => {
+            root.style.setProperty("--x", px.toFixed(1));
+            root.style.setProperty("--y", py.toFixed(1));
+            root.style.setProperty("--xp", (px / innerWidth).toFixed(3));
+            root.style.setProperty("--yp", (py / innerHeight).toFixed(3));
+            pf = null;
           });
-          raf=null;
-        });
-      });
-      on(fld,'pointerleave',()=>fld.querySelectorAll('.px').forEach(p=>p.style.translate='0px 0px'));
+        },
+        { passive: true },
+      );
+      offs.push(() => cancelRaf(pf));
     }
 
-    /* ---------- nav auto hide ---------- */
-    (function(){
-      const nv=document.getElementById('nav');
-      if(!nv)return;
-      let last=scrollY,nf=null;
-      on(window,'scroll',()=>{
-        if(nf)return;
-        nf=requestAnimationFrame(()=>{
-          const y=scrollY;
-          if(y<80)nv.classList.remove('hid');
-          else if(y>last)nv.classList.add('hid');
-          else if(y<last)nv.classList.remove('hid');
-          last=y;nf=null;
-        });
-      },{passive:true});
+    /* hero bubbles · pause when the hero leaves the screen, and a cursor
+       following blob on desktop. Eased follow stands in for the spring. */
+    (() => {
+      const wrap = document.getElementById("bubbles"),
+        hero = document.getElementById("top");
+      if (!wrap || !hero) return;
+      hero.classList.add("bg");
+      mkIO((e) => hero.classList.toggle("paused", !e[0].isIntersecting), { threshold: 0 }).observe(
+        hero,
+      );
+      const cur = document.getElementById("bubcursor");
+      if (!cur || reduce || !matchMedia("(pointer:fine)").matches) return;
+      cur.style.display = "block";
+      let tx = 0,
+        ty = 0,
+        cx = 0,
+        cy = 0,
+        bf: number | null = null;
+      const tick = () => {
+        cx += (tx - cx) * 0.075;
+        cy += (ty - cy) * 0.075;
+        cur.style.transform = "translate3d(" + cx.toFixed(1) + "px," + cy.toFixed(1) + "px,0)";
+        bf = Math.abs(tx - cx) > 0.4 || Math.abs(ty - cy) > 0.4 ? raf(tick) : null;
+      };
+      on(
+        hero,
+        "pointermove",
+        (ev) => {
+          const e = ev as PointerEvent;
+          const r = hero.getBoundingClientRect();
+          tx = e.clientX - (r.left + r.width / 2);
+          ty = e.clientY - (r.top + r.height / 2);
+          if (!bf) bf = raf(tick);
+        },
+        { passive: true },
+      );
+      offs.push(() => cancelRaf(bf));
     })();
 
-    /* ---------- theater ---------- */
-    const stage=document.getElementById('stage'),track=document.getElementById('track');
-    const STEPS=6,$=id=>document.getElementById(id);
-    const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
-    let step=-1,counted=false;
-    const rail=$('rail');
-    function tailPx(){
-      const v=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--tail'))||0;
-      return innerHeight*v/100;
-    }
-    function dist(){return Math.max(1,track.offsetHeight-innerHeight-tailPx());}
-    for(let i=0;i<STEPS;i++){
-      const b=document.createElement('button');
-      b.className='dot';b.setAttribute('aria-label','Step '+(i+1));
-      b.onclick=()=>{scrollTo({top:track.offsetTop+(i+.5)/STEPS*dist(),behavior:reduce?'auto':'smooth'});};
-      rail.appendChild(b);
-    }
-    function count(el,to){if(reduce){el.textContent=to;return;}
-      let v=0;const t=mkInterval(()=>{v+=Math.ceil(to/20);if(v>=to){v=to;clearInterval(t);}el.textContent=v;},32);}
-    function countMoney(el,to){
-      if(reduce){el.textContent='$'+to.toLocaleString();return;}
-      const t0=performance.now(),dur=1100;
-      (function f(t){
-        const p=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-p,3);
-        el.textContent='$'+Math.round(to*e).toLocaleString();
-        if(p<1)requestAnimationFrame(f);
-      })(t0);
-    }
-    function render(s){
-      if(s===step)return;const back=s<step;step=s;stage.dataset.step=s;
-      document.querySelectorAll('.beat').forEach(b=>b.classList.toggle('on',+b.dataset.b===s));
-      [...rail.children].forEach((d,i)=>d.setAttribute('aria-current',i===s));
-      $('lLock').classList.toggle('on',s<=1);
-      $('lMsgs').classList.toggle('on',s>=2&&s<=3);
-      $('lDash').classList.toggle('on',s>=4);
-      $('notif').classList.toggle('show',s===1);
-      $('m1').classList.toggle('on',s>=2);$('typ').classList.toggle('on',s===2);
-      $('m2').classList.toggle('on',s>=2);$('m3').classList.toggle('on',s>=3);$('m4').classList.toggle('on',s>=3);
-      $('f1').classList.toggle('show',s>=2&&s<5);
-      $('f2').classList.toggle('show',s>=3&&s<5);
-      $('f3').classList.toggle('show',s>=4&&s<5);
-      const h=[30,48,40,64,54,78,96];
-      [...$('bars').children].forEach((b,i)=>{b.style.height=(s>=4?h[i]:18)+'%';b.classList.toggle('g',s>=4&&i>4);});
-      if(s>=4&&!counted){counted=true;countMoney($('v0'),2840);count($('v1'),34);count($('v2'),27);count($('v3'),9);}
-      if(s<4&&back){counted=false;$('v0').textContent='$0';$('v1').textContent='0';$('v2').textContent='0';$('v3').textContent='0';}
-    }
-    function tick(){
-      const p=Math.min(1,Math.max(0,(scrollY-track.offsetTop)/dist()));
-      render(Math.min(STEPS-1,Math.floor(p*STEPS)));}
-    on(window,'scroll',()=>requestAnimationFrame(tick),{passive:true});
-    on(window,'resize',tick);tick();
+    /* product viewer tabs */
+    const tabs = document.getElementById("tabs");
 
-    /* ---------- close gradient trigger ---------- */
-    const closeEl=document.getElementById('close');
-    mkIO((e,o)=>{e.forEach(x=>{if(x.isIntersecting){closeEl.classList.add('lit');o.unobserve(x.target)}})},
-      {threshold:0,rootMargin:'0px 0px -14% 0px'}).observe(closeEl);
-
-    /* ---------- cycling business name ---------- */
-    const WORDS=['barbershops','restaurants','dealerships','clinics','roofers','salons','gyms','med spas',
-      'plumbers','detail shops','law offices','trucking','landscapers','dentists','tattoo studios',
-      'food trucks','movers','auto repair','bakeries','photographers'];
-    const rwA=document.getElementById('rwA'),rwB=document.getElementById('rwB');
-    let ri=0,front=true;
-    rwA.textContent=WORDS[0];
-    function roll(){
-      ri=(ri+1)%WORDS.length;
-      const enter=front?rwB:rwA, leave=front?rwA:rwB;
-      enter.textContent=WORDS[ri];
-      enter.style.transition='none';
-      enter.className='rw next';
-      void enter.offsetWidth;
-      enter.style.transition='';
-      enter.className='rw now';
-      leave.className='rw gone';
-      front=!front;
+    /* scroll cue · driven by actual overflow, so it never shows when the strip fits */
+    if (tabs) {
+      const tw = tabs.closest(".tabswrap"),
+        cue = tw && tw.querySelector(".tabcue");
+      if (tw) {
+        const sync = () =>
+          tw.classList.toggle("more", tabs.scrollWidth - tabs.clientWidth - tabs.scrollLeft > 4);
+        sync();
+        on(tabs, "scroll", sync, { passive: true });
+        on(window, "resize", sync, { passive: true });
+        if (cue)
+          on(cue, "click", () =>
+            tabs.scrollBy({
+              left: Math.round(tabs.clientWidth * 0.6),
+              behavior: reduce ? "auto" : "smooth",
+            }),
+          );
+      }
     }
-    mkInterval(roll,1250);
 
-    /* ---------- integrations marquee ---------- */
-    (function(){
-      const tr=document.getElementById('mtrack');
-      if(!tr)return;
-      tr.querySelectorAll('.mitem img').forEach(img=>{
-        const src=(img.dataset.src||'').trim();
-        if(!src){img.remove();return;}
-        on(img,'load',()=>{const s=img.nextElementSibling;if(s)s.remove()});
-        on(img,'error',()=>img.remove());
-        img.src=src;
-      });
-      const clone=tr.cloneNode(true);
-      clone.removeAttribute('id');
-      clone.setAttribute('aria-hidden','true');
-      [...clone.children].forEach(c=>tr.appendChild(c));
-    })();
-
-    /* ---------- feature card images ---------- */
-    document.querySelectorAll('.fmedia').forEach(m=>{
-      const src=(m.dataset.src||'').trim(),img=m.querySelector('img');
-      if(!src){m.remove();return;}
-      on(img,'load',()=>m.closest('.fcard').classList.add('hasimg'));
-      on(img,'error',()=>m.remove());
-      img.src=src;
-    });
-
-    /* ---------- project posters and clips ---------- */
-    const fine=matchMedia('(pointer:fine)').matches;
-    document.querySelectorAll('.shot').forEach(shot=>{
-      const poster=(shot.dataset.poster||'').trim();
-      const list=(shot.dataset.clips||'').split(',').map(s=>s.trim()).filter(Boolean);
-      const pimg=shot.querySelector('.poster'),vid=shot.querySelector('.clip'),pips=shot.querySelector('.pips');
-      if(poster){
-        on(pimg,'load',()=>shot.classList.add('hasposter'));
-        on(pimg,'error',()=>pimg.remove());
-        pimg.src=poster;
-      }else{pimg.remove();}
-      if(!list.length)return;
-      let idx=0;
-      pips.innerHTML=list.map((_,i)=>'<button aria-label="Clip '+(i+1)+'" aria-current="'+(i===0)+'"></button>').join('');
-      const pb=[...pips.children];
-      function play(){shot.classList.add('playing');vid.play().catch(()=>{})}
-      function stop(){shot.classList.remove('playing');vid.pause();vid.currentTime=0}
-      function load(i,go){idx=i;vid.src=list[i];pb.forEach((b,j)=>b.setAttribute('aria-current',j===i));if(go)play()}
-      on(vid,'loadeddata',()=>shot.classList.add('hasvid'));
-      on(vid,'error',()=>shot.classList.remove('hasvid','playing'));
-      pb.forEach((b,i)=>b.onclick=e=>{e.stopPropagation();load(i,true)});
-      load(0,false);
-      if(fine){
-        on(shot,'pointerenter',play);
-        on(shot,'pointerleave',stop);
-        on(shot,'click',()=>load((idx+1)%list.length,true));
-      }else{
-        on(shot,'click',()=>{
-          if(shot.classList.contains('playing')){stop()}else{play()}
+    if (tabs) {
+      const tl = [...tabs.querySelectorAll<HTMLElement>(".tab")],
+        pl = [...document.querySelectorAll<HTMLElement>(".pane")];
+      const pick = (k?: string) => {
+        tl.forEach((t) => t.setAttribute("aria-selected", String(t.dataset.t === k)));
+        pl.forEach((p) => p.classList.toggle("on", p.dataset.p === k));
+      };
+      tl.forEach((t, i) => {
+        on(t, "click", () => pick(t.dataset.t));
+        on(t, "keydown", (e) => {
+          const ev = e as KeyboardEvent;
+          if (ev.key !== "ArrowRight" && ev.key !== "ArrowLeft") return;
+          ev.preventDefault();
+          const n = tl[(i + (ev.key === "ArrowRight" ? 1 : -1) + tl.length) % tl.length];
+          n.focus();
+          pick(n.dataset.t);
         });
-        mkIO(es=>es.forEach(e=>{if(!e.isIntersecting)stop()}),{threshold:.2}).observe(shot);
-      }
-    });
-
-    /* ---------- sticky glass nav + section tracking ---------- */
-    const navEl=document.getElementById('nav');
-    const nlinksEl=document.getElementById('nlinks');
-    const nlinks=[...document.querySelectorAll('.nlink')];
-    const nsecs=nlinks.map(a=>document.querySelector(a.getAttribute('href')));
-    function absTop(el){let y=0;while(el){y+=el.offsetTop;el=el.offsetParent}return y}
-    let tops=[],active=-1;
-    function measure(){tops=nsecs.map(s=>s?absTop(s):Infinity);}
-    function spy(){
-      const y=scrollY+innerHeight*.34;
-      let idx=-1;
-      for(let i=0;i<tops.length;i++){if(y>=tops[i])idx=i;}
-      if(idx===active)return;
-      active=idx;
-      nlinks.forEach((l,i)=>l.classList.toggle('on',i===idx));
-      document.querySelectorAll('.lrow').forEach((r,i)=>r.classList.toggle('on',i===idx));
-
-      if(idx>-1&&nlinksEl.scrollWidth>nlinksEl.clientWidth+4){
-        const l=nlinks[idx];
-        nlinksEl.scrollTo({left:l.offsetLeft-(nlinksEl.clientWidth-l.offsetWidth)/2,behavior:'smooth'});
-      }
+      });
     }
-    nlinks.forEach((l,i)=>on(l,'click',e=>{
-      e.preventDefault();
-      if(!nsecs[i])return;
-      const pad=innerWidth<=860?104:88;
-      scrollTo({top:Math.max(0,absTop(nsecs[i])-pad),behavior:reduce?'auto':'smooth'});
-    }));
-    let nraf=null;
-    on(window,'scroll',()=>{
-      navEl.classList.toggle('stuck',scrollY>24);
-      if(nraf)return;
-      nraf=requestAnimationFrame(()=>{spy();nraf=null});
-    },{passive:true});
-    on(window,'resize',()=>{measure();active=-1;spy()});
-    on(window,'load',()=>{measure();active=-1;spy()});
-    measure();spy();
 
-    /* ---------- hero dot field ---------- */
-    (function(){
-      const cv=document.getElementById('dots');
-      if(!cv||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
-      const ctx=cv.getContext('2d'),hero=cv.parentElement;
-      const dpr=Math.min(devicePixelRatio||1,2),SP=30,R=210;
-      const touch=!matchMedia('(pointer:fine)').matches;
-      let w=0,h=0,pts=[],px=-999,py=-999,tx=-999,ty=-999,raf=null,live=false,lastW=0;
-      function size(){
-        const r=hero.getBoundingClientRect();
-        w=Math.round(r.width);h=Math.round(r.height);
-        cv.width=w*dpr;cv.height=h*dpr;cv.style.width=w+'px';cv.style.height=h+'px';
-        ctx.setTransform(dpr,0,0,dpr,0,0);
-        pts=[];
-        for(let y=SP;y<h;y+=SP)for(let x=SP;x<w;x+=SP)pts.push({x,y});
-        lastW=w;
-        if(touch&&tx<0){tx=w*.5;ty=h*.5;px=tx;py=ty;}
+    /* phone deck · auto rotates, click a phone or a dot to bring it to the front */
+    const deck = document.getElementById("pdeck");
+    if (deck) {
+      const cards = [...deck.querySelectorAll<HTMLElement>(".pmock")],
+        dots = [...document.querySelectorAll<HTMLElement>("#pdots .pdot")],
+        N = cards.length,
+        SLOT = [0, 1, -1] /* position in the cycle -> where it sits */,
+        DELAY = 4200;
+      let idx = 0,
+        timer: ReturnType<typeof setInterval> | null = null;
+
+      function place(animate: boolean) {
+        cards.forEach((c, i) => {
+          const slot = SLOT[(((i - idx) % N) + N) % N],
+            prev = c.dataset.slot === undefined ? null : +c.dataset.slot;
+          /* a card moving between the two side slots would fly across the middle,
+             so hop it over while it is invisible instead */
+          if (animate && prev !== null && Math.abs(slot - prev) > 1) {
+            c.style.transition = "none";
+            c.style.opacity = "0";
+            c.dataset.slot = String(slot);
+            void c.offsetWidth;
+            c.style.transition = "";
+            c.style.opacity = "";
+          } else {
+            c.dataset.slot = String(slot);
+          }
+        });
+        dots.forEach((d, i) => d.setAttribute("aria-current", i === idx ? "true" : "false"));
       }
-      function frame(){
-        const e=touch?.022:.11;
-        px+=(tx-px)*e;py+=(ty-py)*e;
-        ctx.clearRect(0,0,w,h);
-        for(let i=0;i<pts.length;i++){
-          const p=pts[i],dx=p.x-px,dy=p.y-py,d=Math.sqrt(dx*dx+dy*dy);
-          let f=0;
-          if(d<R){f=1-d/R;f=f*f;}
-          const lift=f*26,rad=.85+f*2.6,a=.09+f*.72;
-          ctx.beginPath();
-          ctx.arc(p.x,p.y-lift,rad,0,6.2832);
-          ctx.fillStyle='rgba('+Math.round(245-245*f)+','+Math.round(245+10*f)+','+Math.round(247-112*f)+','+a+')';
-          ctx.fill();
+      const go = (n: number, animate?: boolean) => {
+        idx = ((n % N) + N) % N;
+        place(animate !== false);
+      };
+      const stop = () => {
+        if (timer) {
+          clear(timer);
+          timer = null;
         }
-        raf=requestAnimationFrame(frame);
-      }
-      function start(){if(!live){live=true;raf=requestAnimationFrame(frame)}}
-      function halt(){live=false;if(raf)cancelAnimationFrame(raf);raf=null}
-      if(!touch){
-        on(hero,'pointermove',ev=>{
-          const r=hero.getBoundingClientRect();tx=ev.clientX-r.left;ty=ev.clientY-r.top;
-        });
-        on(hero,'pointerleave',()=>{tx=w*.5;ty=h*.5});
-      }else{
-        mkInterval(()=>{tx=w*(.2+Math.random()*.6);ty=h*(.16+Math.random()*.42)},2600);
-      }
-      size();
-      on(window,'resize',()=>{if(Math.abs(innerWidth-lastW)>2||!pts.length)size()});
-      mkIO(es=>es.forEach(e=>e.isIntersecting?start():halt()),{threshold:0}).observe(hero);
-    })();
+      };
+      const start = () => {
+        stop();
+        if (!reduce) timer = mkInterval(() => go(idx + 1), DELAY);
+      };
 
-    /* ---------- swipe rails with trackers (mobile) ---------- */
-    function railTracker(railId,trackId,itemSel){
-      const rail=document.getElementById(railId),track=document.getElementById(trackId);
-      if(!rail||!track)return;
-      const marks=[...track.children],cards=[...rail.querySelectorAll(itemSel)];
-      let rr=null;
-      on(rail,'scroll',()=>{
-        if(rr)return;
-        rr=requestAnimationFrame(()=>{
-          const mid=rail.scrollLeft+rail.clientWidth/2;
-          let best=0,dist=Infinity;
-          cards.forEach((c,i)=>{
-            const d=Math.abs(c.offsetLeft+c.offsetWidth/2-mid);
-            if(d<dist){dist=d;best=i}
-          });
-          marks.forEach((m,i)=>m.classList.toggle('on',i===best));
-          rr=null;
-        });
-      },{passive:true});
-      marks.forEach((m,i)=>on(m,'click',()=>{
-        rail.scrollTo({left:cards[i].offsetLeft-(rail.clientWidth-cards[i].offsetWidth)/2,behavior:'smooth'});
-      }));
+      /* dragX lets a swipe swallow the click that follows it */
+      let dragX = 0,
+        downX = 0,
+        downY = 0,
+        down = false;
+      cards.forEach((c, i) =>
+        on(c, "click", () => {
+          if (dragX > 10) return;
+          go(i);
+          start();
+        }),
+      );
+      dots.forEach((d, i) =>
+        on(d, "click", () => {
+          go(i);
+          start();
+        }),
+      );
+
+      /* swipe to rotate. No preventDefault, and horizontal has to beat vertical,
+         so this never interferes with scrolling the page. */
+      on(
+        deck,
+        "pointerdown",
+        (e) => {
+          down = true;
+          dragX = 0;
+          downX = (e as PointerEvent).clientX;
+          downY = (e as PointerEvent).clientY;
+        },
+        { passive: true },
+      );
+      on(
+        window,
+        "pointermove",
+        (e) => {
+          if (down) dragX = Math.max(dragX, Math.abs((e as PointerEvent).clientX - downX));
+        },
+        { passive: true },
+      );
+      on(
+        window,
+        "pointerup",
+        (e) => {
+          if (!down) return;
+          down = false;
+          const dx = (e as PointerEvent).clientX - downX,
+            dy = (e as PointerEvent).clientY - downY;
+          if (Math.abs(dx) > 38 && Math.abs(dx) > Math.abs(dy)) {
+            go(idx + (dx < 0 ? 1 : -1));
+            start();
+          }
+        },
+        { passive: true },
+      );
+      on(
+        window,
+        "pointercancel",
+        () => {
+          down = false;
+        },
+        { passive: true },
+      );
+      if (matchMedia("(pointer:fine)").matches) {
+        on(deck, "pointerenter", stop);
+        on(deck, "pointerleave", start);
+      }
+      on(document, "visibilitychange", () => (document.hidden ? stop() : start()));
+
+      go(0, false);
+      start();
+      offs.push(stop);
     }
-    railTracker('tiers','ptrack','.tier');
 
-    /* ---------- problem icons: notification popups ---------- */
-    (function(){
-      const atoms=[...document.querySelectorAll('.atom')];
-      if(!atoms.length)return;
-      const fine=matchMedia('(pointer:fine)').matches;
-      function closeAll(except){atoms.forEach(a=>{if(a!==except)a.classList.remove('open')})}
-      atoms.forEach(a=>{
-        a.setAttribute('tabindex','0');
-        on(a,'click',ev=>{
-          ev.stopPropagation();
-          const open=a.classList.contains('open');
-          closeAll(a);
-          a.classList.toggle('open',!open);
+    document.querySelectorAll<HTMLElement>("[data-go]").forEach((b) =>
+      on(b, "click", () => {
+        const t = document.querySelector<HTMLElement>(b.dataset.go!);
+        if (t) scrollTo({ top: t.offsetTop - 80, behavior: reduce ? "auto" : "smooth" });
+      }),
+    );
+    document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) =>
+      on(a, "click", (ev) => {
+        const t = document.querySelector<HTMLElement>(a.getAttribute("href")!);
+        if (!t) return;
+        ev.preventDefault();
+        scrollTo({ top: Math.max(0, t.offsetTop - 80), behavior: reduce ? "auto" : "smooth" });
+      }),
+    );
+
+    /* gradient footer · glow height tracks how much page is left below the fold */
+    const gband = document.getElementById("gband");
+    if (gband && !reduce) {
+      let gf: number | null = null;
+      const gmeasure = () => {
+        gf = null;
+        const h = gband.offsetHeight || 1; /* offsetHeight ignores the transform */
+        const left = document.documentElement.scrollHeight - innerHeight - scrollY;
+        gband.style.setProperty("--gp", Math.max(0, Math.min(1, (h - left) / h)).toFixed(4));
+      };
+      const greq = () => {
+        if (!gf) gf = raf(gmeasure);
+      };
+      on(window, "scroll", greq, { passive: true });
+      on(window, "resize", greq, { passive: true });
+      gmeasure();
+      offs.push(() => cancelRaf(gf));
+    }
+
+    const nav = document.getElementById("nav")!;
+    let lastY = scrollY,
+      nf: number | null = null;
+    on(
+      window,
+      "scroll",
+      () => {
+        if (nf) return;
+        nf = raf(() => {
+          const y = scrollY;
+          nav.classList.toggle("hide", y > lastY && y > 160);
+          lastY = y;
+          nf = null;
         });
-        on(a,'keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();a.click()}});
-        if(fine){
-          on(a,'pointerenter',()=>{closeAll(a);a.classList.add('open')});
-          on(a,'pointerleave',()=>a.classList.remove('open'));
-        }
+      },
+      { passive: true },
+    );
+    offs.push(() => cancelRaf(nf));
+
+    const send = document.getElementById("send");
+    if (send)
+      on(send, "click", (e) => {
+        const t = e.target as HTMLElement;
+        t.textContent = "Got it. Talk soon.";
+        t.style.pointerEvents = "none";
       });
-      on(document,'click',()=>closeAll(null));
-      on(document,'keydown',ev=>{if(ev.key==='Escape')closeAll(null)});
-    })();
-
-    /* ---------- logo menu ---------- */
-    (function(){
-      const mark=document.getElementById('mark'),menu=document.getElementById('lmenu');
-      if(!mark||!menu)return;
-      const rows=[...menu.querySelectorAll('.lrow')];
-      function setOpen(v){
-        menu.classList.toggle('open',v);
-        mark.setAttribute('aria-expanded',String(v));
-        if(v)document.getElementById('nav').classList.remove('hid');
-      }
-      on(window,'scroll',()=>{if(menu.classList.contains('open')&&document.getElementById('nav').classList.contains('hid'))setOpen(false)},{passive:true});
-      on(mark,'click',ev=>{ev.stopPropagation();setOpen(!menu.classList.contains('open'))});
-      on(menu,'click',ev=>ev.stopPropagation());
-      rows.forEach(r=>on(r,'click',()=>{
-        const sec=document.querySelector(r.dataset.sec);
-        setOpen(false);
-        if(!sec)return;
-        const pad=innerWidth<=860?104:88;
-        let y=0,el=sec;while(el){y+=el.offsetTop;el=el.offsetParent}
-        scrollTo({top:Math.max(0,y-pad),behavior:reduce?'auto':'smooth'});
-      }));
-      menu.querySelectorAll('.nbtn').forEach(b=>on(b,'click',()=>setOpen(false)));
-      on(document,'click',()=>setOpen(false));
-      on(document,'keydown',ev=>{if(ev.key==='Escape')setOpen(false)});
-    })();
-
-    /* ---------- reviews depth carousel (mobile) ---------- */
-    (function(){
-      const rail=document.getElementById('sgrid'),trk=document.getElementById('strack');
-      if(!rail||!trk)return;
-      const cards=[...rail.querySelectorAll('.say')],marks=[...trk.children],N=cards.length;
-      const mq=matchMedia('(max-width:700px)');
-      let idx=0,live=false;
-      function place(){
-        cards.forEach((c,i)=>{
-          let d=i-idx;
-          if(d>N/2)d-=N;
-          if(d<-N/2)d+=N;
-          c.dataset.pos=(d===0||d===1||d===-1)?String(d):'9';
-        });
-        marks.forEach((m,i)=>m.classList.toggle('on',i===idx));
-        const h=Math.max(...cards.map(c=>c.offsetHeight));
-        rail.style.height=(h+18)+'px';
-      }
-      function go(step){idx=(idx+step+N)%N;place()}
-      function enable(){
-        if(live)return;live=true;
-        rail.classList.add('car');
-        idx=0;place();
-        requestAnimationFrame(place);
-      }
-      function disable(){
-        if(!live)return;live=false;
-        rail.classList.remove('car');
-        rail.style.height='';
-        cards.forEach(c=>{delete c.dataset.pos});
-      }
-      let sx=0,dragging=false;
-      on(rail,'pointerdown',ev=>{if(!live)return;dragging=true;sx=ev.clientX});
-      on(rail,'pointerup',ev=>{
-        if(!live||!dragging)return;dragging=false;
-        const dx=ev.clientX-sx;
-        if(Math.abs(dx)>40)go(dx<0?1:-1);
-      });
-      on(rail,'pointercancel',()=>{dragging=false});
-      marks.forEach((m,i)=>on(m,'click',()=>{if(live){idx=i;place()}}));
-      on(window,'resize',()=>{if(live)place()});
-      const sync=()=>mq.matches?enable():disable();
-      on(mq,'change',sync);
-      sync();
-    })();
-
-
-    /* ---------- estimator ---------- */
-    const MODS=document.getElementById('mods');
-    const rSetup=$('rSetup'),rMo=$('rMo'),rTier=$('rTier');
-    function tween(el,from,to){
-      if(reduce){el.textContent='$'+to;return;}
-      const t0=performance.now(),dur=520;
-      function f(t){
-        const p=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-p,3);
-        el.textContent='$'+Math.round(from+(to-from)*e);
-        if(p<1)requestAnimationFrame(f);
-      }
-      requestAnimationFrame(f);
-    }
-    let curS=447,curM=187;
-    function calc(){
-      let mo=97,su=297;
-      MODS.querySelectorAll('.mod[aria-pressed="true"]').forEach(m=>{mo+=+m.dataset.m;su+=+m.dataset.s});
-      const tier=mo<160?'Presence':mo<400?'Connected':'Operations';
-      tween(rSetup,curS,su);tween(rMo,curM,mo);
-      curS=su;curM=mo;
-      rTier.innerHTML='Closest plan: <b>'+tier+'</b>. Final number confirmed after one call about how you actually work.';
-      document.getElementById('stamp').textContent='$'+su+' setup · $'+mo+' per month';
-    }
-    MODS.querySelectorAll('.mod').forEach(m=>m.onclick=()=>{
-      m.setAttribute('aria-pressed',m.getAttribute('aria-pressed')!=='true');
-      calc();
-    });
-    calc();
-
-    /* ---------- contact (mock until a backend is wired) ---------- */
-    const cSend=document.getElementById('cSend');
-    on(cSend,'click',()=>{
-      const lbl=cSend.querySelector('span');
-      lbl.textContent='Got it. Talk soon.';
-      cSend.style.pointerEvents='none';
-    });
 
     return () => {
-      listeners.forEach(([t, ty, fn, opts]) => t.removeEventListener(ty, fn, opts));
+      offs.forEach((f) => f());
       observers.forEach((o) => o.disconnect());
       intervals.forEach((id) => clearInterval(id));
+      intervals.clear();
+      frames.forEach((id) => cancelAnimationFrame(id));
+      frames.clear();
     };
   }, []);
 
   return (
-    <>
-      {/* shared glass gradients */}
-      <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true"><defs>
-        <linearGradient id="hl" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#fff" stopOpacity=".7" /><stop offset=".45" stopColor="#fff" stopOpacity=".14" /><stop offset="1" stopColor="#fff" stopOpacity="0" />
-        </linearGradient>
-        <linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#00FF87" stopOpacity=".6" /><stop offset="1" stopColor="#00FF87" stopOpacity=".14" /></linearGradient>
-        <linearGradient id="tc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#22E5FF" stopOpacity=".6" /><stop offset="1" stopColor="#22E5FF" stopOpacity=".14" /></linearGradient>
-        <linearGradient id="tp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#FF2D78" stopOpacity=".62" /><stop offset="1" stopColor="#FF2D78" stopOpacity=".15" /></linearGradient>
-        <linearGradient id="tv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#B14BFF" stopOpacity=".62" /><stop offset="1" stopColor="#B14BFF" stopOpacity=".15" /></linearGradient>
-        <linearGradient id="to" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#FFA028" stopOpacity=".6" /><stop offset="1" stopColor="#FFA028" stopOpacity=".14" /></linearGradient>
-        <linearGradient id="tw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#fff" stopOpacity=".5" /><stop offset="1" stopColor="#fff" stopOpacity=".1" /></linearGradient>
-        <linearGradient id="sgrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#00FF87" stopOpacity=".34" /><stop offset="1" stopColor="#00FF87" stopOpacity="0" /></linearGradient>
-      </defs></svg>
-
-      <nav id="nav">
-        <div className="navbar">
-          <div className="markwrap">
-            <button className="mark" id="mark" aria-expanded="false" aria-haspopup="true" aria-controls="lmenu" aria-label="Alyxlab menu"><span className="mkico" role="img" aria-label="Alyxlab"></span><i aria-hidden="true"></i></button>
-            <div className="lmenu" id="lmenu">
-              <button className="lrow" data-sec="#problem">The problem</button>
-              <button className="lrow" data-sec="#does">The system</button>
-              <button className="lrow" data-sec="#track">See it work</button>
-              <button className="lrow" data-sec="#work">Projects</button>
-              <button className="lrow" data-sec="#plans">Plans</button>
-              <button className="lrow" data-sec="#talk">Contact</button>
-              <button className="nbtn" data-go="#close">Get my estimate</button>
-            </div>
-          </div>
-
-          <div className="nlinks" id="nlinks">
-            <a className="nlink" href="#problem">The problem</a>
-            <a className="nlink" href="#does">The system</a>
-            <a className="nlink" href="#track">See it work</a>
-            <a className="nlink" href="#work">Projects</a>
-            <a className="nlink" href="#plans">Plans</a>
-            <a className="nlink" href="#talk">Contact</a>
-          </div>
-          <button className="nbtn" data-go="#close">Get my estimate</button>
+  <>
+    <nav id="nav">
+      <div className="navbar">
+        <a className="mark" href="#top">Alyxlab</a>
+        <div className="nlinks">
+          <a href="#work">Work</a>
+          <a href="#gets">What you get</a>
+          <a href="#price">Pricing</a>
         </div>
-      </nav>
-
-      {/* ============ 1 + 2 · DARK WORLD ============ */}
-      <div className="darkzone">
-        <div className="grain" aria-hidden="true"></div>
-
-        <header className="hero">
-          <div className="rise" aria-hidden="true"></div>
-          <canvas className="dots" id="dots" aria-hidden="true"></canvas>
-          <div className="inner">
-            <h1>Your business does not need another <em>website.</em></h1>
-            <p className="sub">It needs a system that answers, books, and follows up. Working the hours you cannot.</p>
-            <button className="cta" data-go="#close"><i className="mlight" aria-hidden="true"></i><span>Build mine</span></button>
-          </div>
-        </header>
-
-        <section className="atoms" id="problem">
-          <div className="shards" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-          <div className="noise" aria-hidden="true"></div>
-          <div className="inner">
-            <h2 className="rv">Right now it lives in <em className="glitch" data-t="six different tabs.">six different tabs.</em></h2>
-            <p className="sub rv">Bookings in one app. Reviews in another. Leads going cold in between.</p>
-            <div className="field" id="field">
-              <div className="atom" data-d="1.3"><div className="px"><div className="ic g1">
-                <svg viewBox="0 0 48 48"><rect x="5" y="9" width="38" height="34" rx="11" fill="url(#tg)" stroke="rgba(255,255,255,.6)" strokeWidth="1.6" /><rect x="5" y="9" width="38" height="15" rx="11" fill="url(#hl)" /><path d="M15 4.5v8M33 4.5v8" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" /><path d="M13 27h6M21 27h6M29 27h6M13 34h6M21 34h6" stroke="rgba(255,255,255,.9)" strokeWidth="2.4" strokeLinecap="round" /></svg>
-              </div></div><div className="apop" role="status"><b>Booking app</b><p>Three double bookings this month. Two people showed up for the same slot.</p></div></div>
-              <div className="atom" data-d=".8"><div className="px"><div className="ic g2">
-                <svg viewBox="0 0 48 48"><rect x="4" y="10" width="40" height="28" rx="9" fill="url(#tc)" stroke="rgba(255,255,255,.6)" strokeWidth="1.6" /><rect x="4" y="10" width="40" height="12" rx="9" fill="url(#hl)" /><path d="M6.5 14.5 24 26l17.5-11.5" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </div></div><div className="apop" role="status"><b>Inbox</b><p>Forty seven unread. The newest one is six days old.</p></div></div>
-              <div className="atom" data-d="1.6"><div className="px"><div className="ic g3">
-                <svg viewBox="0 0 48 48"><path d="M24 3.5l6 12.2 13.5 2-9.7 9.4 2.3 13.4L24 34.2l-12.1 6.3 2.3-13.4-9.7-9.4 13.5-2z" fill="url(#tp)" stroke="rgba(255,255,255,.62)" strokeWidth="1.6" strokeLinejoin="round" /><path d="M24 3.5l6 12.2 13.5 2-4.6 4.4H13.1l-4.6-4.4 13.5-2z" fill="url(#hl)" opacity=".8" /></svg>
-              </div></div><div className="apop" role="status"><b>Reviews</b><p>Last review request sent: never. Twelve happy customers walked out this week.</p></div></div>
-              <div className="atom" data-d="1.1"><div className="px"><div className="ic g4">
-                <svg viewBox="0 0 48 48"><path d="M42 22a17 15.5 0 0 1-17 15.5H7l4.2-5.8A15.5 15.5 0 1 1 42 22z" fill="url(#tv)" stroke="rgba(255,255,255,.6)" strokeWidth="1.6" strokeLinejoin="round" /><path d="M42 22a17 15.5 0 0 0-32-7.5h26.5A15.4 15.4 0 0 1 42 22z" fill="url(#hl)" opacity=".75" /><path d="M17 20.5h14M17 27h9" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" /></svg>
-              </div></div><div className="apop" role="status"><b>Messages</b><p>Nine unread. Four asked about pricing. Two already booked somewhere else.</p></div></div>
-              <div className="atom" data-d=".9"><div className="px"><div className="ic g5">
-                <svg viewBox="0 0 48 48"><rect x="4" y="10" width="40" height="28" rx="8" fill="url(#to)" stroke="rgba(255,255,255,.6)" strokeWidth="1.6" /><rect x="4" y="10" width="40" height="10" rx="8" fill="url(#hl)" /><rect x="4" y="17" width="40" height="6" fill="rgba(255,255,255,.85)" /><path d="M9 31h9" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" /></svg>
-              </div></div><div className="apop" role="status"><b>Payments</b><p>Three hundred forty dollars in unpaid deposits and three no shows you could not charge.</p></div></div>
-              <div className="atom" data-d="1.4"><div className="px"><div className="ic g6">
-                <svg viewBox="0 0 48 48"><rect x="5" y="7" width="38" height="34" rx="7" fill="url(#tw)" stroke="rgba(255,255,255,.62)" strokeWidth="1.6" /><rect x="5" y="7" width="38" height="12" rx="7" fill="url(#hl)" /><path d="M5 19h38M5 29h38M18 7v34M31 7v34" stroke="rgba(255,255,255,.8)" strokeWidth="1.8" /></svg>
-              </div></div><div className="apop" role="status"><b>The spreadsheet</b><p>Last updated three weeks ago. Nobody knows which leads are still live.</p></div></div>
-            </div>
-          </div>
-        </section>
-        <div className="runway" aria-hidden="true"></div>
+        <button className="nbtn" data-go="#start">Get my free plan</button>
       </div>
-
-      {/* ============ 3 · WHITE CURTAIN ============ */}
-      <section className="lite" id="does">
-        <div className="inner">
-          <h2 className="rv">A website says you exist. <em>A system runs the business.</em></h2>
-          <p className="sub rv">Three things change the day it goes live.</p>
-          <div className="cards3">
-            <div className="fcard a rv">
-              {/* drop a square image path in data-src, the icon shows until then */}
-              <div className="fmedia" data-src=""><img alt="" /></div>
-              <div className="fbody">
-              <div className="plate"><svg className="fi" viewBox="0 0 48 48">
-                <rect x="17" y="6" width="21" height="36" rx="5" />
-                <path d="M24 11h7" />
-                <path d="M4 17h9M2 24h11M4 31h9" />
-                <path d="M10 13.5 14.5 17 10 20.5M8 20.5 12.5 24 8 27.5M10 27.5 14.5 31 10 34.5" />
-              </svg></div>
-              <h3>It all lands in your hand</h3>
-              <p>Calls, texts, and forms come to one place, and it answers them for you while you work.</p>
-              </div>
-            </div>
-            <div className="fcard b rv">
-              {/* drop a square image path in data-src, the icon shows until then */}
-              <div className="fmedia" data-src=""><img alt="" /></div>
-              <div className="fbody">
-              <div className="plate"><svg className="fi" viewBox="0 0 48 48">
-                <path d="M40 24a16 16 0 1 1-5.6-12.2" />
-                <path d="M41 6v7h-7" />
-                <path d="M24 15v9l6 3.5" />
-              </svg></div>
-              <h3>It chases people for you</h3>
-              <p>Reminders, confirmations, and review requests go out on their own, exactly when they should.</p>
-              </div>
-            </div>
-            <div className="fcard c rv">
-              {/* drop a square image path in data-src, the icon shows until then */}
-              <div className="fmedia" data-src=""><img alt="" /></div>
-              <div className="fbody">
-              <div className="plate"><svg className="fi" viewBox="0 0 48 48">
-                <path d="M7 41h34" />
-                <path d="M13 41V29M22 41V22M31 41V32M40 41V16" />
-                <path d="M9 25 19 15l6 5L38 8" />
-                <path d="M31 8h7v7" />
-              </svg></div>
-              <h3>You see what it made you</h3>
-              <p>Every lead, every booking, and what it was worth, live on your phone.</p>
-              </div>
-            </div>
-          </div>
-          <p className="mlabel rv">Works with what you already use</p>
-          <div className="marq rv" id="marq">
-            <div className="mtrack" id="mtrack">
-              {/* swap in official logo files any time: <img data-src="logos/stripe.svg" /> replaces the wordmark */}
-              <div className="mitem"><img alt="" data-src="" /><span>Google Calendar</span></div>
-              <div className="mitem"><img alt="" data-src="" /><span>Stripe</span></div>
-              <div className="mitem"><img alt="" data-src="" /><span>Twilio</span></div>
-              <div className="mitem"><img alt="" data-src="" /><span>Gmail</span></div>
-              <div className="mitem"><img alt="" data-src="" /><span>Google Sheets</span></div>
-              <div className="mitem"><img alt="" data-src="" /><span>HubSpot</span></div>
-              <div className="mitem"><img alt="" data-src="" /><span>Resend</span></div>
-              <div className="mitem"><img alt="" data-src="" /><span>Square</span></div>
-              <div className="mitem"><img alt="" data-src="" /><span>QuickBooks</span></div>
-              <div className="mitem"><img alt="" data-src="" /><span>Mailchimp</span></div>
-              <div className="mitem"><img alt="" data-src="" /><span>Slack</span></div>
-              <div className="mitem"><img alt="" data-src="" /><span>n8n</span></div>
-            </div>
+    </nav>
+    
+    {/* ============ 1 · HERO ============ */}
+    <header className="hero" id="top">
+      <div className="glow" aria-hidden="true"></div>
+      <div className="bubbles" id="bubbles" aria-hidden="true">
+        <svg className="goodefs" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="goofilter">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="16" result="blur"/>
+              <feColorMatrix in="blur" mode="matrix"
+                values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="goo"/>
+              <feBlend in="SourceGraphic" in2="goo"/>
+            </filter>
+          </defs>
+        </svg>
+        <div className="goo">
+          <div className="bub b1"></div>
+          <div className="orb o2"><span className="bub b2"></span></div>
+          <div className="orb o3"><span className="bub b3"></span></div>
+          <div className="bub b4"></div>
+          <div className="orb o5"><span className="bub b5"></span></div>
+          <div className="bub b6" id="bubcursor"></div>
+        </div>
+      </div>
+      <div className="grain" aria-hidden="true"></div>
+      <div className="wrap">
+        <h1>Everything your business runs on, <em>in one system.</em></h1>
+        <p className="lede">Calls, bookings, deposits, reminders, reviews. Built for how you actually work and run by the person who built it.</p>
+        <div className="hcta">
+          <button className="btn glass" data-go="#start"><span>Get my free plan</span>
+            <svg viewBox="0 0 24 24"><path d="M5 12h13M12 5.5 18.5 12 12 18.5"/></svg></button>
+          <span className="hnote">No cost. A written plan within a day.</span>
+        </div>
+    
+        {/* HERO IMAGE · put your best dashboard screenshot here */}
+        <div className="shot wide" data-src="">
+          <img alt="" />
+          <div className="ph">
+            <b>Hero screenshot</b>
+            <span>Your strongest dashboard view. DriveOffDallas lead board is the best candidate.</span>
+            <i>1920 × 1200 · data-src on this div</i>
           </div>
         </div>
-      </section>
-      <section className="bridge">
-        <div className="inner">
-          <h2 className="rv">Watch it work. <em>One customer, start to finish.</em></h2>
-          <div className="fline"></div>
-        </div>
-      </section>
-
-      {/* ============ 4 · THE THEATER ============ */}
-      <section className="track" id="track">
-        <b className="snap" style={{ top: "calc(var(--seg) * .4167)" }}></b>
-        <b className="snap" style={{ top: "calc(var(--seg) * 1.25)" }}></b>
-        <b className="snap" style={{ top: "calc(var(--seg) * 2.0833)" }}></b>
-        <b className="snap" style={{ top: "calc(var(--seg) * 2.9167)" }}></b>
-        <b className="snap" style={{ top: "calc(var(--seg) * 3.75)" }}></b>
-        <b className="snap" style={{ top: "calc(var(--seg) * 4.5833)" }}></b>
-        <div className="stage" id="stage" data-step="0">
-          <div className="tfield" aria-hidden="true"><span className="blob b1"></span><span className="blob b2"></span><span className="blob b3"></span><span className="blob b4"></span></div>
-          <div className="cap">
-            <div className="capbox">
-              <div className="beat on" data-b="0"><h2>One lead. <em>Start to finish.</em></h2><p>Not a recording. Everything here runs on the same stack your system would.</p></div>
-              <div className="beat" data-b="1"><h2>9:47 PM. <u>You are closed.</u></h2><p>A text comes in. Nobody is there to answer it, and by morning most people have already booked somewhere else.</p></div>
-              <div className="beat" data-b="2"><h2>Four seconds later.</h2><p>The system answers with real openings pulled from your calendar. Not a canned reply that says we will get back to you.</p></div>
-              <div className="beat" data-b="3"><h2><em>Booked.</em></h2><p>Written to the calendar, confirmation sent, reminder scheduled. Nobody picked up a phone.</p></div>
-              <div className="beat" data-b="4"><h2>You see it <em>in the morning.</em></h2><p>Everything that happened while you slept, in one place. What came in, what booked, and what it was worth.</p></div>
-              <div className="beat" data-b="5"><h2>That is the system.</h2><p>Not a website with a contact form. Something that works the hours you cannot.</p><button className="cta" data-go="#close"><i className="mlight" aria-hidden="true"></i><span>Build mine</span></button></div>
+      </div>
+    </header>
+    
+    {/* ============ 2 · HOW IT WORKS ============ */}
+    <section className="how" id="how">
+      <div className="wrap">
+        <p className="eyebrow rv">How it works</p>
+        <h2 className="rv">Live in two weeks. You do almost nothing.</h2>
+        <div className="steps">
+          <div className="step gcard rv">
+            <div className="gglow" aria-hidden="true"></div>
+            <div className="shot wide" data-src="">
+              <img alt="" />
+              <div className="ph"><b>The written plan</b><span>A real plan document you sent a client, with their name on it</span><i>1200 × 750</i></div>
             </div>
+            <span className="week">Week 1</span>
+            <b>One call, thirty minutes</b>
+            <p>You tell me how customers reach you now and where it breaks. I write up what your system will do and what it costs. No charge.</p>
           </div>
-          <div className="scene">
-            <div className="rig">
-              <div className="phone">
-                <div className="island"></div>
-                <div className="screen">
-                  <div className="layer lock on" id="lLock">
-                    <div className="wall" aria-hidden="true"><span className="x"></span><span className="y"></span><span className="z"></span><span className="w"></span></div>
-                    <div className="lock">
-                      <div className="lk-time">9:47</div>
-                      <div className="lk-date">Saturday, June 14</div>
-                      <div className="lk-state">Shop closed · opens 9:00 AM</div>
-                      <div className="notif" id="notif">
-                        <div className="nf-top"><span className="nbadge">1</span><b>New message</b><time>now</time></div>
-                        <div className="nf-body">Yall have anything open Saturday? Need a fade before my sisters wedding</div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="layer msgs" id="lMsgs">
-                    <div className="mhead">Marcus T. · 9:47 PM</div>
-                    <div className="bub them" id="m1">Yall have anything open Saturday? Need a fade before my sisters wedding</div>
-                    <div className="typing" id="typ"><i></i><i></i><i></i></div>
-                    <div className="bub us" id="m2">Hey Marcus. Saturday 2:15 or 4:30 is open with Dre. Want me to hold one?<span className="sig">Sent by your system · 9:47 PM</span></div>
-                    <div className="bub them" id="m3">2:15 works</div>
-                    <div className="bub us" id="m4">Locked in. Saturday 2:15 with Dre. Reminder coming Friday.<span className="sig">Sent by your system · 9:48 PM</span></div>
-                  </div>
-                  <div className="layer dash on" id="lDash">
-                    <div className="grab"></div>
-                    <div className="dhead"><b>This week</b><span>Live</span></div>
-                    <div className="rev">
-                      <div className="revtop"><span>Booked revenue</span><em>+18%</em></div>
-                      <div className="revnum" id="v0">$0</div>
-                      <svg className="spark2" viewBox="0 0 200 44" preserveAspectRatio="none" aria-hidden="true">
-                        <path className="sfill" d="M0 34 24 30 48 32 72 22 96 25 120 15 144 18 168 9 200 4 200 44 0 44Z" />
-                        <path className="sline" d="M0 34 24 30 48 32 72 22 96 25 120 15 144 18 168 9 200 4" />
-                      </svg>
-                    </div>
-                    <div className="mrow">
-                      <div className="mcard ca"><div className="v" id="v1">0</div><div className="k">Leads in</div></div>
-                      <div className="mcard cb"><div className="v" id="v2">0</div><div className="k">Booked</div></div>
-                      <div className="mcard cc"><div className="v" id="v3">0</div><div className="k">After hours</div></div>
-                    </div>
-                    <div className="bars" id="bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-                    <div className="days"><s>M</s><s>T</s><s>W</s><s>T</s><s>F</s><s>S</s><s>S</s></div>
-                    <div className="dlist">
-                      <div className="ditem"><s></s>Marcus T. booked<em className="money">$45</em></div>
-                      <div className="ditem"><s className="c"></s>Deposit received<em className="money">$120</em></div>
-                      <div className="ditem"><s className="t"></s>Review request sent<em>Sat</em></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="float fl1" id="f1"><div className="k">Reply time</div><b>4 seconds</b><p>Median across every channel, day or night.</p></div>
-              <div className="float fl2" id="f2"><div className="k">Calendar</div><b>Saturday · 2:15 PM</b><p>Skin fade with Dre. Written straight to the booking calendar.</p></div>
-              <div className="float fl3" id="f3"><div className="k">Recovered</div><b>9 after hours</b><p>Leads that would have gone unanswered this week.</p></div>
+          <div className="step gcard rv">
+            <div className="gglow" aria-hidden="true"></div>
+            <div className="shot wide" data-src="">
+              <img alt="" />
+              <div className="ph"><b>The build</b><span>Their old site beside the new one, or a shot mid build</span><i>1200 × 750</i></div>
             </div>
+            <span className="week">Week 2</span>
+            <b>I build it and move you over</b>
+            <p>Connected to the tools you keep, loaded with your existing customers and bookings. You review it before anything goes live.</p>
           </div>
-          <div className="rail" id="rail" aria-label="Sequence"></div>
-        </div>
-      </section>
-
-      {/* ============ 5 · THE WORK ============ */}
-      <section className="work" id="work">
-        <div className="inner">
-          <h2 className="rvb">Real systems, <em>already running.</em></h2>
-          <div className="projs">
-            <div className="proj p1 rvb">
-              {/* data-poster = still image, data-clips = up to 3 clip paths comma separated. Hover on desktop or tap on mobile plays them. */}
-              <div className="shot" data-poster="" data-clips="">
-                <img className="poster" alt="" />
-                <video className="clip" muted={true} loop={true} playsInline={true} preload="metadata"></video>
-                <div className="pips"></div>
-                <div className="playcue" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 6.5v11l9-5.5z" /></svg></div>
-                <div className="win">
-                <div className="wbar"><i></i><i></i><i></i></div>
-                <div className="mocks">
-                  <div className="mk tall"><span>Revenue</span><b>$12.4k</b><svg className="spark" viewBox="0 0 100 22" preserveAspectRatio="none"><path d="M0 18 20 14 40 16 60 8 80 10 100 3" fill="none" stroke="#00FF87" strokeWidth="2" /></svg></div>
-                  <div className="mk"><span>Downloads</span><b>3,208</b></div>
-                  <div className="mk"><span>Sale live</span><b>30% off</b></div>
-                  <div className="mk"><span>Clients</span><b>847</b></div>
-                  <div className="mk"><span>Files</span><b>2.1 TB</b></div>
-                </div>
-                </div>
-              </div>
-              <div className="pbody">
-                <h3>Plugin Warehouse</h3>
-                <p>A storefront for music producers with a full back end: massive file delivery, sales and discounts, analytics, and a client account portal.</p>
-                <div className="tags"><span className="tag">Ecommerce</span><span className="tag">Client portal</span><span className="tag">Large file delivery</span><span className="tag">Sales engine</span></div>
-              </div>
+          <div className="step gcard rv">
+            <div className="gglow" aria-hidden="true"></div>
+            <div className="shot wide" data-src="">
+              <img alt="" />
+              <div className="ph"><b>A real text thread</b><span>Client asks for a change, you reply, done. Blur their name.</span><i>1200 × 750</i></div>
             </div>
-            <div className="proj p2 rvb">
-              <div className="shot" data-poster="" data-clips="">
-                <img className="poster" alt="" />
-                <video className="clip" muted={true} loop={true} playsInline={true} preload="metadata"></video>
-                <div className="pips"></div>
-                <div className="playcue" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 6.5v11l9-5.5z" /></svg></div>
-                <div className="win">
-                <div className="wbar"><i></i><i></i><i></i></div>
-                <div className="mocks">
-                  <div className="mk tall"><span>Leads</span><b>4,116</b><svg className="spark" viewBox="0 0 100 22" preserveAspectRatio="none"><path d="M0 19 20 15 40 17 60 9 80 12 100 4" fill="none" stroke="#FF2D78" strokeWidth="2" /></svg></div>
-                  <div className="mk"><span>Owned</span><b>212</b></div>
-                  <div className="mk"><span>Expiring</span><b>0:58</b></div>
-                  <div className="mk"><span>AI replies</span><b>1,930</b></div>
-                  <div className="mk"><span>Dealers</span><b>14</b></div>
-                </div>
-                </div>
-              </div>
-              <div className="pbody">
-                <h3>DriveOffDallas</h3>
-                <p>A dealership lead system handling thousands of leads with AI assistance, a live phone line, ownership timers, and multi dealer onboarding.</p>
-                <div className="tags"><span className="tag">AI assistant</span><span className="tag">Phone + SMS</span><span className="tag">Lead ownership</span><span className="tag">Multi tenant</span></div>
-              </div>
-            </div>
-            <div className="proj p3 rvb">
-              <div className="shot" data-poster="" data-clips="">
-                <img className="poster" alt="" />
-                <video className="clip" muted={true} loop={true} playsInline={true} preload="metadata"></video>
-                <div className="pips"></div>
-                <div className="playcue" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 6.5v11l9-5.5z" /></svg></div>
-                <div className="win">
-                <div className="wbar"><i></i><i></i><i></i></div>
-                <div className="mocks">
-                  <div className="mk tall"><span>Inquiries</span><b>96</b><svg className="spark" viewBox="0 0 100 22" preserveAspectRatio="none"><path d="M0 17 20 15 40 12 60 13 80 8 100 6" fill="none" stroke="#B14BFF" strokeWidth="2" /></svg></div>
-                  <div className="mk"><span>This week</span><b>23</b></div>
-                  <div className="mk"><span>Replied</span><b>100%</b></div>
-                  <div className="mk"><span>Quotes</span><b>31</b></div>
-                  <div className="mk"><span>Routes</span><b>12</b></div>
-                </div>
-                </div>
-              </div>
-              <div className="pbody">
-                <h3>Monkey Trucking</h3>
-                <p>A clean site with smart contact forms and a simple owner dashboard. Proof that the floor of what I build is still a working system.</p>
-                <div className="tags"><span className="tag">Fast build</span><span className="tag">Smart forms</span><span className="tag">Owner dashboard</span></div>
-              </div>
-            </div>
+            <span className="week">Ongoing</span>
+            <b>You run it, I keep it running</b>
+            <p>Thirty minutes of training for your team. After that it just runs, and when you want a change you text me directly.</p>
           </div>
         </div>
-      </section>
-
-      {/* ============ 6 · PLANS ============ */}
-      <section className="plans" id="plans">
-        <div className="inner">
-          <h2 className="rv">Three ways in. <em>One system underneath.</em></h2>
-          <div className="ptrack" id="ptrack" aria-hidden="true"><i className="on"></i><i></i><i></i></div>
-          <div className="tiers" id="tiers">
-            <div className="tier">
-              <h3>Presence</h3><div className="prom">Be found.</div>
-              <div className="price"><b>$97</b><span>/ month</span></div>
-              <div className="setup">$297 setup, one time</div>
-              <div className="feats">
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>Custom site on your own domain</div>
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>Hosting, updates, and backups</div>
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>Built for phones and fast loads</div>
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>Local search setup</div>
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>Contact form to your inbox</div>
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>One booking or call link</div>
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>Visitor analytics</div>
-              </div>
-              <button className="tbtn" data-go="#close">Start with Presence</button>
-            </div>
-            <div className="tier">
-              <h3>Connected</h3><div className="prom">Never lose a lead.</div>
-              <div className="price"><b>$249</b><span>/ month</span></div>
-              <div className="setup">$597 setup, one time</div>
-              <div className="plus">Everything in Presence, plus</div>
-              <div className="feats">
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>Your own login and dashboard</div>
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>Every inquiry answered in seconds</div>
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>Missed calls texted back</div>
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>Calendar synced both ways</div>
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>Reminders and confirmations</div>
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>Review requests after each visit</div>
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>Email and text campaigns</div>
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>Full lead history</div>
-              </div>
-              <button className="tbtn" data-go="#close">Start with Connected</button>
-            </div>
-            <div className="tier ops">
-              <h3>Operations</h3><div className="prom">Run the business from one place.</div>
-              <div className="price"><b>$499</b><span>/ month</span></div>
-              <div className="setup">$997 setup, one time</div>
-              <div className="plus">Everything in Connected, plus</div>
-              <div className="feats">
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>Accounts and roles for your team</div>
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>AI assistant that answers and books</div>
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>Customer pipeline with your own rules</div>
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>Payments and deposits</div>
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>Business phone line and texting</div>
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>Multi location reporting</div>
-                <div><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" /></svg>Priority support, direct to me</div>
-              </div>
-              <button className="tbtn" data-go="#close">Start with Operations</button>
-            </div>
+      </div>
+    </section>
+    
+    {/* ============ 3 · WORK ============ */}
+    <section className="work light" id="work">
+      <div className="wrap">
+        <div className="shead">
+          <div>
+            <p className="eyebrow rv">Our work</p>
+            <h2 className="rv">Systems already running.</h2>
           </div>
-          <p className="annual rv">On a 12 month agreement, setup drops by half.</p>
-          <div className="sayblock">
-      <h3 className="sayhead rv">What the owners <em>actually say.</em></h3>
-          <div className="strack" id="strack" aria-hidden="true"><i className="on"></i><i></i><i></i></div>
-          <div className="sgrid" id="sgrid">
-            <div className="say" data-placeholder="true">
-              <div className="stars" aria-label="Five out of five">
-                <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
-                <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
-                <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
-                <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
-                <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
-              </div>
-              <p>We were losing people every night after close. Now I wake up to appointments instead of missed calls.</p>
-              <div className="who"><div className="av">MT</div><div><b>Marcus Tolbert</b><span>Fade Theory Barbers</span></div></div>
+          <p className="lede rv">Three businesses, three different problems, one approach.</p>
+        </div>
+    
+        <div className="proj rv">
+          <div className="ptxt">
+            <h3>DriveOffDallas</h3>
+            <p>A lead system for fourteen dealers with a live phone line, an AI assistant that answers first, and ownership timers so no lead sits unclaimed.</p>
+            <div className="pnum">
+              <div><b>4,116</b><span>Leads handled</span></div>
+              <div><b>14</b><span>Dealers</span></div>
             </div>
-            <div className="say" data-placeholder="true">
-              <div className="stars" aria-label="Five out of five">
-                <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
-                <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
-                <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
-                <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
-                <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
-              </div>
-              <p>I ran everything out of three apps and a notebook. Now it is one screen, and my crew actually uses it.</p>
-              <div className="who"><div className="av">DR</div><div><b>Danielle Reyes</b><span>Reyes Home Services</span></div></div>
-            </div>
-            <div className="say" data-placeholder="true">
-              <div className="stars" aria-label="Five out of five">
-                <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
-                <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
-                <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
-                <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
-                <svg viewBox="0 0 24 24"><path d="M12 2l3 6.6 7.2 1-5.2 5 1.3 7.2L12 18.4 5.7 21.8 7 14.6 1.8 9.6l7.2-1z" /></svg>
-              </div>
-              <p>What surprised me was the timers. No lead sits there anymore, and everyone knows whose it is.</p>
-              <div className="who"><div className="av">SO</div><div><b>Sam Okafor</b><span>Northside Auto Group</span></div></div>
-            </div>
-            </div>
+            <div className="ptags"><span className="ptag">Live phone line</span><span className="ptag">AI assistant</span><span className="ptag">Lead ownership</span></div>
           </div>
-
-          <div className="faq rv">
-            <details><summary>Who owns the system?</summary><p>You do. The code, the data, the domain. If we ever part ways, everything transfers to you with documentation. You are never held hostage.</p></details>
-            <details><summary>What if I cancel?</summary><p>Month to month plans cancel anytime. Your site and data are handed over, and hosting transfers to an account you control.</p></details>
-            <details><summary>Do I need to be technical?</summary><p>No. You get a dashboard built for owners, not developers. If you can use your phone, you can run it. And when you need a change, you text me directly.</p></details>
-            <details><summary>How fast is it live?</summary><p>Most builds are live in under two weeks, including migration from whatever you have now.</p></details>
+          <div className="shot wide" data-src="">
+            <img alt="" />
+            <div className="ph"><b>DriveOffDallas</b><span>Lead board with the ownership timers visible</span><i>1600 × 1000</i></div>
           </div>
         </div>
-      </section>
-
-      {/* ============ 7 · CLOSE ============ */}
-      <section className="close" id="close">
-        <div className="rise2" aria-hidden="true"></div>
-        <div className="grain" aria-hidden="true"></div>
-        <div className="inner">
-          <h2 className="rv">Built for<span className="roller" id="roller" aria-label="any business"><span className="rw now" id="rwA"></span><span className="rw next" id="rwB"></span></span></h2>
-          <p className="sub rv">Whatever you run, it gets built for how that business actually works. Tap what yours needs and watch the number build.</p>
-
-          <div className="est rv">
-            <div className="eslabel">What should it do?</div>
-            <div className="mods" id="mods">
-              <button className="mod" aria-pressed="true" data-m="60" data-s="100"><span className="sw"></span><b>Instant reply to every lead</b></button>
-              <button className="mod" aria-pressed="false" data-m="55" data-s="90"><span className="sw"></span><b>Your own business phone line</b></button>
-              <button className="mod" aria-pressed="false" data-m="110" data-s="160"><span className="sw"></span><b>AI assistant that books</b></button>
-              <button className="mod" aria-pressed="true" data-m="30" data-s="50"><span className="sw"></span><b>Review requests after each visit</b></button>
-              <button className="mod" aria-pressed="false" data-m="50" data-s="90"><span className="sw"></span><b>Payments and deposits</b></button>
-              <button className="mod" aria-pressed="false" data-m="45" data-s="80"><span className="sw"></span><b>Rules and routing</b></button>
-              <button className="mod" aria-pressed="false" data-m="32" data-s="60"><span className="sw"></span><b>Team logins and roles</b></button>
-              <button className="mod" aria-pressed="false" data-m="20" data-s="70"><span className="sw"></span><b>Affiliate and referral links</b></button>
+    
+        <div className="proj rv">
+          <div className="ptxt">
+            <h3>Plugin Warehouse</h3>
+            <p>A storefront for music producers handling very large file delivery, sale campaigns, full analytics, and a customer account portal.</p>
+            <div className="pnum">
+              <div><b>2.1 TB</b><span>Delivered</span></div>
+              <div><b>847</b><span>Customers</span></div>
             </div>
-            <p className="modnote">We build and run the system. Writing your marketing content stays with you, or we can quote it separately.</p>
-
-
-            <div className="result">
-              <div className="rnum"><b id="rSetup">$447</b><span>setup, one time</span></div>
-              <div className="rnum g"><b id="rMo">$187</b><span>per month, everything included</span></div>
-              <div className="rtier" id="rTier">Closest plan: <b>Connected</b>. Final number confirmed after one call about how you actually work.</div>
-              <button className="cta" data-go="#talk"><i className="mlight" aria-hidden="true"></i><span>Send this over</span></button>
-            </div>
+            <div className="ptags"><span className="ptag">Ecommerce</span><span className="ptag">Large file delivery</span><span className="ptag">Customer portal</span></div>
           </div>
-
-          <div className="talk rv" id="talk">
-            <h3>Reach out. <em>It comes straight to me.</em></h3>
-            <div className="tgrid">
-              <form className="tform" onSubmit={(e) => e.preventDefault()}>
-                <div className="fh"><b>Send a message</b><span className="stamp" id="stamp">$447 setup · $187 per month</span></div>
-                <div className="f2">
-                  <div className="fld"><label htmlFor="cName">Your name</label><input id="cName" type="text" autoComplete="name" placeholder="Marcus" /></div>
-                  <div className="fld"><label htmlFor="cBiz">Business</label><input id="cBiz" type="text" autoComplete="organization" placeholder="Fade Theory" /></div>
-                </div>
-                <div className="f2">
-                  <div className="fld"><label htmlFor="cPhone">Phone</label><input id="cPhone" type="tel" autoComplete="tel" placeholder="(555) 123 4567" /></div>
-                  <div className="fld"><label htmlFor="cMail">Email</label><input id="cMail" type="email" autoComplete="email" placeholder="you@business.com" /></div>
-                </div>
-                <div className="fld"><label htmlFor="cNote">What is not working right now</label><textarea id="cNote" placeholder="Missing calls after close, everything lives in three apps, no idea where leads go."></textarea></div>
-                <button className="cta" id="cSend" type="submit"><i className="mlight" aria-hidden="true"></i><span>Send message</span></button>
-              </form>
-              <div className="side">
-                <a className="scard" href="tel:+14699431560">
-                  <div className="sico"><svg viewBox="0 0 24 24"><path d="M6.5 3h3l1.5 4.5-2 1.5a13 13 0 0 0 6 6l1.5-2 4.5 1.5v3a2 2 0 0 1-2.2 2A17.5 17.5 0 0 1 4.5 5.2 2 2 0 0 1 6.5 3z" /></svg></div>
-                  <div><div className="k">Text or call</div><b>(469) 943 1560</b></div>
-                  <svg className="arw" viewBox="0 0 24 24"><path d="M5 12h13M12 5.5 18.5 12 12 18.5" /></svg>
-                </a>
-                <a className="scard" href="mailto:alyxlabwork@gmail.com">
-                  <div className="sico"><svg viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="3" /><path d="m4.5 8 7.5 5 7.5-5" /></svg></div>
-                  <div><div className="k">Email</div><b>alyxlabwork@gmail.com</b></div>
-                  <svg className="arw" viewBox="0 0 24 24"><path d="M5 12h13M12 5.5 18.5 12 12 18.5" /></svg>
-                </a>
-                <div className="steps">
-                  <div className="stitle">What happens next</div>
-                  <div className="step"><i>1</i><span>I read it myself, usually within a few hours.</span></div>
-                  <div className="step"><i>2</i><span>A short call about how your business actually runs.</span></div>
-                  <div className="step"><i>3</i><span>A fixed price and a start date. No proposal deck.</span></div>
+          <div className="shot wide" data-src="">
+            <img alt="" />
+            <div className="ph"><b>Plugin Warehouse</b><span>Storefront or the analytics view</span><i>1600 × 1000</i></div>
+          </div>
+        </div>
+    
+        <div className="proj rv">
+          <div className="ptxt">
+            <h3>Monkey Trucking</h3>
+            <p>A fast site with intake forms that ask the right questions up front, feeding a dashboard the owner actually opens.</p>
+            <div className="pnum">
+              <div><b>100%</b><span>Inquiries answered</span></div>
+              <div><b>96</b><span>Inquiries</span></div>
+            </div>
+            <div className="ptags"><span className="ptag">Smart intake</span><span className="ptag">Owner dashboard</span></div>
+          </div>
+          <div className="shot wide" data-src="">
+            <img alt="" />
+            <div className="ph"><b>Monkey Trucking</b><span>Homepage or the dashboard</span><i>1600 × 1000</i></div>
+          </div>
+        </div>
+    
+        <div className="pmwrap rv">
+          <p className="pmlead">The same system on your phone.</p>
+          <div className="pdeck" id="pdeck">
+            <figure className="pmock">
+              <div className="pframe">
+                <div className="shot phone" data-src="/img/phone-1.jpg">
+                  <img alt="Morning summary screen showing messages answered, missed calls handled, and new bookings" loading="lazy" />
+                  <div className="ph"><b>Morning summary</b><i>1080 × 1935</i></div>
                 </div>
               </div>
+              <figcaption>What happened overnight</figcaption>
+            </figure>
+            <figure className="pmock">
+              <div className="pframe">
+                <div className="shot phone" data-src="/img/phone-2.jpg">
+                  <img alt="Revenue dashboard showing the weekly total, leads, bookings, and close rate" loading="lazy" />
+                  <div className="ph"><b>Revenue</b><i>1080 × 1935</i></div>
+                </div>
+              </div>
+              <figcaption>What the week is worth</figcaption>
+            </figure>
+            <figure className="pmock">
+              <div className="pframe">
+                <div className="shot phone" data-src="/img/phone-3.jpg">
+                  <img alt="Booking calendar showing the appointments scheduled for today" loading="lazy" />
+                  <div className="ph"><b>Today</b><i>1080 × 1935</i></div>
+                </div>
+              </div>
+              <figcaption>Who is booked today</figcaption>
+            </figure>
+          </div>
+          <div className="pdots" id="pdots">
+            <button className="pdot" type="button" aria-label="Show the morning summary"></button>
+            <button className="pdot" type="button" aria-label="Show the revenue dashboard"></button>
+            <button className="pdot" type="button" aria-label="Show today's bookings"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    {/* ============ 4 · PRODUCT VIEWER ============ */}
+    <section className="viewer light" id="gets">
+      <div className="wrap">
+        <p className="eyebrow rv">What you get</p>
+        <h2 className="rv">Look inside the system.</h2>
+    
+        <div className="tabswrap rv">
+        <div className="tabs" role="tablist" id="tabs">
+          <button className="tab" role="tab" aria-selected="true" data-t="inbox">
+            <svg viewBox="0 0 24 24"><path d="M3 13h5l1.5 3h5l1.5-3h5"/><path d="M5.5 4.5h13l2.5 8.5v4.5a2 2 0 0 1-2 2h-14a2 2 0 0 1-2-2V13z"/></svg>Inbox</button>
+          <button className="tab" role="tab" aria-selected="false" data-t="calendar">
+            <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 2.5v4M16 2.5v4M3 10h18"/></svg>Calendar</button>
+          <button className="tab" role="tab" aria-selected="false" data-t="pipeline">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="5" height="16" rx="2"/><rect x="9.5" y="4" width="5" height="11" rx="2"/><rect x="16" y="4" width="5" height="7" rx="2"/></svg>Pipeline</button>
+          <button className="tab" role="tab" aria-selected="false" data-t="payments">
+            <svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M2.5 9.5h19M6 15h3.5"/></svg>Payments</button>
+          <button className="tab" role="tab" aria-selected="false" data-t="reports">
+            <svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M6 20v-6M11 20V7M16 20v-9"/></svg>Reports</button>
+        </div>
+          <button className="tabcue" type="button" aria-label="Scroll for more tabs">
+            <svg viewBox="0 0 24 24"><path d="M9 5.5 15.5 12 9 18.5"/></svg>
+          </button>
+        </div>
+    
+        <div className="panes">
+          <div className="pane on" data-p="inbox">
+            <div className="shot wide" data-src=""><img alt="" />
+              <div className="ph"><b>Inbox screenshot</b><span>The unified thread view, ideally with an automatic reply visible</span><i>1600 × 1000</i></div></div>
+            <div className="pline"><b>Everyone in one thread</b><span>Calls, texts, and web forms all land in the same place, and missed calls get a text back in seconds.</span></div>
+          </div>
+          <div className="pane" data-p="calendar">
+            <div className="shot wide" data-src=""><img alt="" />
+              <div className="ph"><b>Calendar screenshot</b><span>Booking view with real availability</span><i>1600 × 1000</i></div></div>
+            <div className="pline"><b>Books itself</b><span>Only genuinely open times get offered, the booking writes back to your calendar, and the reminder goes out on schedule.</span></div>
+          </div>
+          <div className="pane" data-p="pipeline">
+            <div className="shot wide" data-src=""><img alt="" />
+              <div className="ph"><b>Pipeline screenshot</b><span>DriveOffDallas lead board with the ownership timers</span><i>1600 × 1000</i></div></div>
+            <div className="pline"><b>Nothing sits unclaimed</b><span>Every lead lands in a stage with an owner and a clock, routed by rules you set once.</span></div>
+          </div>
+          <div className="pane" data-p="payments">
+            <div className="shot wide" data-src=""><img alt="" />
+              <div className="ph"><b>Payments screenshot</b><span>Deposit or checkout view</span><i>1600 × 1000</i></div></div>
+            <div className="pline"><b>Paid at booking</b><span>Deposits collected before the slot is held, receipts sent automatically, no shows you can actually charge.</span></div>
+          </div>
+          <div className="pane" data-p="reports">
+            <div className="shot wide" data-src=""><img alt="" />
+              <div className="ph"><b>Reports screenshot</b><span>Revenue and lead numbers dashboard</span><i>1600 × 1000</i></div></div>
+            <div className="pline"><b>You see everything</b><span>What came in, what booked, what it was worth, and which hours actually make you money.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    {/* ============ 5 · ALSO INCLUDED ============ */}
+    <section className="gets">
+      <div className="wrap">
+        <p className="eyebrow rv">Also included</p>
+        <div className="fan rv">
+          <article className="fcard">
+            <div className="fc-top">
+              <span className="fc-ico"><svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.2L12 17l-5.4 3 1-6.2L3.2 9.5l6.1-.9z"/></svg></span>
+              <b>Review requests</b>
+            </div>
+            <p>Sent automatically after every completed job.</p>
+            <div className="fdetail">
+              <svg className="fd-stars" viewBox="0 0 106 20" aria-hidden="true">
+                <defs><path id="fdstar" d="M10 2.2l2.4 4.9 5.4.8-3.9 3.8.9 5.4L10 14.5l-4.8 2.6.9-5.4L2.2 7.9l5.4-.8z"/></defs>
+                <use href="#fdstar" x="0"/><use href="#fdstar" x="22"/><use href="#fdstar" x="44"/><use href="#fdstar" x="66"/><use href="#fdstar" x="88"/>
+              </svg>
+            </div>
+          </article>
+          <article className="fcard">
+            <div className="fc-top">
+              <span className="fc-ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 5.2a3.5 3.5 0 0 1 0 5.6M17.5 20a6.4 6.4 0 0 0-2-4.6"/></svg></span>
+              <b>Team accounts</b>
+            </div>
+            <p>Separate logins and roles for your staff.</p>
+            <div className="fdetail">
+              <div className="fd-avs" aria-hidden="true"><span></span><span></span><span></span></div>
+            </div>
+          </article>
+          <article className="fcard">
+            <div className="fc-top">
+              <span className="fc-ico"><svg viewBox="0 0 24 24"><path d="M10 13.5a4 4 0 0 0 5.7.4l2.8-2.8a4 4 0 0 0-5.7-5.7l-1.4 1.4"/><path d="M14 10.5a4 4 0 0 0-5.7-.4l-2.8 2.8a4 4 0 0 0 5.7 5.7l1.4-1.4"/></svg></span>
+              <b>Referral links</b>
+            </div>
+            <p>See exactly who sends you business.</p>
+            <div className="fdetail" aria-hidden="true">
+              <span className="fd-pill">
+                <svg viewBox="0 0 24 24"><path d="M10 13.5a4 4 0 0 0 5.7.4l2.8-2.8a4 4 0 0 0-5.7-5.7l-1.4 1.4"/><path d="M14 10.5a4 4 0 0 0-5.7-.4l-2.8 2.8a4 4 0 0 0 5.7 5.7l1.4-1.4"/></svg>
+                alyxlab.co/r/9f2…
+              </span>
+              <span className="fd-count">18 clicks</span>
+            </div>
+          </article>
+          <article className="fcard">
+            <div className="fc-top">
+              <span className="fc-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 2.5v4M16 2.5v4"/><path d="M8 14l3 3 5-6"/></svg></span>
+              <b>Your own domain</b>
+            </div>
+            <p>Yours outright. You keep it if you leave.</p>
+            <div className="fdetail" aria-hidden="true">
+              <span className="fd-bar">
+                <svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9" rx="2.2"/><path d="M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7"/></svg>
+                yourshop.com
+              </span>
+            </div>
+          </article>
+          <article className="fcard">
+            <div className="fc-top">
+              <span className="fc-ico"><svg viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="m4.5 8 7.5 5 7.5-5"/></svg></span>
+              <b>Automatic emails</b>
+            </div>
+            <p>Price drops, abandoned carts, abandoned checkouts. Sent for you.</p>
+            <div className="fdetail" aria-hidden="true">
+              <span className="fd-pill">Price drop</span>
+              <span className="fd-pill">Cart saved</span>
+              <span className="fd-pill">Win back</span>
+            </div>
+          </article>
+          <article className="fcard">
+            <div className="fc-top">
+              <span className="fc-ico"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.5L3 21l2-5.6A8.5 8.5 0 1 1 21 11.5z"/></svg></span>
+              <b>Text me directly</b>
+            </div>
+            <p>You text, I fix it. No ticket queue.</p>
+            <div className="fdetail" aria-hidden="true">
+              <span className="fd-pill">
+                <svg viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.5L3 21l2-5.6A8.5 8.5 0 1 1 21 11.5z"/></svg>
+                Add Saturday hours?
+              </span>
+              <span className="fd-count">Done by noon</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+    
+    {/* ============ 4 · PRICING ============ */}
+    <section className="price" id="price">
+      <div className="wrap">
+        <p className="eyebrow rv">Pricing</p>
+        <h2 className="rv">Three ways in.</h2>
+        <p className="lede rv">Setup covers the build and the move over. Monthly covers hosting, support, and changes.</p>
+        <div className="tiers">
+          <div className="tier rv">
+            <h3>Presence</h3><div className="prom">Be found.</div>
+            <div className="amt"><b>$97</b><span>/ mo</span></div>
+            <div className="setup">$297 setup</div>
+            <ul>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Custom site on your domain</li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Hosting, updates, backups</li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Local search setup</li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>One booking or call link</li>
+            </ul>
+            <button className="tbtn" data-go="#start">Start with Presence</button>
+          </div>
+          <div className="tier rv">
+            <h3>Connected</h3><div className="prom">Never lose a lead.</div>
+            <div className="amt"><b>$249</b><span>/ mo</span></div>
+            <div className="setup">$597 setup</div>
+            <ul>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Everything in Presence</li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Your own login and dashboard</li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Missed calls texted back</li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Calendar synced both ways</li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Reminders and review requests</li>
+            </ul>
+            <button className="tbtn" data-go="#start">Start with Connected</button>
+          </div>
+          <div className="tier best rv">
+            <h3>Operations</h3><div className="prom">Run the whole business from one place.</div>
+            <div className="amt"><b>$499</b><span>/ mo</span></div>
+            <div className="setup">$997 setup</div>
+            <ul>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Everything in Connected</li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>AI assistant that answers and books</li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Your own business phone line</li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Payments and deposits</li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Team accounts and roles</li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Rules, routing, referral links</li>
+            </ul>
+            <button className="tbtn" data-go="#start">Start with Operations</button>
+          </div>
+        </div>
+        <p className="annual rv">On a twelve month agreement, setup drops by half.</p>
+      </div>
+    </section>
+    
+    {/* ============ 5 · CONTACT ============ */}
+    <section className="contact" id="start">
+      <div className="wrap">
+        <div className="cbox rv">
+          <div>
+            <h2>Tell me what you run. <em>I will map the system.</em></h2>
+            <p className="lede">No cost, no obligation. You get a written plan: what it would do, what it replaces, what it costs.</p>
+            <div className="creach">
+              <a href="tel:+14699431560">
+                <svg viewBox="0 0 24 24"><path d="M6.5 3h3l1.5 4.5-2 1.5a13 13 0 0 0 6 6l1.5-2 4.5 1.5v3a2 2 0 0 1-2.2 2A17.5 17.5 0 0 1 4.5 5.2 2 2 0 0 1 6.5 3z"/></svg>
+                (469) 943 1560</a>
+              <a href="mailto:alyxlabwork@gmail.com">
+                <svg viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="m4.5 8 7.5 5 7.5-5"/></svg>
+                alyxlabwork@gmail.com</a>
             </div>
           </div>
-
-          <footer>
-            <b>Alyxlab</b>
-            <div className="flinks">
-              <a href="#problem">The problem</a>
-              <a href="#does">The system</a>
-              <a href="#track">See it work</a>
-              <a href="#work">Projects</a>
-              <a href="#plans">Plans</a>
-              <a href="#talk">Contact</a>
-            </div>
-            <span>One person. Complete systems. Dallas, TX.</span>
-          </footer>
+          <form className="form" onSubmit={(e) => e.preventDefault()}>
+            <input type="text" autocomplete="name" placeholder="Your name" />
+            <input type="text" autocomplete="organization" placeholder="Business name" />
+            <input type="tel" autocomplete="tel" placeholder="Phone" />
+            <select>
+              <option value="">What kind of business</option>
+              <option>Barbershop or salon</option>
+              <option>Restaurant</option>
+              <option>Dealership</option>
+              <option>Clinic or practice</option>
+              <option>Home services</option>
+              <option>Something else</option>
+            </select>
+            <textarea placeholder="What is not working right now"></textarea>
+            <button className="btn" id="send" type="submit">Send it over</button>
+          </form>
         </div>
-      </section>
-    </>
+      </div>
+      <footer>
+        <b>Alyxlab</b>
+        <span className="end">One person. Complete systems. Dallas, TX.</span>
+    
+        <div className="gband" id="gband" aria-hidden="true">
+          <svg viewBox="0 0 1271 599" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="gbandgrad" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0" stopColor="#340B05"/>
+                <stop offset="0.1827" stopColor="#0358F7"/>
+                <stop offset="0.2837" stopColor="#5092C7"/>
+                <stop offset="0.4135" stopColor="#E1ECFE"/>
+                <stop offset="0.5866" stopColor="#FFD400"/>
+                <stop offset="0.6827" stopColor="#FA3D1D"/>
+                <stop offset="0.8029" stopColor="#FD02F5"/>
+                <stop offset="1" stopColor="#FFC0FD" stopOpacity="0"/>
+              </linearGradient>
+              <filter id="gbandblur" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="15"/>
+              </filter>
+            </defs>
+            <g filter="url(#gbandblur)" fill="url(#gbandgrad)">
+              <rect x="0"       y="276.10" width="173.70" height="322.90"/>
+              <rect x="141.22"  y="196.85" width="173.70" height="402.15"/>
+              <rect x="282.44"  y="123.83" width="173.70" height="475.17"/>
+              <rect x="423.67"  y="59.34"  width="173.70" height="539.66"/>
+              <rect x="564.89"  y="11.98"  width="173.70" height="587.02"/>
+              <rect x="706.11"  y="59.34"  width="173.70" height="539.66"/>
+              <rect x="847.33"  y="123.83" width="173.70" height="475.17"/>
+              <rect x="988.56"  y="196.85" width="173.70" height="402.15"/>
+              <rect x="1129.78" y="276.10" width="173.70" height="322.90"/>
+            </g>
+          </svg>
+        </div>
+      </footer>
+    </section>  </>
   );
 }
