@@ -446,7 +446,9 @@ export default function Index() {
   <>
     <nav id="nav">
       <div className="navbar">
-        <a className="mark" href="#top">Alyxlab</a>
+        <a className="mark" href="#top" aria-label="Alyxlab home">
+          <img className="logo-img" src="/img/logo.png" alt="Alyxlab" width="1500" height="1500" />
+        </a>
         <div className="nlinks">
           <a href="#work">Work</a>
           <a href="#gets">What you get</a>
@@ -1241,7 +1243,7 @@ export default function Index() {
         </div>
       </div>
       <footer>
-        <b>Alyxlab</b>
+        <img className="logo-img" src="/img/logo.png" alt="Alyxlab" width="1500" height="1500" />
         <span className="end">One person. Complete systems. Dallas, TX.</span>
     
         <div className="gband" id="gband" aria-hidden="true">
