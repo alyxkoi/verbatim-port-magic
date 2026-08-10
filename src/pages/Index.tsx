@@ -1266,9 +1266,9 @@ export default function Index() {
             </div>
           </div>
           <form className="form" onSubmit={(e) => e.preventDefault()}>
-            <input id="f-name" name="name" aria-label="Your name" type="text" autoComplete="name" placeholder="Your name" />
-            <input id="f-biz" name="business" aria-label="Business name" type="text" autoComplete="organization" placeholder="Business name" />
-            <input id="f-phone" name="phone" aria-label="Phone" type="tel" autoComplete="tel" placeholder="Phone" />
+            <input id="f-name" name="name" aria-label="Your name" type="text" autoComplete="name" placeholder="Your name" maxLength={120} required />
+            <input id="f-biz" name="business" aria-label="Business name" type="text" autoComplete="organization" placeholder="Business name" maxLength={160} />
+            <input id="f-phone" name="phone" aria-label="Phone" type="tel" autoComplete="tel" placeholder="Phone" maxLength={32} required />
             <select id="f-type" name="businessType" aria-label="What kind of business">
               <option value="">What kind of business</option>
               <option>Barbershop or salon</option>
