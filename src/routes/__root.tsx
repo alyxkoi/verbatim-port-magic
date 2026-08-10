@@ -81,6 +81,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Alyxlab · Complete business systems" },
       { name: "description", content: "One system that answers every call, books the job, takes the deposit, and asks for the review. Built and run for local businesses in Dallas." },
       { name: "author", content: "Lovable" },
+      { name: "google-site-verification", content: "iGtWnGtRmxVv1YwNXFeNwEysjFPtdVH4iX0e_pAp1Dc" },
       { property: "og:title", content: "Alyxlab · Complete business systems" },
       { property: "og:description", content: "One system that answers every call, books the job, takes the deposit, and asks for the review. Built and run for local businesses in Dallas." },
       { property: "og:type", content: "website" },
