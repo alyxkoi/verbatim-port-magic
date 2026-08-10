@@ -304,6 +304,73 @@ export default function Index() {
       offs.push(stop);
     }
 
+    /* how it works · play the stages once on arrival, parallax tilt on desktop */
+    const steps = [...document.querySelectorAll<HTMLElement>("[data-step]")];
+    if (steps.length) {
+      if (reduce) {
+        steps.forEach((s) => s.classList.add("play"));
+      } else {
+        const sio = mkIO(
+          (es) => {
+            es.forEach((en) => {
+              if (!en.isIntersecting) return;
+              const i = steps.indexOf(en.target as HTMLElement);
+              const t = setTimeout(() => en.target.classList.add("play"), i * 160);
+              offs.push(() => clearTimeout(t));
+              sio.unobserve(en.target);
+            });
+          },
+          { threshold: 0.35 },
+        );
+        steps.forEach((s) => sio.observe(s));
+
+        if (matchMedia("(pointer:fine)").matches) {
+          steps.forEach((s) => {
+            const deck = s.querySelector<HTMLElement>(".deck")!;
+            const stage = s.querySelector<HTMLElement>(".stage")!;
+            let busy = false;
+            let rf: number | null = null;
+            let mx = 0;
+            let my = 0;
+            on(
+              s,
+              "pointermove",
+              ((e: PointerEvent) => {
+                const r = stage.getBoundingClientRect();
+                mx = (e.clientX - r.left) / r.width - 0.5;
+                my = (e.clientY - r.top) / r.height - 0.5;
+                if (rf) return;
+                rf = raf(() => {
+                  deck.classList.add("settle");
+                  deck.style.setProperty("--ry", (mx * 13).toFixed(2) + "deg");
+                  deck.style.setProperty("--rx", (my * -9).toFixed(2) + "deg");
+                  rf = null;
+                });
+              }) as EventListener,
+              { passive: true },
+            );
+            offs.push(() => cancelRaf(rf));
+            on(s, "pointerleave", () => {
+              deck.classList.remove("settle");
+              deck.style.setProperty("--ry", "0deg");
+              deck.style.setProperty("--rx", "0deg");
+            });
+            on(s, "pointerenter", () => {
+              if (busy || !s.classList.contains("play")) return;
+              busy = true;
+              s.classList.remove("play");
+              void s.offsetWidth;
+              s.classList.add("play");
+              const t = setTimeout(() => {
+                busy = false;
+              }, 2800);
+              offs.push(() => clearTimeout(t));
+            });
+          });
+        }
+      }
+    }
+
     document.querySelectorAll<HTMLElement>("[data-go]").forEach((b) =>
       on(b, "click", () => {
         const t = document.querySelector<HTMLElement>(b.dataset.go!);
@@ -439,37 +506,413 @@ export default function Index() {
       <div className="wrap">
         <p className="eyebrow rv">How it works</p>
         <h2 className="rv">Live in two weeks. You do almost nothing.</h2>
+
         <div className="steps">
-          <div className="step gcard rv">
+
+          {/* ============ 1 · THE WRITTEN PLAN ============ */}
+          <div className="step gcard" data-step="">
             <div className="gglow" aria-hidden="true"></div>
-            <div className="shot wide" data-src="">
-              <img alt="" />
-              <div className="ph"><b>The written plan</b><span>A real plan document you sent a client, with their name on it</span><i>1200 × 750</i></div>
+            <div className="stage">
+              <div className="scene"><div className="deck">
+
+                {/* back plane */}
+                <div className="layer anim" style={{"--z": "-55px"}}>
+                  <svg viewBox="0 0 360 225" aria-hidden="true">
+                    <defs>
+                      <pattern id="pdots" width="18" height="18" patternUnits="userSpaceOnUse">
+                        <circle cx="1.2" cy="1.2" r="1.2" fill="rgba(245,245,247,.13)"/>
+                      </pattern>
+                    </defs>
+                    <g className="p-grid" data-a="">
+                      <rect x="-40" y="-30" width="440" height="290" fill="url(#pdots)"/>
+                    </g>
+                  </svg>
+                </div>
+
+                {/* the sheet */}
+                <div className="layer anim" style={{"--z": "0px"}}>
+                  <svg viewBox="0 0 360 225" role="img"
+                       aria-label="A system plan: calls, web forms and texts feeding one system, which feeds calendar, payments and reviews">
+                    <defs>
+                      <linearGradient id="pnode" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stopColor="#1D1D26"/><stop offset="1" stopColor="#131319"/>
+                      </linearGradient>
+                      <filter id="pshadow" x="-60%" y="-60%" width="220%" height="220%">
+                        <feDropShadow dx="0" dy="6" stdDeviation="7"
+                                      floodColor="#000" floodOpacity=".6"/>
+                      </filter>
+                    </defs>
+
+                    <g className="p-head" data-a="">
+                      <text x="18" y="30" fill="#F5F5F7" fontSize="13" fontWeight="800">System plan</text>
+                      <text x="342" y="30" fill="rgba(245,245,247,.45)" fontSize="11"
+                            fontWeight="600" textAnchor="end">Sunnyside</text>
+                      <rect x="18" y="42" width="324" height="1" fill="rgba(245,245,247,.12)"/>
+                    </g>
+
+                    <g fill="none" stroke="var(--cyan)" strokeWidth="1.6" strokeLinecap="round">
+                      <path className="conn c-in" d="M96 78 C120 78 122 104 141 104"/>
+                      <path className="conn c-in" d="M96 121 L141 121"/>
+                      <path className="conn c-in" d="M96 164 C120 164 122 138 141 138"/>
+                    </g>
+                    <g fill="none" stroke="var(--violet)" strokeWidth="1.6" strokeLinecap="round">
+                      <path className="conn c-out" d="M219 104 C238 104 240 78 264 78"/>
+                      <path className="conn c-out" d="M219 121 L264 121"/>
+                      <path className="conn c-out" d="M219 138 C238 138 240 164 264 164"/>
+                    </g>
+
+                    <g className="p-in" data-a="" filter="url(#pshadow)">
+                      <rect x="18" y="65" width="78" height="26" rx="8" fill="url(#pnode)"
+                            stroke="rgba(34,229,255,.38)"/>
+                      <text x="57" y="82" fill="#F5F5F7" fontSize="11" fontWeight="600"
+                            textAnchor="middle">Calls</text>
+                    </g>
+                    <g className="p-in" data-a="" filter="url(#pshadow)">
+                      <rect x="18" y="108" width="78" height="26" rx="8" fill="url(#pnode)"
+                            stroke="rgba(34,229,255,.38)"/>
+                      <text x="57" y="125" fill="#F5F5F7" fontSize="11" fontWeight="600"
+                            textAnchor="middle">Web form</text>
+                    </g>
+                    <g className="p-in" data-a="" filter="url(#pshadow)">
+                      <rect x="18" y="151" width="78" height="26" rx="8" fill="url(#pnode)"
+                            stroke="rgba(34,229,255,.38)"/>
+                      <text x="57" y="168" fill="#F5F5F7" fontSize="11" fontWeight="600"
+                            textAnchor="middle">Texts</text>
+                    </g>
+
+                    <g className="p-out" data-a="" filter="url(#pshadow)">
+                      <rect x="264" y="65" width="78" height="26" rx="8" fill="url(#pnode)"
+                            stroke="rgba(177,75,255,.42)"/>
+                      <text x="303" y="82" fill="#F5F5F7" fontSize="11" fontWeight="600"
+                            textAnchor="middle">Calendar</text>
+                    </g>
+                    <g className="p-out" data-a="" filter="url(#pshadow)">
+                      <rect x="264" y="108" width="78" height="26" rx="8" fill="url(#pnode)"
+                            stroke="rgba(177,75,255,.42)"/>
+                      <text x="303" y="125" fill="#F5F5F7" fontSize="11" fontWeight="600"
+                            textAnchor="middle">Payments</text>
+                    </g>
+                    <g className="p-out" data-a="" filter="url(#pshadow)">
+                      <rect x="264" y="151" width="78" height="26" rx="8" fill="url(#pnode)"
+                            stroke="rgba(177,75,255,.42)"/>
+                      <text x="303" y="168" fill="#F5F5F7" fontSize="11" fontWeight="600"
+                            textAnchor="middle">Reviews</text>
+                    </g>
+
+                    <g className="p-foot" data-a="">
+                      <rect x="18" y="192" width="324" height="1" fill="rgba(245,245,247,.1)"/>
+                      <text x="18" y="209" fill="rgba(245,245,247,.42)" fontSize="10.5"
+                            fontWeight="600">Prepared for Sunnyside</text>
+                      <text x="342" y="209" fill="rgba(245,245,247,.42)" fontSize="10.5"
+                            fontWeight="600" textAnchor="end">No charge</text>
+                    </g>
+                  </svg>
+                </div>
+
+                {/* the core, lifted off the sheet */}
+                <div className="layer anim" style={{"--z": "42px"}}>
+                  <svg viewBox="0 0 360 225" aria-hidden="true">
+                    <defs>
+                      <filter id="pcore" x="-70%" y="-70%" width="240%" height="240%">
+                        <feDropShadow dx="0" dy="12" stdDeviation="14"
+                                      floodColor="#000" floodOpacity=".7"/>
+                      </filter>
+                      <linearGradient id="pcoreg" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stopColor="#5BFFB4"/><stop offset="1" stopColor="#00E878"/>
+                      </linearGradient>
+                    </defs>
+                    <g className="p-core" data-a="" filter="url(#pcore)">
+                      <rect x="141" y="94" width="78" height="54" rx="13" fill="url(#pcoreg)"/>
+                      <text x="180" y="118" fill="#04120A" fontSize="12" fontWeight="800"
+                            textAnchor="middle">One</text>
+                      <text x="180" y="133" fill="#04120A" fontSize="12" fontWeight="800"
+                            textAnchor="middle">system</text>
+                    </g>
+                  </svg>
+                </div>
+
+              </div></div>
             </div>
             <span className="week">Week 1</span>
             <b>One call, thirty minutes</b>
             <p>You tell me how customers reach you now and where it breaks. I write up what your system will do and what it costs. No charge.</p>
           </div>
-          <div className="step gcard rv">
+
+          {/* ============ 2 · THE BUILD ============ */}
+          <div className="step gcard" data-step="">
             <div className="gglow" aria-hidden="true"></div>
-            <div className="shot wide" data-src="">
-              <img alt="" />
-              <div className="ph"><b>The build</b><span>Their old site beside the new one, or a shot mid build</span><i>1200 × 750</i></div>
+            <div className="stage">
+              <div className="scene"><div className="deck">
+
+                {/* the old site, flat at the back */}
+                <div className="layer anim" style={{"--z": "-30px"}}>
+                  <svg viewBox="0 0 360 225" aria-hidden="true">
+                    <rect x="0" y="0" width="360" height="225" fill="#E4E4E6"/>
+                    <rect x="0" y="0" width="360" height="26" fill="#D2D2D6"/>
+                    <rect x="14" y="8" width="34" height="10" rx="2" fill="#9A9AA2"/>
+                    <rect x="240" y="10" width="26" height="6" rx="1" fill="#A9A9B0"/>
+                    <rect x="274" y="10" width="26" height="6" rx="1" fill="#A9A9B0"/>
+                    <rect x="308" y="10" width="26" height="6" rx="1" fill="#A9A9B0"/>
+                    <rect x="14" y="38" width="332" height="78" rx="2" fill="#C9C9CE"/>
+                    <rect x="30" y="60" width="150" height="9" rx="1" fill="#AEAEB5"/>
+                    <rect x="30" y="76" width="118" height="6" rx="1" fill="#BCBCC2"/>
+                    <rect x="30" y="90" width="58" height="14" rx="2" fill="#8E8E96"/>
+                    <rect x="14" y="128" width="104" height="6" rx="1" fill="#C4C4CA"/>
+                    <rect x="14" y="140" width="96" height="6" rx="1" fill="#CFCFD4"/>
+                    <rect x="14" y="152" width="88" height="6" rx="1" fill="#CFCFD4"/>
+                    <rect x="128" y="128" width="104" height="6" rx="1" fill="#C4C4CA"/>
+                    <rect x="128" y="140" width="96" height="6" rx="1" fill="#CFCFD4"/>
+                    <rect x="128" y="152" width="88" height="6" rx="1" fill="#CFCFD4"/>
+                    <rect x="242" y="128" width="104" height="6" rx="1" fill="#C4C4CA"/>
+                    <rect x="242" y="140" width="96" height="6" rx="1" fill="#CFCFD4"/>
+                    <rect x="242" y="152" width="88" height="6" rx="1" fill="#CFCFD4"/>
+                    <rect x="0" y="186" width="360" height="39" fill="#D2D2D6"/>
+                    <rect x="14" y="200" width="70" height="6" rx="1" fill="#AEAEB5"/>
+                    <g className="b-before" data-a="">
+                      <rect x="286" y="196" width="56" height="18" rx="9" fill="rgba(20,20,23,.78)"/>
+                      <text x="314" y="208.5" fill="#F5F5F7" fontSize="10" fontWeight="700"
+                            textAnchor="middle">Before</text>
+                    </g>
+                  </svg>
+                </div>
+
+                {/* the new dashboard, revealed by the wipe */}
+                <div className="layer anim" style={{"--z": "0px"}}>
+                  <svg viewBox="0 0 360 225" role="img"
+                       aria-label="The new dashboard replacing the old site, with a sidebar, a revenue chart and stat cards">
+                    <defs>
+                      <clipPath id="bwipe" clipPathUnits="userSpaceOnUse">
+                        <rect className="wipeclip" x="0" y="0" width="360" height="225"/>
+                      </clipPath>
+                      <linearGradient id="bpanel" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stopColor="#1A1A23"/><stop offset="1" stopColor="#101016"/>
+                      </linearGradient>
+                      <linearGradient id="bfill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stopColor="rgba(0,255,135,.32)"/>
+                        <stop offset="1" stopColor="rgba(0,255,135,0)"/>
+                      </linearGradient>
+                      <linearGradient id="bbar" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stopColor="#22E5FF"/><stop offset="1" stopColor="#0E7FA0"/>
+                      </linearGradient>
+                    </defs>
+
+                    <g clipPath="url(#bwipe)">
+                      <rect x="0" y="0" width="360" height="225" fill="#0A0A10"/>
+
+                      {/* sidebar */}
+                      <rect x="0" y="0" width="64" height="225" fill="#0E0E15"/>
+                      <rect x="63" y="0" width="1" height="225" fill="rgba(255,255,255,.07)"/>
+                      <circle cx="20" cy="20" r="7" fill="var(--volt)"/>
+                      <rect x="32" y="16" width="22" height="7" rx="3.5" fill="rgba(245,245,247,.85)"/>
+                      <rect x="10" y="42" width="44" height="16" rx="6" fill="rgba(0,255,135,.16)"
+                            stroke="rgba(0,255,135,.4)"/>
+                      <rect x="17" y="47" width="8" height="6" rx="2" fill="var(--volt)"/>
+                      <rect x="29" y="48" width="18" height="4" rx="2" fill="rgba(0,255,135,.75)"/>
+                      <g fill="rgba(245,245,247,.26)">
+                        <rect x="17" y="70" width="8" height="6" rx="2"/>
+                        <rect x="29" y="71" width="18" height="4" rx="2"/>
+                        <rect x="17" y="90" width="8" height="6" rx="2"/>
+                        <rect x="29" y="91" width="18" height="4" rx="2"/>
+                        <rect x="17" y="110" width="8" height="6" rx="2"/>
+                        <rect x="29" y="111" width="18" height="4" rx="2"/>
+                        <rect x="17" y="130" width="8" height="6" rx="2"/>
+                        <rect x="29" y="131" width="18" height="4" rx="2"/>
+                        <rect x="17" y="150" width="8" height="6" rx="2"/>
+                        <rect x="29" y="151" width="18" height="4" rx="2"/>
+                      </g>
+                      <rect x="10" y="196" width="44" height="18" rx="9" fill="#15151D"
+                            stroke="rgba(255,255,255,.07)"/>
+
+                      {/* top bar */}
+                      <rect x="76" y="14" width="86" height="10" rx="5" fill="rgba(245,245,247,.9)"/>
+                      <rect x="76" y="30" width="58" height="6" rx="3" fill="rgba(245,245,247,.3)"/>
+                      <rect x="300" y="12" width="46" height="18" rx="9" fill="#15151D"
+                            stroke="rgba(255,255,255,.08)"/>
+                      <circle cx="310" cy="21" r="5" fill="rgba(177,75,255,.7)"/>
+
+                      {/* revenue chart panel */}
+                      <rect x="76" y="48" width="164" height="94" rx="12" fill="url(#bpanel)"
+                            stroke="rgba(255,255,255,.08)"/>
+                      <text x="88" y="66" fill="rgba(245,245,247,.55)" fontSize="9"
+                            fontWeight="700" letterSpacing=".4">REVENUE</text>
+                      <text x="88" y="84" fill="#F5F5F7" fontSize="16" fontWeight="800">$12,480</text>
+                      <path className="b-line" d="M88 128 L112 118 L136 122 L160 104 L184 108 L208 92 L228 84"
+                            fill="none" stroke="var(--volt)" strokeWidth="2"
+                            strokeLinecap="round" strokeLinejoin="round"
+                            strokeDasharray="300" strokeDashoffset="300"/>
+                      <path d="M88 128 L112 118 L136 122 L160 104 L184 108 L208 92 L228 84 L228 132 L88 132 Z"
+                            fill="url(#bfill)" opacity=".9"/>
+
+                      {/* bookings bars */}
+                      <rect x="250" y="48" width="96" height="94" rx="12" fill="url(#bpanel)"
+                            stroke="rgba(255,255,255,.08)"/>
+                      <text x="262" y="66" fill="rgba(245,245,247,.55)" fontSize="9"
+                            fontWeight="700" letterSpacing=".4">BOOKINGS</text>
+                      <g fill="url(#bbar)">
+                        <rect className="b-bar" x="262" y="102" width="10" height="28" rx="3"/>
+                        <rect className="b-bar" x="278" y="94" width="10" height="36" rx="3"/>
+                        <rect className="b-bar" x="294" y="106" width="10" height="24" rx="3"/>
+                        <rect className="b-bar" x="310" y="84" width="10" height="46" rx="3"/>
+                        <rect className="b-bar" x="326" y="76" width="10" height="54" rx="3"/>
+                      </g>
+                    </g>
+
+                    <g className="b-after" data-a="">
+                      <rect x="76" y="196" width="50" height="18" rx="9" fill="rgba(0,255,135,.16)"
+                            stroke="rgba(0,255,135,.45)"/>
+                      <text x="101" y="208.5" fill="var(--volt)" fontSize="10" fontWeight="700"
+                            textAnchor="middle">After</text>
+                    </g>
+                  </svg>
+                </div>
+
+                {/* the wipe edge, riding above everything */}
+                <div className="layer" style={{"--z": "52px"}}>
+                  <svg viewBox="0 0 360 225" aria-hidden="true">
+                    <rect className="b-edge" x="0" y="0" width="2" height="225" fill="var(--volt)"/>
+                  </svg>
+                </div>
+
+                {/* stat cards, floating off the surface */}
+                <div className="layer anim" style={{"--z": "56px"}}>
+                  <svg viewBox="0 0 360 225" aria-hidden="true">
+                    <defs>
+                      <filter id="bcard" x="-60%" y="-60%" width="220%" height="220%">
+                        <feDropShadow dx="0" dy="12" stdDeviation="13"
+                                      floodColor="#000" floodOpacity=".72"/>
+                      </filter>
+                      <linearGradient id="bcg" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stopColor="#22222D"/><stop offset="1" stopColor="#15151C"/>
+                      </linearGradient>
+                    </defs>
+                    <g className="b-card" data-a="" filter="url(#bcard)">
+                      <rect x="140" y="152" width="98" height="46" rx="12" fill="url(#bcg)"
+                            stroke="rgba(255,255,255,.12)"/>
+                      <text x="152" y="169" fill="rgba(245,245,247,.5)" fontSize="8.5"
+                            fontWeight="700" letterSpacing=".4">NEW CUSTOMERS</text>
+                      <text x="152" y="188" fill="#F5F5F7" fontSize="17" fontWeight="800">27</text>
+                      <text x="228" y="188" fill="var(--volt)" fontSize="10"
+                            fontWeight="700" textAnchor="end">+18%</text>
+                    </g>
+                    <g className="b-card" data-a="" filter="url(#bcard)">
+                      <rect x="248" y="152" width="98" height="46" rx="12" fill="url(#bcg)"
+                            stroke="rgba(255,255,255,.12)"/>
+                      <text x="260" y="169" fill="rgba(245,245,247,.5)" fontSize="8.5"
+                            fontWeight="700" letterSpacing=".4">DEPOSITS TAKEN</text>
+                      <text x="260" y="188" fill="#F5F5F7" fontSize="17" fontWeight="800">$3,140</text>
+                      <text x="336" y="188" fill="var(--cyan)" fontSize="10"
+                            fontWeight="700" textAnchor="end">+9%</text>
+                    </g>
+                  </svg>
+                </div>
+
+              </div></div>
             </div>
             <span className="week">Week 2</span>
             <b>I build it and move you over</b>
             <p>Connected to the tools you keep, loaded with your existing customers and bookings. You review it before anything goes live.</p>
           </div>
-          <div className="step gcard rv">
+
+          {/* ============ 3 · THE TEXT THREAD ============ */}
+          <div className="step gcard" data-step="">
             <div className="gglow" aria-hidden="true"></div>
-            <div className="shot wide" data-src="">
-              <img alt="" />
-              <div className="ph"><b>A real text thread</b><span>Client asks for a change, you reply, done. Blur their name.</span><i>1200 × 750</i></div>
+            <div className="stage">
+              <div className="scene"><div className="deck">
+
+                {/* back plane */}
+                <div className="layer anim" style={{"--z": "-45px"}}>
+                  <svg viewBox="0 0 360 225" aria-hidden="true">
+                    <defs>
+                      <radialGradient id="tglow" cx="50%" cy="30%" r="70%">
+                        <stop offset="0" stopColor="rgba(255,45,120,.16)"/>
+                        <stop offset="1" stopColor="rgba(255,45,120,0)"/>
+                      </radialGradient>
+                    </defs>
+                    <rect x="-40" y="-30" width="440" height="290" fill="url(#tglow)"/>
+                    <g className="t-time" data-a="">
+                      <text x="180" y="26" fill="rgba(245,245,247,.4)" fontSize="10.5"
+                            fontWeight="600" textAnchor="middle">Today 9:14 AM</text>
+                    </g>
+                  </svg>
+                </div>
+
+                {/* incoming, mid depth */}
+                <div className="layer anim" style={{"--z": "14px"}}>
+                  <svg viewBox="0 0 360 225" role="img"
+                       aria-label="The owner asks whether Saturday hours can be added to the booking page">
+                    <defs>
+                      <linearGradient id="tin" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stopColor="#21212A"/><stop offset="1" stopColor="#16161C"/>
+                      </linearGradient>
+                      <filter id="tsh" x="-60%" y="-60%" width="220%" height="220%">
+                        <feDropShadow dx="0" dy="8" stdDeviation="9"
+                                      floodColor="#000" floodOpacity=".6"/>
+                      </filter>
+                    </defs>
+                    <g className="t-in" data-a="" filter="url(#tsh)">
+                      <rect x="18" y="42" width="216" height="52" rx="16" fill="url(#tin)"
+                            stroke="rgba(255,255,255,.09)"/>
+                      <text x="36" y="66" fill="#F5F5F7" fontSize="12.5" fontWeight="600">Can we add Saturday</text>
+                      <text x="36" y="83" fill="#F5F5F7" fontSize="12.5" fontWeight="600">hours to the booking page?</text>
+                    </g>
+                    <g className="t-typing" data-a="" filter="url(#tsh)">
+                      <rect x="270" y="106" width="72" height="34" rx="16" fill="url(#tin)"
+                            stroke="rgba(255,255,255,.09)"/>
+                      <circle cx="290" cy="123" r="3.4" fill="rgba(245,245,247,.6)"/>
+                      <circle cx="306" cy="123" r="3.4" fill="rgba(245,245,247,.6)"/>
+                      <circle cx="322" cy="123" r="3.4" fill="rgba(245,245,247,.6)"/>
+                    </g>
+                  </svg>
+                </div>
+
+                {/* the reply, furthest forward */}
+                <div className="layer anim" style={{"--z": "50px"}}>
+                  <svg viewBox="0 0 360 225" role="img"
+                       aria-label="The reply says Saturdays are live on the calendar now">
+                    <defs>
+                      <linearGradient id="tout" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0" stopColor="#FF4A8C"/><stop offset="1" stopColor="#F01E68"/>
+                      </linearGradient>
+                      <filter id="toutsh" x="-70%" y="-70%" width="240%" height="240%">
+                        <feDropShadow dx="0" dy="14" stdDeviation="15"
+                                      floodColor="#000" floodOpacity=".72"/>
+                      </filter>
+                    </defs>
+                    <g className="t-out" data-a="" filter="url(#toutsh)">
+                      <rect x="126" y="106" width="216" height="52" rx="16" fill="url(#tout)"/>
+                      <text x="144" y="130" fill="#14000A" fontSize="12.5" fontWeight="700">Added. Saturdays are</text>
+                      <text x="144" y="147" fill="#14000A" fontSize="12.5" fontWeight="700">live on the calendar now.</text>
+                    </g>
+                    <g className="t-meta" data-a="">
+                      <text x="342" y="176" fill="rgba(245,245,247,.42)" fontSize="10.5"
+                            fontWeight="600" textAnchor="end">Delivered 9:16 AM</text>
+                    </g>
+                  </svg>
+                </div>
+
+                {/* the compose bar sits on the surface */}
+                <div className="layer anim" style={{"--z": "26px"}}>
+                  <svg viewBox="0 0 360 225" aria-hidden="true">
+                    <g className="t-bar" data-a="">
+                      <rect x="18" y="192" width="324" height="30" rx="15" fill="#15151B"
+                            stroke="rgba(255,255,255,.08)"/>
+                      <text x="36" y="211" fill="rgba(245,245,247,.28)" fontSize="11.5"
+                            fontWeight="500">Text message</text>
+                      <circle cx="326" cy="207" r="10" fill="rgba(255,255,255,.1)"/>
+                      <path d="M326 202.5 L326 211.5 M322 206.5 L326 202.5 L330 206.5"
+                            stroke="rgba(245,245,247,.55)" strokeWidth="1.6" fill="none"
+                            strokeLinecap="round" strokeLinejoin="round"/>
+                    </g>
+                  </svg>
+                </div>
+
+              </div></div>
             </div>
             <span className="week">Ongoing</span>
             <b>You run it, I keep it running</b>
             <p>Thirty minutes of training for your team. After that it just runs, and when you want a change you text me directly.</p>
           </div>
+
         </div>
       </div>
     </section>
