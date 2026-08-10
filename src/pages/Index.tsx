@@ -495,9 +495,9 @@ export default function Index() {
         <div className="shot wide loaded" data-src="">
           <img
             src="/img/hero-dashboard.webp"
-            alt="Sunnyside operations dashboard showing orders, revenue, delivery calendar and performance breakdown"
+            alt="Sunnyside dashboard showing today's bookings, new leads, deposits taken and revenue this week"
             width={1920}
-            height={1200}
+            height={1288}
             loading="eager"
             fetchPriority="high"
             decoding="sync"
