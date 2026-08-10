@@ -101,6 +101,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "stylesheet", href: alyxlabCss },
+      { rel: "preload", as: "image", href: "/img/hero-dashboard.webp", fetchPriority: "high" },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
     scripts: [
