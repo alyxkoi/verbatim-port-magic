@@ -1044,28 +1044,23 @@ export default function Index() {
     
         <div className="panes">
           <div className="pane on" data-p="inbox">
-            <div className="shot wide" data-src=""><img alt="" />
-              <div className="ph"><b>Inbox screenshot</b><span>The unified thread view, ideally with an automatic reply visible</span><i>1600 × 1000</i></div></div>
+            <div className="shot wide loaded" data-src=""><img src="/img/inbox.webp" alt="Sunnyside Inbox showing calls, texts and web forms in one thread with an automatic reply" width={1920} height={1288} loading="eager" decoding="sync" /></div>
             <div className="pline"><b>Everyone in one thread</b><span>Calls, texts, and web forms all land in the same place, and missed calls get a text back in seconds.</span></div>
           </div>
           <div className="pane" data-p="calendar">
-            <div className="shot wide" data-src=""><img alt="" />
-              <div className="ph"><b>Calendar screenshot</b><span>Booking view with real availability</span><i>1600 × 1000</i></div></div>
+            <div className="shot wide loaded" data-src=""><img src="/img/calendar.webp" alt="Sunnyside Calendar week view showing booked appointments and blocked time" width={1920} height={1288} loading="eager" decoding="sync" /></div>
             <div className="pline"><b>Books itself</b><span>Only genuinely open times get offered, the booking writes back to your calendar, and the reminder goes out on schedule.</span></div>
           </div>
           <div className="pane" data-p="pipeline">
-            <div className="shot wide" data-src=""><img alt="" />
-              <div className="ph"><b>Pipeline screenshot</b><span>DriveOffDallas lead board with the ownership timers</span><i>1600 × 1000</i></div></div>
+            <div className="shot wide loaded" data-src=""><img src="/img/pipeline.webp" alt="Sunnyside Pipeline board with leads by stage, owners and response timers" width={1920} height={1288} loading="eager" decoding="sync" /></div>
             <div className="pline"><b>Nothing sits unclaimed</b><span>Every lead lands in a stage with an owner and a clock, routed by rules you set once.</span></div>
           </div>
           <div className="pane" data-p="payments">
-            <div className="shot wide" data-src=""><img alt="" />
-              <div className="ph"><b>Payments screenshot</b><span>Deposit or checkout view</span><i>1600 × 1000</i></div></div>
+            <div className="shot wide loaded" data-src=""><img src="/img/payments.webp" alt="Sunnyside Payments view with deposits collected and transaction list" width={1920} height={1288} loading="eager" decoding="sync" /></div>
             <div className="pline"><b>Paid at booking</b><span>Deposits collected before the slot is held, receipts sent automatically, no shows you can actually charge.</span></div>
           </div>
           <div className="pane" data-p="reports">
-            <div className="shot wide" data-src=""><img alt="" />
-              <div className="ph"><b>Reports screenshot</b><span>Revenue and lead numbers dashboard</span><i>1600 × 1000</i></div></div>
+            <div className="shot wide loaded" data-src=""><img src="/img/reports.webp" alt="Sunnyside Reports dashboard with leads, bookings, show rate and revenue" width={1920} height={1288} loading="eager" decoding="sync" /></div>
             <div className="pline"><b>You see everything</b><span>What came in, what booked, what it was worth, and which hours actually make you money.</span></div>
           </div>
         </div>
