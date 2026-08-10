@@ -484,7 +484,7 @@ export default function Index() {
       </div>
       <div className="grain" aria-hidden="true"></div>
       <div className="wrap">
-        <h1>Everything your business runs on, <em><GradientShimmer gradient="sunrise">in one system.</GradientShimmer></em></h1>
+        <h1>Everything your business runs on, <em><GradientShimmer gradient="sunrise" baseColor="white">in one system.</GradientShimmer></em></h1>
         <p className="lede">Calls, bookings, deposits, reminders, reviews. Built for how you actually work and run by the person who built it.</p>
         <div className="hcta">
           <button className="btn glass" data-go="#start"><span>Get my free plan</span>
