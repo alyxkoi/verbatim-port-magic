@@ -489,14 +489,17 @@ export default function Index() {
           <span className="hnote">No cost. A written plan within a day.</span>
         </div>
     
-        {/* HERO IMAGE · put your best dashboard screenshot here */}
-        <div className="shot wide" data-src="">
-          <img alt="" />
-          <div className="ph">
-            <b>Hero screenshot</b>
-            <span>Your strongest dashboard view. DriveOffDallas lead board is the best candidate.</span>
-            <i>1920 × 1200 · data-src on this div</i>
-          </div>
+        {/* HERO IMAGE */}
+        <div className="shot wide loaded" data-src="">
+          <img
+            src="/img/hero-dashboard.webp"
+            alt="Sunnyside operations dashboard showing orders, revenue, delivery calendar and performance breakdown"
+            width={1920}
+            height={1200}
+            loading="eager"
+            fetchPriority="high"
+            decoding="sync"
+          />
         </div>
       </div>
     </header>
@@ -938,9 +941,8 @@ export default function Index() {
             </div>
             <div className="ptags"><span className="ptag">Live phone line</span><span className="ptag">AI assistant</span><span className="ptag">Lead ownership</span></div>
           </div>
-          <div className="shot wide" data-src="">
-            <img alt="" />
-            <div className="ph"><b>DriveOffDallas</b><span>Lead board with the ownership timers visible</span><i>1600 × 1000</i></div>
+          <div className="shot wide loaded" data-src="">
+            <img src="/img/driveoffdallas.webp" alt="DriveOffDallas CRM messages view with reply times and bookings from text" width={1920} height={1080} loading="eager" decoding="sync" />
           </div>
         </div>
     
@@ -954,9 +956,8 @@ export default function Index() {
             </div>
             <div className="ptags"><span className="ptag">Ecommerce</span><span className="ptag">Large file delivery</span><span className="ptag">Customer portal</span></div>
           </div>
-          <div className="shot wide" data-src="">
-            <img alt="" />
-            <div className="ph"><b>Plugin Warehouse</b><span>Storefront or the analytics view</span><i>1600 × 1000</i></div>
+          <div className="shot wide loaded" data-src="">
+            <img src="/img/pluginwarehouse.png" alt="Plugin Warehouse dashboard with revenue over time, recent orders and best sellers" width={1920} height={983} loading="eager" decoding="sync" />
           </div>
         </div>
     
@@ -970,9 +971,8 @@ export default function Index() {
             </div>
             <div className="ptags"><span className="ptag">Smart intake</span><span className="ptag">Owner dashboard</span></div>
           </div>
-          <div className="shot wide" data-src="">
-            <img alt="" />
-            <div className="ph"><b>Monkey Trucking</b><span>Homepage or the dashboard</span><i>1600 × 1000</i></div>
+          <div className="shot wide loaded" data-src="">
+            <img src="/img/monkey-trucking.png" alt="Monkey Trucking homepage hero for gravel, hauling and dirt work across DFW" width={1920} height={979} loading="eager" decoding="sync" />
           </div>
         </div>
     
