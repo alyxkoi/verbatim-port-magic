@@ -477,6 +477,24 @@ export default function Index() {
         send.style.pointerEvents = "none";
       });
 
+    /* one system diagram · play once on arrival */
+    const onesys = document.getElementById("onesys");
+    if (onesys) {
+      mkIO(
+        (entries, o) => {
+          entries.forEach((x) => {
+            if (x.isIntersecting) {
+              document.getElementById("diagram")?.classList.add("in");
+              o.unobserve(x.target);
+            }
+          });
+        },
+        { threshold: 0.25 },
+      ).observe(onesys);
+    }
+
+
+
 
     return () => {
       offs.forEach((f) => f());
@@ -551,6 +569,296 @@ export default function Index() {
         </div>
       </div>
     </header>
+    
+    {/* ============ 2 · ONE SYSTEM ============ */}
+    <section className="onesys" id="onesys">
+      <div className="grain" aria-hidden="true"></div>
+      <div className="wrap">
+        <p className="eyebrow">The idea</p>
+        <h2>One system instead of five.</h2>
+        <p className="lede">Right now the work is scattered across whatever you signed up for. All of it moves into one place that you own.</p>
+
+        <div className="diagram" id="diagram">
+          <div className="tools">
+            <div className="tool">
+              <div className="tile"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 2.5v4M16 2.5v4M3 10h18"/></svg></div>
+              <span>Booking app</span>
+            </div>
+            <div className="tool">
+              <div className="tile"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="m4 8 8 5.5L20 8"/></svg></div>
+              <span>Email</span>
+            </div>
+            <div className="tool">
+              <div className="tile"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.5H3l2.1-2.9A8.5 8.5 0 1 1 21 11.5z"/><path d="M8.5 10.5h7M8.5 14h4.5"/></svg></div>
+              <span>Texts</span>
+            </div>
+            <div className="tool">
+              <div className="tile"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M2.5 9.5h19M6 15h3.5"/></svg></div>
+              <span>Payments</span>
+            </div>
+            <div className="tool">
+              <div className="tile"><svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.2L12 17l-5.4 3 1-6.2L3.2 9.5l6.1-.9z"/></svg></div>
+              <span>Reviews</span>
+            </div>
+            <div className="tool">
+              <div className="tile"><svg viewBox="0 0 24 24"><rect x="3" y="3.5" width="18" height="17" rx="3"/><path d="M3 9h18M3 15h18M9 3.5v17M15 3.5v17"/></svg></div>
+              <span>The spreadsheet</span>
+            </div>
+          </div>
+
+          <svg className="lines" viewBox="0 0 1200 120" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M100 0 C100 66 600 54 600 120"/>
+            <path d="M300 0 C300 66 600 54 600 120"/>
+            <path d="M500 0 C500 66 600 54 600 120"/>
+            <path d="M700 0 C700 66 600 54 600 120"/>
+            <path d="M900 0 C900 66 600 54 600 120"/>
+            <path d="M1100 0 C1100 66 600 54 600 120"/>
+          </svg>
+
+          <div className="one">
+            <div className="onemark">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.6"/><path d="M12 2v3.4M12 18.6V22M2 12h3.4M18.6 12H22M4.9 4.9l2.4 2.4M16.7 16.7l2.4 2.4M19.1 4.9l-2.4 2.4M7.3 16.7l-2.4 2.4"/></svg>
+            </div>
+            <div className="onetxt">
+              <b>Your system</b>
+              <span>One login. One bill. Yours to keep.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    {/* ============ 4 · PRODUCT VIEWER ============ */}
+    <section className="viewer light" id="gets">
+      <div className="wrap">
+        <p className="eyebrow rv">What you get</p>
+        <h2 className="rv">Look inside the <GradientShimmer gradient="sunrise">system</GradientShimmer>.</h2>
+    
+        <div className="tabswrap rv">
+        <div className="tabs" role="tablist" id="tabs">
+          <button className="tab" role="tab" aria-selected="true" data-t="inbox">
+            <svg viewBox="0 0 24 24"><path d="M3 13h5l1.5 3h5l1.5-3h5"/><path d="M5.5 4.5h13l2.5 8.5v4.5a2 2 0 0 1-2 2h-14a2 2 0 0 1-2-2V13z"/></svg>Inbox</button>
+          <button className="tab" role="tab" aria-selected="false" data-t="calendar">
+            <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 2.5v4M16 2.5v4M3 10h18"/></svg>Calendar</button>
+          <button className="tab" role="tab" aria-selected="false" data-t="pipeline">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="5" height="16" rx="2"/><rect x="9.5" y="4" width="5" height="11" rx="2"/><rect x="16" y="4" width="5" height="7" rx="2"/></svg>Pipeline</button>
+          <button className="tab" role="tab" aria-selected="false" data-t="payments">
+            <svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M2.5 9.5h19M6 15h3.5"/></svg>Payments</button>
+          <button className="tab" role="tab" aria-selected="false" data-t="reports">
+            <svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M6 20v-6M11 20V7M16 20v-9"/></svg>Reports</button>
+        </div>
+          <button className="tabcue" type="button" aria-label="Scroll for more tabs">
+            <svg viewBox="0 0 24 24"><path d="M9 5.5 15.5 12 9 18.5"/></svg>
+          </button>
+        </div>
+    
+        <div className="panes">
+          <div className="pane on" data-p="inbox">
+            <div className="shot wide loaded" data-src=""><img src="/img/inbox.webp" alt="Sunnyside Inbox showing calls, texts and web forms in one thread with an automatic reply" width={1920} height={1288} loading="eager" decoding="sync" /></div>
+            <div className="pline"><b>Everyone in one thread</b><span>Calls, texts, and web forms all land in the same place, and missed calls get a text back in seconds.</span></div>
+          </div>
+          <div className="pane" data-p="calendar">
+            <div className="shot wide loaded" data-src=""><img src="/img/calendar.webp" alt="Sunnyside Calendar week view showing booked appointments and blocked time" width={1920} height={1288} loading="eager" decoding="sync" /></div>
+            <div className="pline"><b>Books itself</b><span>Only genuinely open times get offered, the booking writes back to your calendar, and the reminder goes out on schedule.</span></div>
+          </div>
+          <div className="pane" data-p="pipeline">
+            <div className="shot wide loaded" data-src=""><img src="/img/pipeline.webp" alt="Sunnyside Pipeline board with leads by stage, owners and response timers" width={1920} height={1288} loading="eager" decoding="sync" /></div>
+            <div className="pline"><b>Nothing sits unclaimed</b><span>Every lead lands in a stage with an owner and a clock, routed by rules you set once.</span></div>
+          </div>
+          <div className="pane" data-p="payments">
+            <div className="shot wide loaded" data-src=""><img src="/img/payments.webp" alt="Sunnyside Payments view with deposits collected and transaction list" width={1920} height={1288} loading="eager" decoding="sync" /></div>
+            <div className="pline"><b>Paid at booking</b><span>Deposits collected before the slot is held, receipts sent automatically, no shows you can actually charge.</span></div>
+          </div>
+          <div className="pane" data-p="reports">
+            <div className="shot wide loaded" data-src=""><img src="/img/reports.webp" alt="Sunnyside Reports dashboard with leads, bookings, show rate and revenue" width={1920} height={1288} loading="eager" decoding="sync" /></div>
+            <div className="pline"><b>You see everything</b><span>What came in, what booked, what it was worth, and which hours actually make you money.</span></div>
+          </div>
+        </div>
+        <div className="pmwrap rv">
+          <p className="pmlead">The same system on your phone.</p>
+          <div className="pdeck" id="pdeck">
+            <figure className="pmock">
+              <div className="pframe">
+                <div className="shot phone" data-src="/img/phone-1.jpg">
+                  <img alt="Morning summary screen showing messages answered, missed calls handled, and new bookings" loading="lazy" />
+                  <div className="ph"><b>Morning summary</b><i>1080 × 1935</i></div>
+                </div>
+              </div>
+              <figcaption>What happened overnight</figcaption>
+            </figure>
+            <figure className="pmock">
+              <div className="pframe">
+                <div className="shot phone" data-src="/img/phone-2.jpg">
+                  <img alt="Revenue dashboard showing the weekly total, leads, bookings, and close rate" loading="lazy" />
+                  <div className="ph"><b>Revenue</b><i>1080 × 1935</i></div>
+                </div>
+              </div>
+              <figcaption>What the week is worth</figcaption>
+            </figure>
+            <figure className="pmock">
+              <div className="pframe">
+                <div className="shot phone" data-src="/img/phone-3.jpg">
+                  <img alt="Booking calendar showing the appointments scheduled for today" loading="lazy" />
+                  <div className="ph"><b>Today</b><i>1080 × 1935</i></div>
+                </div>
+              </div>
+              <figcaption>Who is booked today</figcaption>
+            </figure>
+          </div>
+          <div className="pdots" id="pdots">
+            <button className="pdot" type="button" aria-label="Show the morning summary"></button>
+            <button className="pdot" type="button" aria-label="Show the revenue dashboard"></button>
+            <button className="pdot" type="button" aria-label="Show today's bookings"></button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+    
+    {/* ============ 5 · ALSO INCLUDED ============ */}
+    <section className="gets">
+      <div className="wrap">
+        <p className="eyebrow rv">Also included</p>
+        <div className="fan rv">
+          <article className="fcard">
+            <div className="fc-top">
+              <span className="fc-ico"><svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.2L12 17l-5.4 3 1-6.2L3.2 9.5l6.1-.9z"/></svg></span>
+              <b>Review requests</b>
+            </div>
+            <p>Sent automatically after every completed job.</p>
+            <div className="fdetail">
+              <svg className="fd-stars" viewBox="0 0 106 20" aria-hidden="true">
+                <defs><path id="fdstar" d="M10 2.2l2.4 4.9 5.4.8-3.9 3.8.9 5.4L10 14.5l-4.8 2.6.9-5.4L2.2 7.9l5.4-.8z"/></defs>
+                <use href="#fdstar" x="0"/><use href="#fdstar" x="22"/><use href="#fdstar" x="44"/><use href="#fdstar" x="66"/><use href="#fdstar" x="88"/>
+              </svg>
+            </div>
+          </article>
+          <article className="fcard">
+            <div className="fc-top">
+              <span className="fc-ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 5.2a3.5 3.5 0 0 1 0 5.6M17.5 20a6.4 6.4 0 0 0-2-4.6"/></svg></span>
+              <b>Team accounts</b>
+            </div>
+            <p>Separate logins and roles for your staff.</p>
+            <div className="fdetail">
+              <div className="fd-avs" aria-hidden="true"><span></span><span></span><span></span></div>
+            </div>
+          </article>
+          <article className="fcard">
+            <div className="fc-top">
+              <span className="fc-ico"><svg viewBox="0 0 24 24"><path d="M10 13.5a4 4 0 0 0 5.7.4l2.8-2.8a4 4 0 0 0-5.7-5.7l-1.4 1.4"/><path d="M14 10.5a4 4 0 0 0-5.7-.4l-2.8 2.8a4 4 0 0 0 5.7 5.7l1.4-1.4"/></svg></span>
+              <b>Referral links</b>
+            </div>
+            <p>See exactly who sends you business.</p>
+            <div className="fdetail" aria-hidden="true">
+              <span className="fd-pill">
+                <svg viewBox="0 0 24 24"><path d="M10 13.5a4 4 0 0 0 5.7.4l2.8-2.8a4 4 0 0 0-5.7-5.7l-1.4 1.4"/><path d="M14 10.5a4 4 0 0 0-5.7-.4l-2.8 2.8a4 4 0 0 0 5.7 5.7l1.4-1.4"/></svg>
+                alyxlab.co/r/9f2…
+              </span>
+              <span className="fd-count">18 clicks</span>
+            </div>
+          </article>
+          <article className="fcard">
+            <div className="fc-top">
+              <span className="fc-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 2.5v4M16 2.5v4"/><path d="M8 14l3 3 5-6"/></svg></span>
+              <b>Your own domain</b>
+            </div>
+            <p>Yours outright. You keep it if you leave.</p>
+            <div className="fdetail" aria-hidden="true">
+              <span className="fd-bar">
+                <svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9" rx="2.2"/><path d="M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7"/></svg>
+                yourshop.com
+              </span>
+            </div>
+          </article>
+          <article className="fcard">
+            <div className="fc-top">
+              <span className="fc-ico"><svg viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="m4.5 8 7.5 5 7.5-5"/></svg></span>
+              <b>Automatic emails</b>
+            </div>
+            <p>Price drops, abandoned carts, abandoned checkouts. Sent for you.</p>
+            <div className="fdetail" aria-hidden="true">
+              <span className="fd-pill">Price drop</span>
+              <span className="fd-pill">Cart saved</span>
+              <span className="fd-pill">Win back</span>
+            </div>
+          </article>
+          <article className="fcard">
+            <div className="fc-top">
+              <span className="fc-ico"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.5L3 21l2-5.6A8.5 8.5 0 1 1 21 11.5z"/></svg></span>
+              <b>Text me directly</b>
+            </div>
+            <p>You text, I fix it. No ticket queue.</p>
+            <div className="fdetail" aria-hidden="true">
+              <span className="fd-pill">
+                <svg viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.5L3 21l2-5.6A8.5 8.5 0 1 1 21 11.5z"/></svg>
+                Add Saturday hours?
+              </span>
+              <span className="fd-count">Done by noon</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+    
+    {/* ============ 3 · WORK ============ */}
+    <section className="work light" id="work">
+      <div className="wrap">
+        <div className="shead">
+          <div>
+            <p className="eyebrow rv">Our work</p>
+            <h2 className="rv">Systems already running.</h2>
+          </div>
+          <p className="lede rv">Three businesses, three different problems, one approach.</p>
+        </div>
+    
+        <div className="proj rv">
+          <div className="ptxt">
+            <h3>DriveOffDallas</h3>
+            <p>A lead system for fourteen dealers with a live phone line, an AI assistant that answers first, and ownership timers so no lead sits unclaimed.</p>
+            <div className="pnum">
+              <div><b>4,116</b><span>Leads handled</span></div>
+              <div><b>14</b><span>Dealers</span></div>
+            </div>
+            <div className="ptags"><span className="ptag">Live phone line</span><span className="ptag">AI assistant</span><span className="ptag">Lead ownership</span></div>
+          </div>
+          <div className="shot wide loaded" data-src="">
+            <img src="/img/driveoffdallas.webp" alt="DriveOffDallas CRM messages view with reply times and bookings from text" width={1920} height={1080} loading="eager" decoding="sync" />
+          </div>
+        </div>
+    
+        <div className="proj rv">
+          <div className="ptxt">
+            <h3>Plugin Warehouse</h3>
+            <p>A storefront for music producers handling very large file delivery, sale campaigns, full analytics, and a customer account portal.</p>
+            <div className="pnum">
+              <div><b>2.1 TB</b><span>Delivered</span></div>
+              <div><b>847</b><span>Customers</span></div>
+            </div>
+            <div className="ptags"><span className="ptag">Ecommerce</span><span className="ptag">Large file delivery</span><span className="ptag">Customer portal</span></div>
+          </div>
+          <div className="shot wide loaded" data-src="">
+            <img src="/img/pluginwarehouse.png" alt="Plugin Warehouse dashboard with revenue over time, recent orders and best sellers" width={1920} height={983} loading="eager" decoding="sync" />
+          </div>
+        </div>
+    
+        <div className="proj rv">
+          <div className="ptxt">
+            <h3>Monkey Trucking</h3>
+            <p>A fast site with intake forms that ask the right questions up front, feeding a dashboard the owner actually opens.</p>
+            <div className="pnum">
+              <div><b>100%</b><span>Inquiries answered</span></div>
+              <div><b>96</b><span>Inquiries</span></div>
+            </div>
+            <div className="ptags"><span className="ptag">Smart intake</span><span className="ptag">Owner dashboard</span></div>
+          </div>
+          <div className="shot wide loaded" data-src="">
+            <img src="/img/monkey-trucking.png" alt="Monkey Trucking homepage hero for gravel, hauling and dirt work across DFW" width={1920} height={979} loading="eager" decoding="sync" />
+          </div>
+        </div>
+    
+
+      </div>
+    </section>
     
     {/* ============ 2 · HOW IT WORKS ============ */}
     <section className="how" id="how">
@@ -964,236 +1272,6 @@ export default function Index() {
             <p>Thirty minutes of training for your team. After that it just runs, and when you want a change you text me directly.</p>
           </div>
 
-        </div>
-      </div>
-    </section>
-    
-    {/* ============ 3 · WORK ============ */}
-    <section className="work light" id="work">
-      <div className="wrap">
-        <div className="shead">
-          <div>
-            <p className="eyebrow rv">Our work</p>
-            <h2 className="rv">Systems already running.</h2>
-          </div>
-          <p className="lede rv">Three businesses, three different problems, one approach.</p>
-        </div>
-    
-        <div className="proj rv">
-          <div className="ptxt">
-            <h3>DriveOffDallas</h3>
-            <p>A lead system for fourteen dealers with a live phone line, an AI assistant that answers first, and ownership timers so no lead sits unclaimed.</p>
-            <div className="pnum">
-              <div><b>4,116</b><span>Leads handled</span></div>
-              <div><b>14</b><span>Dealers</span></div>
-            </div>
-            <div className="ptags"><span className="ptag">Live phone line</span><span className="ptag">AI assistant</span><span className="ptag">Lead ownership</span></div>
-          </div>
-          <div className="shot wide loaded" data-src="">
-            <img src="/img/driveoffdallas.webp" alt="DriveOffDallas CRM messages view with reply times and bookings from text" width={1920} height={1080} loading="eager" decoding="sync" />
-          </div>
-        </div>
-    
-        <div className="proj rv">
-          <div className="ptxt">
-            <h3>Plugin Warehouse</h3>
-            <p>A storefront for music producers handling very large file delivery, sale campaigns, full analytics, and a customer account portal.</p>
-            <div className="pnum">
-              <div><b>2.1 TB</b><span>Delivered</span></div>
-              <div><b>847</b><span>Customers</span></div>
-            </div>
-            <div className="ptags"><span className="ptag">Ecommerce</span><span className="ptag">Large file delivery</span><span className="ptag">Customer portal</span></div>
-          </div>
-          <div className="shot wide loaded" data-src="">
-            <img src="/img/pluginwarehouse.png" alt="Plugin Warehouse dashboard with revenue over time, recent orders and best sellers" width={1920} height={983} loading="eager" decoding="sync" />
-          </div>
-        </div>
-    
-        <div className="proj rv">
-          <div className="ptxt">
-            <h3>Monkey Trucking</h3>
-            <p>A fast site with intake forms that ask the right questions up front, feeding a dashboard the owner actually opens.</p>
-            <div className="pnum">
-              <div><b>100%</b><span>Inquiries answered</span></div>
-              <div><b>96</b><span>Inquiries</span></div>
-            </div>
-            <div className="ptags"><span className="ptag">Smart intake</span><span className="ptag">Owner dashboard</span></div>
-          </div>
-          <div className="shot wide loaded" data-src="">
-            <img src="/img/monkey-trucking.png" alt="Monkey Trucking homepage hero for gravel, hauling and dirt work across DFW" width={1920} height={979} loading="eager" decoding="sync" />
-          </div>
-        </div>
-    
-        <div className="pmwrap rv">
-          <p className="pmlead">The same system on your phone.</p>
-          <div className="pdeck" id="pdeck">
-            <figure className="pmock">
-              <div className="pframe">
-                <div className="shot phone" data-src="/img/phone-1.jpg">
-                  <img alt="Morning summary screen showing messages answered, missed calls handled, and new bookings" loading="lazy" />
-                  <div className="ph"><b>Morning summary</b><i>1080 × 1935</i></div>
-                </div>
-              </div>
-              <figcaption>What happened overnight</figcaption>
-            </figure>
-            <figure className="pmock">
-              <div className="pframe">
-                <div className="shot phone" data-src="/img/phone-2.jpg">
-                  <img alt="Revenue dashboard showing the weekly total, leads, bookings, and close rate" loading="lazy" />
-                  <div className="ph"><b>Revenue</b><i>1080 × 1935</i></div>
-                </div>
-              </div>
-              <figcaption>What the week is worth</figcaption>
-            </figure>
-            <figure className="pmock">
-              <div className="pframe">
-                <div className="shot phone" data-src="/img/phone-3.jpg">
-                  <img alt="Booking calendar showing the appointments scheduled for today" loading="lazy" />
-                  <div className="ph"><b>Today</b><i>1080 × 1935</i></div>
-                </div>
-              </div>
-              <figcaption>Who is booked today</figcaption>
-            </figure>
-          </div>
-          <div className="pdots" id="pdots">
-            <button className="pdot" type="button" aria-label="Show the morning summary"></button>
-            <button className="pdot" type="button" aria-label="Show the revenue dashboard"></button>
-            <button className="pdot" type="button" aria-label="Show today's bookings"></button>
-          </div>
-        </div>
-      </div>
-    </section>
-    
-    {/* ============ 4 · PRODUCT VIEWER ============ */}
-    <section className="viewer light" id="gets">
-      <div className="wrap">
-        <p className="eyebrow rv">What you get</p>
-        <h2 className="rv">Look inside the <GradientShimmer gradient="sunrise">system</GradientShimmer>.</h2>
-    
-        <div className="tabswrap rv">
-        <div className="tabs" role="tablist" id="tabs">
-          <button className="tab" role="tab" aria-selected="true" data-t="inbox">
-            <svg viewBox="0 0 24 24"><path d="M3 13h5l1.5 3h5l1.5-3h5"/><path d="M5.5 4.5h13l2.5 8.5v4.5a2 2 0 0 1-2 2h-14a2 2 0 0 1-2-2V13z"/></svg>Inbox</button>
-          <button className="tab" role="tab" aria-selected="false" data-t="calendar">
-            <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 2.5v4M16 2.5v4M3 10h18"/></svg>Calendar</button>
-          <button className="tab" role="tab" aria-selected="false" data-t="pipeline">
-            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="5" height="16" rx="2"/><rect x="9.5" y="4" width="5" height="11" rx="2"/><rect x="16" y="4" width="5" height="7" rx="2"/></svg>Pipeline</button>
-          <button className="tab" role="tab" aria-selected="false" data-t="payments">
-            <svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M2.5 9.5h19M6 15h3.5"/></svg>Payments</button>
-          <button className="tab" role="tab" aria-selected="false" data-t="reports">
-            <svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M6 20v-6M11 20V7M16 20v-9"/></svg>Reports</button>
-        </div>
-          <button className="tabcue" type="button" aria-label="Scroll for more tabs">
-            <svg viewBox="0 0 24 24"><path d="M9 5.5 15.5 12 9 18.5"/></svg>
-          </button>
-        </div>
-    
-        <div className="panes">
-          <div className="pane on" data-p="inbox">
-            <div className="shot wide loaded" data-src=""><img src="/img/inbox.webp" alt="Sunnyside Inbox showing calls, texts and web forms in one thread with an automatic reply" width={1920} height={1288} loading="eager" decoding="sync" /></div>
-            <div className="pline"><b>Everyone in one thread</b><span>Calls, texts, and web forms all land in the same place, and missed calls get a text back in seconds.</span></div>
-          </div>
-          <div className="pane" data-p="calendar">
-            <div className="shot wide loaded" data-src=""><img src="/img/calendar.webp" alt="Sunnyside Calendar week view showing booked appointments and blocked time" width={1920} height={1288} loading="eager" decoding="sync" /></div>
-            <div className="pline"><b>Books itself</b><span>Only genuinely open times get offered, the booking writes back to your calendar, and the reminder goes out on schedule.</span></div>
-          </div>
-          <div className="pane" data-p="pipeline">
-            <div className="shot wide loaded" data-src=""><img src="/img/pipeline.webp" alt="Sunnyside Pipeline board with leads by stage, owners and response timers" width={1920} height={1288} loading="eager" decoding="sync" /></div>
-            <div className="pline"><b>Nothing sits unclaimed</b><span>Every lead lands in a stage with an owner and a clock, routed by rules you set once.</span></div>
-          </div>
-          <div className="pane" data-p="payments">
-            <div className="shot wide loaded" data-src=""><img src="/img/payments.webp" alt="Sunnyside Payments view with deposits collected and transaction list" width={1920} height={1288} loading="eager" decoding="sync" /></div>
-            <div className="pline"><b>Paid at booking</b><span>Deposits collected before the slot is held, receipts sent automatically, no shows you can actually charge.</span></div>
-          </div>
-          <div className="pane" data-p="reports">
-            <div className="shot wide loaded" data-src=""><img src="/img/reports.webp" alt="Sunnyside Reports dashboard with leads, bookings, show rate and revenue" width={1920} height={1288} loading="eager" decoding="sync" /></div>
-            <div className="pline"><b>You see everything</b><span>What came in, what booked, what it was worth, and which hours actually make you money.</span></div>
-          </div>
-        </div>
-      </div>
-    </section>
-    
-    {/* ============ 5 · ALSO INCLUDED ============ */}
-    <section className="gets">
-      <div className="wrap">
-        <p className="eyebrow rv">Also included</p>
-        <div className="fan rv">
-          <article className="fcard">
-            <div className="fc-top">
-              <span className="fc-ico"><svg viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.2L12 17l-5.4 3 1-6.2L3.2 9.5l6.1-.9z"/></svg></span>
-              <b>Review requests</b>
-            </div>
-            <p>Sent automatically after every completed job.</p>
-            <div className="fdetail">
-              <svg className="fd-stars" viewBox="0 0 106 20" aria-hidden="true">
-                <defs><path id="fdstar" d="M10 2.2l2.4 4.9 5.4.8-3.9 3.8.9 5.4L10 14.5l-4.8 2.6.9-5.4L2.2 7.9l5.4-.8z"/></defs>
-                <use href="#fdstar" x="0"/><use href="#fdstar" x="22"/><use href="#fdstar" x="44"/><use href="#fdstar" x="66"/><use href="#fdstar" x="88"/>
-              </svg>
-            </div>
-          </article>
-          <article className="fcard">
-            <div className="fc-top">
-              <span className="fc-ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 5.2a3.5 3.5 0 0 1 0 5.6M17.5 20a6.4 6.4 0 0 0-2-4.6"/></svg></span>
-              <b>Team accounts</b>
-            </div>
-            <p>Separate logins and roles for your staff.</p>
-            <div className="fdetail">
-              <div className="fd-avs" aria-hidden="true"><span></span><span></span><span></span></div>
-            </div>
-          </article>
-          <article className="fcard">
-            <div className="fc-top">
-              <span className="fc-ico"><svg viewBox="0 0 24 24"><path d="M10 13.5a4 4 0 0 0 5.7.4l2.8-2.8a4 4 0 0 0-5.7-5.7l-1.4 1.4"/><path d="M14 10.5a4 4 0 0 0-5.7-.4l-2.8 2.8a4 4 0 0 0 5.7 5.7l1.4-1.4"/></svg></span>
-              <b>Referral links</b>
-            </div>
-            <p>See exactly who sends you business.</p>
-            <div className="fdetail" aria-hidden="true">
-              <span className="fd-pill">
-                <svg viewBox="0 0 24 24"><path d="M10 13.5a4 4 0 0 0 5.7.4l2.8-2.8a4 4 0 0 0-5.7-5.7l-1.4 1.4"/><path d="M14 10.5a4 4 0 0 0-5.7-.4l-2.8 2.8a4 4 0 0 0 5.7 5.7l1.4-1.4"/></svg>
-                alyxlab.co/r/9f2…
-              </span>
-              <span className="fd-count">18 clicks</span>
-            </div>
-          </article>
-          <article className="fcard">
-            <div className="fc-top">
-              <span className="fc-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M8 2.5v4M16 2.5v4"/><path d="M8 14l3 3 5-6"/></svg></span>
-              <b>Your own domain</b>
-            </div>
-            <p>Yours outright. You keep it if you leave.</p>
-            <div className="fdetail" aria-hidden="true">
-              <span className="fd-bar">
-                <svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9" rx="2.2"/><path d="M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7"/></svg>
-                yourshop.com
-              </span>
-            </div>
-          </article>
-          <article className="fcard">
-            <div className="fc-top">
-              <span className="fc-ico"><svg viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="m4.5 8 7.5 5 7.5-5"/></svg></span>
-              <b>Automatic emails</b>
-            </div>
-            <p>Price drops, abandoned carts, abandoned checkouts. Sent for you.</p>
-            <div className="fdetail" aria-hidden="true">
-              <span className="fd-pill">Price drop</span>
-              <span className="fd-pill">Cart saved</span>
-              <span className="fd-pill">Win back</span>
-            </div>
-          </article>
-          <article className="fcard">
-            <div className="fc-top">
-              <span className="fc-ico"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.5L3 21l2-5.6A8.5 8.5 0 1 1 21 11.5z"/></svg></span>
-              <b>Text me directly</b>
-            </div>
-            <p>You text, I fix it. No ticket queue.</p>
-            <div className="fdetail" aria-hidden="true">
-              <span className="fd-pill">
-                <svg viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.5L3 21l2-5.6A8.5 8.5 0 1 1 21 11.5z"/></svg>
-                Add Saturday hours?
-              </span>
-              <span className="fd-count">Done by noon</span>
-            </div>
-          </article>
         </div>
       </div>
     </section>
