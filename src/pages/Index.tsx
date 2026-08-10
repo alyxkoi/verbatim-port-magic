@@ -425,13 +425,37 @@ export default function Index() {
     );
     offs.push(() => cancelRaf(nf));
 
-    const send = document.getElementById("send");
-    if (send)
-      on(send, "click", (e) => {
-        const t = e.target as HTMLElement;
-        t.textContent = "Got it. Talk soon.";
-        t.style.pointerEvents = "none";
+    const send = document.getElementById("send") as HTMLButtonElement | null;
+    const form = send ? (send.closest("form") as HTMLFormElement | null) : null;
+    if (send && form)
+      on(form, "submit", async (e) => {
+        e.preventDefault();
+        if (send.disabled) return;
+        const label = send.textContent;
+        send.disabled = true;
+        send.textContent = "Sending…";
+        const val = (id: string) =>
+          ((document.getElementById(id) as HTMLInputElement | null)?.value || "").trim();
+        const { error } = await supabase.from("leads").insert({
+          name: val("f-name") || null,
+          business: val("f-biz") || null,
+          phone: val("f-phone") || null,
+          business_type: val("f-type") || null,
+          message: val("f-msg") || null,
+        });
+        if (error) {
+          send.disabled = false;
+          send.textContent = "Did not send. Try again.";
+          setTimeout(() => {
+            if (send) send.textContent = label;
+          }, 3200);
+          return;
+        }
+        form.reset();
+        send.textContent = "Got it. Talk soon.";
+        send.style.pointerEvents = "none";
       });
+
 
     return () => {
       offs.forEach((f) => f());
