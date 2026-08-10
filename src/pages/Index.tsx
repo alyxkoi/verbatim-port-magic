@@ -971,9 +971,8 @@ export default function Index() {
             </div>
             <div className="ptags"><span className="ptag">Smart intake</span><span className="ptag">Owner dashboard</span></div>
           </div>
-          <div className="shot wide" data-src="">
-            <img alt="" />
-            <div className="ph"><b>Monkey Trucking</b><span>Homepage or the dashboard</span><i>1600 × 1000</i></div>
+          <div className="shot wide loaded" data-src="">
+            <img src="/img/monkey-trucking.png" alt="Monkey Trucking homepage hero for gravel, hauling and dirt work across DFW" width={1920} height={979} loading="eager" decoding="sync" />
           </div>
         </div>
     
