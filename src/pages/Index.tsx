@@ -516,7 +516,7 @@ export default function Index() {
               <div className="scene"><div className="deck">
 
                 {/* back plane */}
-                <div className="layer anim" style={{"--z": "-55px"}}>
+                <div className="layer anim" style={{"--z": "-55px"} as React.CSSProperties}>
                   <svg viewBox="0 0 360 225" aria-hidden="true">
                     <defs>
                       <pattern id="pdots" width="18" height="18" patternUnits="userSpaceOnUse">
@@ -530,7 +530,7 @@ export default function Index() {
                 </div>
 
                 {/* the sheet */}
-                <div className="layer anim" style={{"--z": "0px"}}>
+                <div className="layer anim" style={{"--z": "0px"} as React.CSSProperties}>
                   <svg viewBox="0 0 360 225" role="img"
                        aria-label="A system plan: calls, web forms and texts feeding one system, which feeds calendar, payments and reviews">
                     <defs>
@@ -610,7 +610,7 @@ export default function Index() {
                 </div>
 
                 {/* the core, lifted off the sheet */}
-                <div className="layer anim" style={{"--z": "42px"}}>
+                <div className="layer anim" style={{"--z": "42px"} as React.CSSProperties}>
                   <svg viewBox="0 0 360 225" aria-hidden="true">
                     <defs>
                       <filter id="pcore" x="-70%" y="-70%" width="240%" height="240%">
@@ -645,7 +645,7 @@ export default function Index() {
               <div className="scene"><div className="deck">
 
                 {/* the old site, flat at the back */}
-                <div className="layer anim" style={{"--z": "-30px"}}>
+                <div className="layer anim" style={{"--z": "-30px"} as React.CSSProperties}>
                   <svg viewBox="0 0 360 225" aria-hidden="true">
                     <rect x="0" y="0" width="360" height="225" fill="#E4E4E6"/>
                     <rect x="0" y="0" width="360" height="26" fill="#D2D2D6"/>
@@ -677,7 +677,7 @@ export default function Index() {
                 </div>
 
                 {/* the new dashboard, revealed by the wipe */}
-                <div className="layer anim" style={{"--z": "0px"}}>
+                <div className="layer anim" style={{"--z": "0px"} as React.CSSProperties}>
                   <svg viewBox="0 0 360 225" role="img"
                        aria-label="The new dashboard replacing the old site, with a sidebar, a revenue chart and stat cards">
                     <defs>
@@ -767,14 +767,14 @@ export default function Index() {
                 </div>
 
                 {/* the wipe edge, riding above everything */}
-                <div className="layer" style={{"--z": "52px"}}>
+                <div className="layer" style={{"--z": "52px"} as React.CSSProperties}>
                   <svg viewBox="0 0 360 225" aria-hidden="true">
                     <rect className="b-edge" x="0" y="0" width="2" height="225" fill="var(--volt)"/>
                   </svg>
                 </div>
 
                 {/* stat cards, floating off the surface */}
-                <div className="layer anim" style={{"--z": "56px"}}>
+                <div className="layer anim" style={{"--z": "56px"} as React.CSSProperties}>
                   <svg viewBox="0 0 360 225" aria-hidden="true">
                     <defs>
                       <filter id="bcard" x="-60%" y="-60%" width="220%" height="220%">
@@ -820,7 +820,7 @@ export default function Index() {
               <div className="scene"><div className="deck">
 
                 {/* back plane */}
-                <div className="layer anim" style={{"--z": "-45px"}}>
+                <div className="layer anim" style={{"--z": "-45px"} as React.CSSProperties}>
                   <svg viewBox="0 0 360 225" aria-hidden="true">
                     <defs>
                       <radialGradient id="tglow" cx="50%" cy="30%" r="70%">
@@ -837,7 +837,7 @@ export default function Index() {
                 </div>
 
                 {/* incoming, mid depth */}
-                <div className="layer anim" style={{"--z": "14px"}}>
+                <div className="layer anim" style={{"--z": "14px"} as React.CSSProperties}>
                   <svg viewBox="0 0 360 225" role="img"
                        aria-label="The owner asks whether Saturday hours can be added to the booking page">
                     <defs>
@@ -866,7 +866,7 @@ export default function Index() {
                 </div>
 
                 {/* the reply, furthest forward */}
-                <div className="layer anim" style={{"--z": "50px"}}>
+                <div className="layer anim" style={{"--z": "50px"} as React.CSSProperties}>
                   <svg viewBox="0 0 360 225" role="img"
                        aria-label="The reply says Saturdays are live on the calendar now">
                     <defs>
@@ -891,7 +891,7 @@ export default function Index() {
                 </div>
 
                 {/* the compose bar sits on the surface */}
-                <div className="layer anim" style={{"--z": "26px"}}>
+                <div className="layer anim" style={{"--z": "26px"} as React.CSSProperties}>
                   <svg viewBox="0 0 360 225" aria-hidden="true">
                     <g className="t-bar" data-a="">
                       <rect x="18" y="192" width="324" height="30" rx="15" fill="#15151B"
