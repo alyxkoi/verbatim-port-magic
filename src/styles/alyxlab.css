@@ -181,6 +181,10 @@ nav.hide{transform:translateY(-150%)}
 .pnum div b{display:block;font-size:26px;font-weight:900;letter-spacing:-.04em;color:var(--ink)}
 .pnum div span{display:block;margin-top:3px;font-size:12.5px;color:var(--ink3)}
 .work .shot{box-shadow:0 30px 70px rgba(20,20,23,.16)}
+/* project screenshots are wider than 16:10; widen the frame so they fit */
+.work .shot.wide{aspect-ratio:16/9}
+.work .shot.wide img{object-fit:contain}
+
 
 /* phone mockups · rotating deck, closes out the work section */
 .pmwrap{margin-top:clamp(54px,7vw,92px)}
