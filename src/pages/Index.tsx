@@ -941,9 +941,8 @@ export default function Index() {
             </div>
             <div className="ptags"><span className="ptag">Live phone line</span><span className="ptag">AI assistant</span><span className="ptag">Lead ownership</span></div>
           </div>
-          <div className="shot wide" data-src="">
-            <img alt="" />
-            <div className="ph"><b>DriveOffDallas</b><span>Lead board with the ownership timers visible</span><i>1600 × 1000</i></div>
+          <div className="shot wide loaded" data-src="">
+            <img src="/img/driveoffdallas.webp" alt="DriveOffDallas CRM messages view with reply times and bookings from text" width={1920} height={1080} loading="eager" decoding="sync" />
           </div>
         </div>
     
