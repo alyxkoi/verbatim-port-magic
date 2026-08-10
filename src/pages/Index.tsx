@@ -469,11 +469,7 @@ export default function Index() {
           message: message || null,
         });
         if (error) {
-          send.disabled = false;
-          send.textContent = "Did not send. Try again.";
-          setTimeout(() => {
-            if (send) send.textContent = label;
-          }, 3200);
+          fail("Did not send. Try again.");
           return;
         }
         form.reset();
