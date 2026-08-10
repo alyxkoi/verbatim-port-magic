@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { GradientShimmer } from "@/components/ui/gradient-shimmer";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function Index() {
   useEffect(() => {
