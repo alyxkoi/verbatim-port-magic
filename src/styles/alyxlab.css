@@ -218,8 +218,7 @@ nav.hide{transform:translateY(-150%)}
 .pdot[aria-current="true"]{background:var(--ink);transform:scale(1.3)}
 
 /* ===== HOW IT WORKS ===== */
-.how{background:var(--cloud);color:var(--ink);
-  border-radius:clamp(28px,4vw,48px) clamp(28px,4vw,48px) 0 0;position:relative;z-index:3;
+.how{background:var(--cloud);color:var(--ink);position:relative;z-index:3;
   padding:clamp(72px,9vw,124px) var(--pad) clamp(56px,7vw,90px)}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2.4vw,26px);
   margin-top:clamp(30px,3.6vw,44px)}
@@ -362,7 +361,9 @@ nav.hide{transform:translateY(-150%)}
 .step p{margin-top:8px;font-size:14.5px;line-height:1.55;color:var(--mute)}
 
 /* ===== PRODUCT VIEWER ===== */
-.viewer{background:var(--cloud);color:var(--ink);padding:0 var(--pad) clamp(72px,9vw,124px)}
+.viewer{background:var(--cloud);color:var(--ink);
+  border-radius:clamp(28px,4vw,48px) clamp(28px,4vw,48px) 0 0;position:relative;z-index:3;
+  padding:clamp(72px,9vw,124px) var(--pad) clamp(72px,9vw,124px)}
 .tabswrap{position:relative;margin-top:clamp(26px,3vw,36px)}
 .tabs{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
