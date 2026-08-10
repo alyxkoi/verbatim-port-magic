@@ -956,9 +956,8 @@ export default function Index() {
             </div>
             <div className="ptags"><span className="ptag">Ecommerce</span><span className="ptag">Large file delivery</span><span className="ptag">Customer portal</span></div>
           </div>
-          <div className="shot wide" data-src="">
-            <img alt="" />
-            <div className="ph"><b>Plugin Warehouse</b><span>Storefront or the analytics view</span><i>1600 × 1000</i></div>
+          <div className="shot wide loaded" data-src="">
+            <img src="/img/pluginwarehouse.png" alt="Plugin Warehouse dashboard with revenue over time, recent orders and best sellers" width={1920} height={983} loading="eager" decoding="sync" />
           </div>
         </div>
     
