@@ -1,0 +1,1 @@
+DELETE FROM public.leads WHERE name = 'Test Bot' AND message = 'automated verification';
