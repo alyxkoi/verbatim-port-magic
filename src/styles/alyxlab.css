@@ -513,7 +513,7 @@ nav.hide{transform:translateY(-150%)}
 footer{position:relative;max-width:var(--shell);margin:0 auto;
   padding:26px var(--pad) var(--gh);display:flex;align-items:center;
   gap:14px 24px;flex-wrap:wrap;font-size:13px;color:var(--faint)}
-footer b{color:var(--text);font-size:16px;font-weight:800;letter-spacing:-.03em}
+footer .logo-img{width:110px;height:28px;object-position:left center}
 footer .end{margin-left:auto}
 
 /* gradient footer · the glow is pinned to the viewport floor and rises out of
