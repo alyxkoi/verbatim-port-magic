@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { GradientShimmer } from "@/components/ui/gradient-shimmer";
 
 export default function Index() {
   useEffect(() => {
@@ -483,7 +484,7 @@ export default function Index() {
       </div>
       <div className="grain" aria-hidden="true"></div>
       <div className="wrap">
-        <h1>Everything your business runs on, <em>in one system.</em></h1>
+        <h1>Everything your business runs on, <em><GradientShimmer gradient="sunrise">in one system.</GradientShimmer></em></h1>
         <p className="lede">Calls, bookings, deposits, reminders, reviews. Built for how you actually work and run by the person who built it.</p>
         <div className="hcta">
           <button className="btn glass" data-go="#start"><span>Get my free plan</span>
@@ -1022,7 +1023,7 @@ export default function Index() {
     <section className="viewer light" id="gets">
       <div className="wrap">
         <p className="eyebrow rv">What you get</p>
-        <h2 className="rv">Look inside the system.</h2>
+        <h2 className="rv">Look inside the <GradientShimmer gradient="sunrise">system</GradientShimmer>.</h2>
     
         <div className="tabswrap rv">
         <div className="tabs" role="tablist" id="tabs">
