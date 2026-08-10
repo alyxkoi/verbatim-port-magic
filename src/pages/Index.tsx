@@ -433,16 +433,40 @@ export default function Index() {
         e.preventDefault();
         if (send.disabled) return;
         const label = send.textContent;
-        send.disabled = true;
-        send.textContent = "Sending…";
         const val = (id: string) =>
           ((document.getElementById(id) as HTMLInputElement | null)?.value || "").trim();
+        const clip = (s: string, max: number) => (s ? s.slice(0, max) : "");
+        const name = clip(val("f-name"), 120);
+        const business = clip(val("f-biz"), 160);
+        const phone = clip(val("f-phone").replace(/[^\d+()\-.\s]/g, ""), 32);
+        const businessType = clip(val("f-type"), 80);
+        const message = clip(val("f-msg"), 2000);
+
+        const fail = (msg: string) => {
+          send.disabled = false;
+          send.textContent = msg;
+          setTimeout(() => {
+            if (send) send.textContent = label;
+          }, 3200);
+        };
+
+        if (!name || !phone) {
+          fail("Add your name and phone.");
+          return;
+        }
+        if (phone.replace(/\D/g, "").length < 7) {
+          fail("Check the phone number.");
+          return;
+        }
+
+        send.disabled = true;
+        send.textContent = "Sending…";
         const { error } = await supabase.from("leads").insert({
-          name: val("f-name") || null,
-          business: val("f-biz") || null,
-          phone: val("f-phone") || null,
-          business_type: val("f-type") || null,
-          message: val("f-msg") || null,
+          name,
+          business: business || null,
+          phone,
+          business_type: businessType || null,
+          message: message || null,
         });
         if (error) {
           send.disabled = false;
