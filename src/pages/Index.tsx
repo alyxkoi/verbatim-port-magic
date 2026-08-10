@@ -433,23 +433,43 @@ export default function Index() {
         e.preventDefault();
         if (send.disabled) return;
         const label = send.textContent;
-        send.disabled = true;
-        send.textContent = "Sending…";
         const val = (id: string) =>
           ((document.getElementById(id) as HTMLInputElement | null)?.value || "").trim();
-        const { error } = await supabase.from("leads").insert({
-          name: val("f-name") || null,
-          business: val("f-biz") || null,
-          phone: val("f-phone") || null,
-          business_type: val("f-type") || null,
-          message: val("f-msg") || null,
-        });
-        if (error) {
+        const clip = (s: string, max: number) => (s ? s.slice(0, max) : "");
+        const name = clip(val("f-name"), 120);
+        const business = clip(val("f-biz"), 160);
+        const phone = clip(val("f-phone").replace(/[^\d+()\-.\s]/g, ""), 32);
+        const businessType = clip(val("f-type"), 80);
+        const message = clip(val("f-msg"), 2000);
+
+        const fail = (msg: string) => {
           send.disabled = false;
-          send.textContent = "Did not send. Try again.";
+          send.textContent = msg;
           setTimeout(() => {
             if (send) send.textContent = label;
           }, 3200);
+        };
+
+        if (!name || !phone) {
+          fail("Add your name and phone.");
+          return;
+        }
+        if (phone.replace(/\D/g, "").length < 7) {
+          fail("Check the phone number.");
+          return;
+        }
+
+        send.disabled = true;
+        send.textContent = "Sending…";
+        const { error } = await supabase.from("leads").insert({
+          name,
+          business: business || null,
+          phone,
+          business_type: businessType || null,
+          message: message || null,
+        });
+        if (error) {
+          fail("Did not send. Try again.");
           return;
         }
         form.reset();
@@ -1246,9 +1266,9 @@ export default function Index() {
             </div>
           </div>
           <form className="form" onSubmit={(e) => e.preventDefault()}>
-            <input id="f-name" name="name" aria-label="Your name" type="text" autoComplete="name" placeholder="Your name" />
-            <input id="f-biz" name="business" aria-label="Business name" type="text" autoComplete="organization" placeholder="Business name" />
-            <input id="f-phone" name="phone" aria-label="Phone" type="tel" autoComplete="tel" placeholder="Phone" />
+            <input id="f-name" name="name" aria-label="Your name" type="text" autoComplete="name" placeholder="Your name" maxLength={120} required />
+            <input id="f-biz" name="business" aria-label="Business name" type="text" autoComplete="organization" placeholder="Business name" maxLength={160} />
+            <input id="f-phone" name="phone" aria-label="Phone" type="tel" autoComplete="tel" placeholder="Phone" maxLength={32} required />
             <select id="f-type" name="businessType" aria-label="What kind of business">
               <option value="">What kind of business</option>
               <option>Barbershop or salon</option>
@@ -1258,7 +1278,7 @@ export default function Index() {
               <option>Home services</option>
               <option>Something else</option>
             </select>
-            <textarea id="f-msg" name="message" aria-label="What is not working right now" placeholder="What is not working right now"></textarea>
+            <textarea id="f-msg" name="message" aria-label="What is not working right now" placeholder="What is not working right now" maxLength={2000}></textarea>
             <button className="btn" id="send" type="submit">Send it over</button>
           </form>
         </div>
