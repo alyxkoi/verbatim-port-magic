@@ -477,6 +477,24 @@ export default function Index() {
         send.style.pointerEvents = "none";
       });
 
+    /* one system diagram · play once on arrival */
+    const onesys = document.getElementById("onesys");
+    if (onesys) {
+      mkIO(
+        (entries, o) => {
+          entries.forEach((x) => {
+            if (x.isIntersecting) {
+              document.getElementById("diagram")?.classList.add("in");
+              o.unobserve(x.target);
+            }
+          });
+        },
+        { threshold: 0.25 },
+      ).observe(onesys);
+    }
+
+
+
 
     return () => {
       offs.forEach((f) => f());
