@@ -489,14 +489,17 @@ export default function Index() {
           <span className="hnote">No cost. A written plan within a day.</span>
         </div>
     
-        {/* HERO IMAGE · put your best dashboard screenshot here */}
-        <div className="shot wide" data-src="">
-          <img alt="" />
-          <div className="ph">
-            <b>Hero screenshot</b>
-            <span>Your strongest dashboard view. DriveOffDallas lead board is the best candidate.</span>
-            <i>1920 × 1200 · data-src on this div</i>
-          </div>
+        {/* HERO IMAGE */}
+        <div className="shot wide loaded" data-src="">
+          <img
+            src="/img/hero-dashboard.webp"
+            alt="Sunnyside operations dashboard showing orders, revenue, delivery calendar and performance breakdown"
+            width={1920}
+            height={1200}
+            loading="eager"
+            fetchPriority="high"
+            decoding="sync"
+          />
         </div>
       </div>
     </header>
