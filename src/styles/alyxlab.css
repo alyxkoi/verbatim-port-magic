@@ -154,6 +154,7 @@ nav.hide{transform:translateY(-150%)}
 .hcta{display:flex;flex-direction:column;align-items:center;gap:15px;
   margin-top:clamp(28px,3.5vw,38px)}
 .hnote{font-size:13.5px;color:var(--faint)}
+.hero .shot.wide{aspect-ratio:3/2}
 .hero .shot{margin-top:clamp(44px,6vw,72px);
   box-shadow:0 50px 120px rgba(0,0,0,.6),0 0 90px rgba(177,75,255,.16)}
 /* on a wide screen let the screenshot break past the text column */
@@ -391,6 +392,7 @@ nav.hide{transform:translateY(-150%)}
 .pane.on{display:block;animation:fadein .5s var(--ease)}
 @keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .pane .shot{box-shadow:0 30px 70px rgba(20,20,23,.16)}
+.pane .shot.wide{aspect-ratio:3/2}
 .pline{display:flex;align-items:flex-start;gap:14px;margin-top:18px;flex-wrap:wrap}
 .pline b{font-size:18px;font-weight:800;letter-spacing:-.026em;flex:none}
 .pline span{font-size:15px;line-height:1.55;color:var(--ink2);flex:1;min-width:240px}
