@@ -710,7 +710,9 @@ export default function Index() {
             <button className="pdot" type="button" aria-label="Show the revenue dashboard"></button>
             <button className="pdot" type="button" aria-label="Show today's bookings"></button>
           </div>
+        </div>
       </div>
+
     </section>
     
     {/* ============ 5 · ALSO INCLUDED ============ */}
