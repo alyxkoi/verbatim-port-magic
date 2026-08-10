@@ -1278,7 +1278,7 @@ export default function Index() {
               <option>Home services</option>
               <option>Something else</option>
             </select>
-            <textarea id="f-msg" name="message" aria-label="What is not working right now" placeholder="What is not working right now"></textarea>
+            <textarea id="f-msg" name="message" aria-label="What is not working right now" placeholder="What is not working right now" maxLength={2000}></textarea>
             <button className="btn" id="send" type="submit">Send it over</button>
           </form>
         </div>
