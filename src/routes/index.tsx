@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "../pages/Index";
 
+const HOME_TITLE = "Booking, Payments and Reviews in One System | Dallas | ALYXLAB";
+const HOME_DESC =
+  "One system that answers every call, books the job, and takes the deposit. Built and run for Dallas businesses in two weeks. Free plan, no obligation.";
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
