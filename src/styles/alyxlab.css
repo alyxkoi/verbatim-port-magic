@@ -689,7 +689,10 @@ footer .end{margin-left:auto}
 .r2{animation:slideR var(--dur,24s) linear infinite}
 @keyframes slideL{from{transform:translateX(0)}to{transform:translateX(calc(var(--shift,0px) * -1))}}
 @keyframes slideR{from{transform:translateX(calc(var(--shift,0px) * -1))}to{transform:translateX(0)}}
-.rails:hover .rail{animation-play-state:paused}
+.rails:hover .rail,
+.rail:hover{animation-play-state:paused}
+/* keep conns content above the grain overlay */
+.conns .clead,.conns .rails,.conns .cnote{position:relative;z-index:2}
 
 .cicon{flex:none;width:clamp(64px,6.5vw,88px);height:clamp(64px,6.5vw,88px);object-fit:contain;
   margin-right:clamp(20px,2.6vw,36px);

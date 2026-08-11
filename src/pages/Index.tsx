@@ -697,6 +697,7 @@ export default function Index() {
 
     {/* ============ CONNECTIONS STRIP ============ */}
     <section className="conns" id="conns">
+      <div className="grain" aria-hidden="true"></div>
       <p className="clead">You keep what already works. <b>The system connects to it.</b></p>
 
       <div className="rails">
