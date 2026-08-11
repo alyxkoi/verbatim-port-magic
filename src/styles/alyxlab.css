@@ -515,7 +515,8 @@ nav.hide{transform:translateY(-150%)}
 .form .btn{justify-content:center;margin-top:4px}
 /* ===== SITE FOOTER ===== */
 footer{position:relative;background:var(--void);border-top:1px solid rgba(255,255,255,.09);
-  margin-top:clamp(48px,6vw,84px);padding:clamp(44px,5vw,68px) 0 var(--gh)}
+  margin:clamp(48px,6vw,84px) calc(-1 * var(--pad)) 0;
+  padding:clamp(44px,5vw,68px) 0 var(--gh)}
 footer .fgrid,footer .fbar{max-width:var(--shell);margin:0 auto;
   padding-left:var(--pad);padding-right:var(--pad);position:relative;z-index:2}
 footer .fgrid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.1fr;
@@ -602,7 +603,6 @@ footer a:focus-visible,footer button:focus-visible{outline:2px solid var(--volt)
 }
 @media(max-width:560px){
   .fan{grid-template-columns:1fr}
-  footer .end{margin-left:0;width:100%}
 }
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition-duration:.01ms!important}
