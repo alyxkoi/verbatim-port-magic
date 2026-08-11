@@ -1387,19 +1387,6 @@ export default function Index() {
             </ul>
             <button className="tbtn" data-go="#start">Start with Presence</button>
           </div>
-          <div className="tier rv">
-            <h3>Connected</h3><div className="prom">Never lose a lead.</div>
-            <div className="amt"><b>$249</b><span>/ mo</span></div>
-            <div className="setup">$597 setup</div>
-            <ul>
-              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Everything in Presence</li>
-              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Your own login and dashboard</li>
-              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Missed calls texted back</li>
-              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Calendar synced both ways</li>
-              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Reminders and review requests</li>
-            </ul>
-            <button className="tbtn" data-go="#start">Start with Connected</button>
-          </div>
           <div className="tier best rv">
             <h3>Operations</h3><div className="prom">Run the whole business from one place.</div>
             <div className="amt"><b>$499</b><span>/ mo</span></div>
@@ -1413,6 +1400,19 @@ export default function Index() {
               <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Rules, routing, referral links</li>
             </ul>
             <button className="tbtn" data-go="#start">Start with Operations</button>
+          </div>
+          <div className="tier rv">
+            <h3>Connected</h3><div className="prom">Never lose a lead.</div>
+            <div className="amt"><b>$249</b><span>/ mo</span></div>
+            <div className="setup">$597 setup</div>
+            <ul>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Everything in Presence</li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Your own login and dashboard</li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Missed calls texted back</li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Calendar synced both ways</li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg>Reminders and review requests</li>
+            </ul>
+            <button className="tbtn" data-go="#start">Start with Connected</button>
           </div>
         </div>
         <p className="annual rv">On a twelve month agreement, setup drops by half.</p>
