@@ -1,21 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import Index from "../pages/Index";
 
+const HOME_TITLE = "Booking, Payments and Reviews in One System | Dallas | ALYXLAB";
+const HOME_DESC =
+  "One system that answers every call, books the job, and takes the deposit. Built and run for Dallas businesses in two weeks. Free plan, no obligation.";
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Alyxlab · Complete business systems" },
-      {
-        name: "description",
-        content:
-          "One system that answers every call, books the job, takes the deposit, and asks for the review. Built and run for local businesses in Dallas.",
-      },
-      { property: "og:title", content: "Alyxlab · Complete business systems" },
-      {
-        property: "og:description",
-        content:
-          "One system that answers every call, books the job, takes the deposit, and asks for the review. Built and run for local businesses in Dallas.",
-      },
+      { title: HOME_TITLE },
+      { name: "description", content: HOME_DESC },
+      { property: "og:title", content: HOME_TITLE },
+      { property: "og:description", content: HOME_DESC },
+      { name: "twitter:title", content: HOME_TITLE },
+      { name: "twitter:description", content: HOME_DESC },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://alyxlab.com/" },
       { name: "twitter:card", content: "summary_large_image" },

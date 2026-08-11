@@ -16,6 +16,12 @@ export const Route = createFileRoute("/guides/")({
         content:
           "Straight answers about what booking and customer systems cost, what they do, and whether you need one.",
       },
+      { name: "twitter:title", content: "Guides · Alyxlab" },
+      {
+        name: "twitter:description",
+        content:
+          "Straight answers about what booking and customer systems cost, what they do, and whether you need one.",
+      },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://alyxlab.com/guides" },
       { name: "twitter:card", content: "summary_large_image" },
