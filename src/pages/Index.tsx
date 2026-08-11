@@ -383,10 +383,16 @@ export default function Index() {
       }
     }
 
+    const offset = (target: HTMLElement) => {
+      const nav = document.getElementById("nav");
+      const pad = 16;
+      return Math.max(0, target.offsetTop - (nav ? nav.offsetHeight + pad : 80));
+    };
+
     document.querySelectorAll<HTMLElement>("[data-go]").forEach((b) =>
       on(b, "click", () => {
         const t = document.querySelector<HTMLElement>(b.dataset.go!);
-        if (t) scrollTo({ top: t.offsetTop - 80, behavior: reduce ? "auto" : "smooth" });
+        if (t) scrollTo({ top: offset(t), behavior: reduce ? "auto" : "smooth" });
       }),
     );
     document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) =>
@@ -394,7 +400,7 @@ export default function Index() {
         const t = document.querySelector<HTMLElement>(a.getAttribute("href")!);
         if (!t) return;
         ev.preventDefault();
-        scrollTo({ top: Math.max(0, t.offsetTop - 80), behavior: reduce ? "auto" : "smooth" });
+        scrollTo({ top: offset(t), behavior: reduce ? "auto" : "smooth" });
       }),
     );
 
@@ -581,8 +587,9 @@ export default function Index() {
           <img className="logo-img" src="/img/logo.png" alt="Alyxlab" width="1500" height="1500" />
         </a>
         <div className="nlinks">
-          <a href="#work">Work</a>
           <a href="#gets">What you get</a>
+          <a href="#work">Our work</a>
+          <a href="#how">How it works</a>
           <a href="#price">Pricing</a>
         </div>
         <button className="nbtn" data-go="#start">Get my free plan</button>
