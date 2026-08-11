@@ -9,8 +9,6 @@ const iconUrls = Object.values(
     import: "default",
   }),
 ) as string[];
-const railOne = iconUrls.slice(0, Math.ceil(iconUrls.length / 2));
-const railTwo = iconUrls.slice(Math.ceil(iconUrls.length / 2));
 
 
 
@@ -506,7 +504,7 @@ export default function Index() {
     }
 
     /* connections strip · seamless marquee + reveal */
-    const SPEED = 62; /* px per second, same for both rails */
+    const SPEED = 44; /* px per second */
     const railEls = [...document.querySelectorAll<HTMLElement>(".rail")];
     const railOriginals = new Map<HTMLElement, Element[]>();
     railEls.forEach((r) => railOriginals.set(r, [...r.children]));
@@ -703,12 +701,7 @@ export default function Index() {
 
       <div className="rails">
         <div className="rail r1" id="rail1" aria-hidden="true">
-          {railOne.map((src) => (
-            <img className="cicon" src={src} alt="" key={src} />
-          ))}
-        </div>
-        <div className="rail r2" id="rail2" aria-hidden="true">
-          {railTwo.map((src) => (
+          {iconUrls.map((src) => (
             <img className="cicon" src={src} alt="" key={src} />
           ))}
         </div>
