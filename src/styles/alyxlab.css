@@ -689,9 +689,9 @@ footer .end{margin-left:auto}
 .rail + .rail{margin-top:clamp(14px,1.8vw,24px)}
 /* the shift is one exact set width, measured in px, so the seam never drifts */
 .r1{animation:slideL var(--dur,24s) linear infinite}
-.r2{animation:slideR var(--dur,24s) linear infinite}
+.r2{animation:railSlideR var(--dur,24s) linear infinite}
 @keyframes slideL{from{transform:translateX(0)}to{transform:translateX(calc(var(--shift,0px) * -1))}}
-@keyframes slideR{from{transform:translateX(calc(var(--shift,0px) * -1))}to{transform:translateX(0)}}
+@keyframes railSlideR{from{transform:translateX(calc(var(--shift,0px) * -1))}to{transform:translateX(0)}}
 /* keep conns content above the grain overlay */
 .conns .clead,.conns .rails,.conns .cnote{position:relative;z-index:2}
 
