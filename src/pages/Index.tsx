@@ -581,8 +581,9 @@ export default function Index() {
           <img className="logo-img" src="/img/logo.png" alt="Alyxlab" width="1500" height="1500" />
         </a>
         <div className="nlinks">
-          <a href="#work">Work</a>
           <a href="#gets">What you get</a>
+          <a href="#work">Our work</a>
+          <a href="#how">How it works</a>
           <a href="#price">Pricing</a>
         </div>
         <button className="nbtn" data-go="#start">Get my free plan</button>
