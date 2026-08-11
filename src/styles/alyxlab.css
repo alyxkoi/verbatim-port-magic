@@ -577,7 +577,7 @@ footer .end{margin-left:auto}
 
 /* ===== ONE SYSTEM ===== */
 .onesys{position:relative;overflow:hidden;background:var(--void);color:var(--text);
-  padding:clamp(72px,9vw,124px) var(--pad) clamp(120px,14vw,190px);text-align:center}
+  padding:clamp(72px,9vw,124px) var(--pad) clamp(160px,15vw,200px);text-align:center}
 .onesys .eyebrow{color:var(--volt)}
 .onesys .lede{margin:18px auto 0;max-width:46ch}
 
