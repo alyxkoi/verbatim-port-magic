@@ -493,6 +493,63 @@ export default function Index() {
       ).observe(onesys);
     }
 
+    /* connections strip · seamless marquee + reveal */
+    const SPEED = 62; /* px per second, same for both rails */
+    const railEls = [...document.querySelectorAll<HTMLElement>(".rail")];
+    const railOriginals = new Map<HTMLElement, Element[]>();
+    railEls.forEach((r) => railOriginals.set(r, [...r.children]));
+    const buildRail = (rail: HTMLElement) => {
+      const originals = railOriginals.get(rail) ?? [];
+      if (!originals.length) return;
+      const setWidth = () =>
+        originals.reduce((w, el) => {
+          const cs = getComputedStyle(el);
+          return w + el.getBoundingClientRect().width + parseFloat(cs.marginRight || "0");
+        }, 0);
+      rail.replaceChildren(...originals);
+      const shift = setWidth();
+      if (shift < 1) return;
+      const need = Math.max(2, Math.ceil(((rail.parentElement?.clientWidth ?? 0) * 2) / shift));
+      for (let i = 1; i < need; i++) {
+        originals.forEach((el) => {
+          const clone = el.cloneNode(true) as HTMLElement;
+          clone.setAttribute("aria-hidden", "true");
+          rail.appendChild(clone);
+        });
+      }
+      rail.style.setProperty("--shift", shift.toFixed(2) + "px");
+      rail.style.setProperty("--dur", (shift / SPEED).toFixed(2) + "s");
+    };
+    const layout = () => railEls.forEach(buildRail);
+    /* wait for the images so the measurement is taken at real width, not zero */
+    if (document.readyState === "complete") layout();
+    else on(window, "load", layout);
+    let rt: ReturnType<typeof setTimeout> | null = null;
+    on(window, "resize", () => {
+      if (rt) clearTimeout(rt);
+      rt = setTimeout(layout, 180);
+    });
+    offs.push(() => {
+      if (rt) clearTimeout(rt);
+    });
+
+    const conns = document.getElementById("conns");
+    if (conns) {
+      mkIO(
+        (entries, o) => {
+          entries.forEach((x) => {
+            if (x.isIntersecting) {
+              x.target.classList.add("in");
+              o.unobserve(x.target);
+            }
+          });
+        },
+        { threshold: 0.2 },
+      ).observe(conns);
+    }
+
+
+
 
 
 
