@@ -684,6 +684,28 @@ export default function Index() {
         </div>
       </div>
     </section>
+
+    {/* ============ CONNECTIONS STRIP ============ */}
+    <section className="conns" id="conns">
+      <p className="clead">You keep what already works. <b>The system connects to it.</b></p>
+
+      <div className="rails">
+        <div className="rail r1" id="rail1" aria-hidden="true">
+          {railOne.map((src) => (
+            <img className="cicon" src={src} alt="" key={src} />
+          ))}
+        </div>
+        <div className="rail r2" id="rail2" aria-hidden="true">
+          {railTwo.map((src) => (
+            <img className="cicon" src={src} alt="" key={src} />
+          ))}
+        </div>
+      </div>
+
+      <p className="cnote">Not on the list? Tell me what you use and I will tell you honestly whether it connects.</p>
+    </section>
+    
+
     
     {/* ============ 4 · PRODUCT VIEWER ============ */}
     <section className="viewer light" id="gets">
