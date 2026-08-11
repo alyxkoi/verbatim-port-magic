@@ -691,7 +691,7 @@ footer .end{margin-left:auto}
 @keyframes slideR{from{transform:translateX(calc(var(--shift,0px) * -1))}to{transform:translateX(0)}}
 .rails:hover .rail{animation-play-state:paused}
 
-.cicon{flex:none;width:clamp(48px,5vw,64px);height:clamp(48px,5vw,64px);object-fit:contain;
+.cicon{flex:none;width:clamp(64px,6.5vw,88px);height:clamp(64px,6.5vw,88px);object-fit:contain;
   margin-right:clamp(20px,2.6vw,36px);
   filter:grayscale(1) brightness(1.25) contrast(.92);opacity:.6;
   transition:filter .5s var(--ease),opacity .5s var(--ease),transform .5s var(--ease)}
