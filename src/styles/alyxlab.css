@@ -689,8 +689,6 @@ footer .end{margin-left:auto}
 .r2{animation:slideR var(--dur,24s) linear infinite}
 @keyframes slideL{from{transform:translateX(0)}to{transform:translateX(calc(var(--shift,0px) * -1))}}
 @keyframes slideR{from{transform:translateX(calc(var(--shift,0px) * -1))}to{transform:translateX(0)}}
-.rails:hover .rail,
-.rail:hover{animation-play-state:paused}
 /* keep conns content above the grain overlay */
 .conns .clead,.conns .rails,.conns .cnote{position:relative;z-index:2}
 
