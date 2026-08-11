@@ -2,6 +2,18 @@ import { useEffect } from "react";
 import { GradientShimmer } from "@/components/ui/gradient-shimmer";
 import { supabase } from "@/integrations/supabase/client";
 
+const iconUrls = Object.values(
+  import.meta.glob("../assets/icons/*.{png,webp,svg}", {
+    eager: true,
+    query: "?url",
+    import: "default",
+  }),
+) as string[];
+const railOne = iconUrls.slice(0, Math.ceil(iconUrls.length / 2));
+const railTwo = iconUrls.slice(Math.ceil(iconUrls.length / 2));
+
+
+
 export default function Index() {
   useEffect(() => {
     document.documentElement.classList.add("js");
