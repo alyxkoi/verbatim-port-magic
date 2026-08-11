@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as GuidesIndexRouteImport } from './routes/guides.index'
 import { Route as GuidesBookingSystemCostRouteImport } from './routes/guides.booking-system-cost'
+import { Route as GuidesDallasBookingSystemRouteImport } from './routes/guides.dallas-booking-system'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,17 +35,25 @@ const GuidesBookingSystemCostRoute = GuidesBookingSystemCostRouteImport.update({
   path: '/guides/booking-system-cost',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuidesDallasBookingSystemRoute =
+  GuidesDallasBookingSystemRouteImport.update({
+    id: '/guides/dallas-booking-system',
+    path: '/guides/dallas-booking-system',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
+  '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
   '/guides/': typeof GuidesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
+  '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
   '/guides': typeof GuidesIndexRoute
 }
 export interface FileRoutesById {
@@ -52,18 +61,30 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
+  '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
   '/guides/': typeof GuidesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sitemap.xml' | '/guides/booking-system-cost' | '/guides/'
+  fullPaths:
+    | '/'
+    | '/sitemap.xml'
+    | '/guides/booking-system-cost'
+    | '/guides/dallas-booking-system'
+    | '/guides/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sitemap.xml' | '/guides/booking-system-cost' | '/guides'
+  to:
+    | '/'
+    | '/sitemap.xml'
+    | '/guides/booking-system-cost'
+    | '/guides/dallas-booking-system'
+    | '/guides'
   id:
     | '__root__'
     | '/'
     | '/sitemap.xml'
     | '/guides/booking-system-cost'
+    | '/guides/dallas-booking-system'
     | '/guides/'
   fileRoutesById: FileRoutesById
 }
@@ -71,6 +92,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   GuidesBookingSystemCostRoute: typeof GuidesBookingSystemCostRoute
+  GuidesDallasBookingSystemRoute: typeof GuidesDallasBookingSystemRoute
   GuidesIndexRoute: typeof GuidesIndexRoute
 }
 
@@ -104,6 +126,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuidesBookingSystemCostRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guides/dallas-booking-system': {
+      id: '/guides/dallas-booking-system'
+      path: '/guides/dallas-booking-system'
+      fullPath: '/guides/dallas-booking-system'
+      preLoaderRoute: typeof GuidesDallasBookingSystemRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -111,6 +140,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   GuidesBookingSystemCostRoute: GuidesBookingSystemCostRoute,
+  GuidesDallasBookingSystemRoute: GuidesDallasBookingSystemRoute,
   GuidesIndexRoute: GuidesIndexRoute,
 }
 export const routeTree = rootRouteImport
