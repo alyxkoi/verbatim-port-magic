@@ -513,11 +513,55 @@ nav.hide{transform:translateY(-150%)}
   background-repeat:no-repeat;background-position:right 15px center}
 .form select option{background:var(--surf)}
 .form .btn{justify-content:center;margin-top:4px}
-footer{position:relative;max-width:var(--shell);margin:0 auto;
-  padding:26px var(--pad) var(--gh);display:flex;align-items:center;
-  gap:14px 24px;flex-wrap:wrap;font-size:13px;color:var(--faint)}
-footer .logo-img{width:110px;height:28px;object-position:left center}
-footer .end{margin-left:auto}
+/* ===== SITE FOOTER ===== */
+footer{position:relative;background:var(--void);border-top:1px solid rgba(255,255,255,.09);
+  margin:clamp(48px,6vw,84px) calc(-1 * var(--pad)) 0;
+  padding:clamp(44px,5vw,68px) 0 var(--gh)}
+footer .fgrid,footer .fbar{max-width:var(--shell);margin:0 auto;
+  padding-left:var(--pad);padding-right:var(--pad);position:relative;z-index:2}
+footer .fgrid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1.1fr;
+  gap:clamp(28px,3.4vw,52px);text-align:left}
+footer .fcol{min-width:0}
+footer .fcol h3{font-size:12.5px;font-weight:700;color:var(--faint);
+  letter-spacing:.06em;text-transform:uppercase}
+footer .fcol ul{margin-top:16px;display:flex;flex-direction:column;gap:11px;list-style:none}
+footer .fcol ul a{font-size:14.5px;font-weight:500;color:var(--mute);
+  transition:color .35s var(--ease)}
+footer .fcol ul a:hover{color:var(--text)}
+footer .fall{color:var(--volt)!important}
+footer .fall:hover{color:var(--volt)!important;opacity:.82}
+footer .logo-img{width:110px;height:28px;object-fit:contain;object-position:left center}
+footer .fline{margin-top:16px;font-size:14.5px;line-height:1.6;color:var(--mute);max-width:42ch}
+footer .fnap{margin-top:20px;font-style:normal;font-size:14.5px;line-height:1.7;color:var(--mute)}
+footer .fnap strong{display:block;font-weight:700;color:var(--text)}
+footer .fnap a{color:var(--mute);transition:color .35s var(--ease)}
+footer .fnap a:hover{color:var(--text)}
+footer .fbtn{margin-top:16px;width:100%;justify-content:center}
+footer .fnote{margin-top:12px;font-size:14.5px;line-height:1.55;color:var(--mute)}
+footer .freach{margin-top:18px;gap:11px}
+footer .freach a{font-size:14.5px;font-weight:500;color:var(--mute)}
+footer .freach a:hover{color:var(--volt)}
+footer .fbar{margin-top:clamp(40px,5vw,64px);padding-top:24px;display:flex;
+  align-items:center;gap:12px 24px;font-size:13px;color:var(--faint)}
+footer .fbar::before{content:"";position:absolute;left:var(--pad);right:var(--pad);top:0;
+  height:1px;background:rgba(255,255,255,.09)}
+footer .fbar-links{margin-left:auto;display:flex;gap:20px}
+footer .fbar-links a{font-size:13px;color:var(--faint);transition:color .35s var(--ease)}
+footer .fbar-links a:hover{color:var(--text)}
+footer a:focus-visible,footer button:focus-visible{outline:2px solid var(--volt);
+  outline-offset:3px;border-radius:4px}
+@media(max-width:900px){
+  footer .fgrid{grid-template-columns:1fr 1fr}
+  footer .fbrand,footer .fstart{grid-column:1 / -1}
+  footer .fbtn{width:auto;min-width:220px}
+}
+@media(max-width:560px){
+  footer .fgrid{grid-template-columns:1fr}
+  footer .fbtn{width:100%}
+  footer .fbar{flex-direction:column;align-items:flex-start}
+  footer .fbar-links{margin-left:0}
+}
+
 
 /* gradient footer · the glow is pinned to the viewport floor and rises out of
    it over the last screen of scroll, full height exactly at the page end.
@@ -559,7 +603,6 @@ footer .end{margin-left:auto}
 }
 @media(max-width:560px){
   .fan{grid-template-columns:1fr}
-  footer .end{margin-left:0;width:100%}
 }
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition-duration:.01ms!important}

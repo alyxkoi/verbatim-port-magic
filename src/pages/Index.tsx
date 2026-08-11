@@ -1454,8 +1454,64 @@ export default function Index() {
         </div>
       </div>
       <footer>
-        <img className="logo-img" src="/img/logo.png" alt="Alyxlab" width="1500" height="1500" />
-        <span className="end">One person. Complete systems. Dallas, TX.</span>
+        <div className="fgrid">
+          <div className="fcol fbrand">
+            <img className="logo-img" src="/img/logo.png" alt="Alyxlab" width="1500" height="1500" />
+            <p className="fline">Complete business systems for local businesses. One place that answers, books, takes the deposit, and asks for the review.</p>
+            <address className="fnap">
+              <strong>ALYXLAB</strong>
+              839 S Good Latimer Expy<br />
+              Dallas, TX 75226<br />
+              <a href="tel:+14699431560">(469) 943 1560</a><br />
+              <a href="mailto:alyxlabwork@gmail.com">alyxlabwork@gmail.com</a>
+            </address>
+          </div>
+
+          <div className="fcol">
+            <h3>The system</h3>
+            <ul>
+              <li><a href="#gets">What you get</a></li>
+              <li><a href="#work">Our work</a></li>
+              <li><a href="#how">How it works</a></li>
+              <li><a href="#price">Pricing</a></li>
+              <li><a href="#start">Contact</a></li>
+            </ul>
+          </div>
+
+          <div className="fcol">
+            <h3>Guides</h3>
+            <ul>
+              <li><a href="/guides/missed-calls-after-hours">Why shops miss calls after hours</a></li>
+              <li><a href="/guides/booking-system-cost-dallas">What a booking system costs</a></li>
+              <li><a href="/guides/deposits-stop-no-shows">Using deposits to stop no shows</a></li>
+              <li><a href="/guides/one-system-vs-five-apps">One system or five apps</a></li>
+              <li><a className="fall" href="/guides">All guides</a></li>
+            </ul>
+          </div>
+
+          <div className="fcol fstart">
+            <h3>Get started</h3>
+            <button className="nbtn fbtn" data-go="#start">Get my free plan</button>
+            <p className="fnote">A written plan for your business, usually within a day. No cost.</p>
+            <div className="creach freach">
+              <a href="tel:+14699431560">
+                <svg viewBox="0 0 24 24"><path d="M6.5 3h3l1.5 4.5-2 1.5a13 13 0 0 0 6 6l1.5-2 4.5 1.5v3a2 2 0 0 1-2.2 2A17.5 17.5 0 0 1 4.5 5.2 2 2 0 0 1 6.5 3z"/></svg>
+                (469) 943 1560</a>
+              <a href="mailto:alyxlabwork@gmail.com">
+                <svg viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="m4.5 8 7.5 5 7.5-5"/></svg>
+                alyxlabwork@gmail.com</a>
+            </div>
+          </div>
+        </div>
+
+        <div className="fbar">
+          <span>© 2026 Alyxlab. One person. Complete systems. Dallas, TX.</span>
+          <div className="fbar-links">
+            <a href="/privacy">Privacy</a>
+            <a href="/terms">Terms</a>
+          </div>
+        </div>
+    
     
         <div className="gband" id="gband" aria-hidden="true">
           <svg viewBox="0 0 1271 599" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">

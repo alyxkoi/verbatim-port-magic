@@ -125,6 +125,23 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
                 "Complete business systems for local businesses: answering every call, booking the job, taking the deposit, and asking for the review.",
             },
             {
+              "@type": "LocalBusiness",
+              "@id": "https://alyxlab.com/#localbusiness",
+              name: "ALYXLAB",
+              url: "https://alyxlab.com",
+              telephone: "+1-469-943-1560",
+              email: "alyxlabwork@gmail.com",
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: "839 S Good Latimer Expy",
+                addressLocality: "Dallas",
+                addressRegion: "TX",
+                postalCode: "75226",
+                addressCountry: "US",
+              },
+              areaServed: "Dallas, TX",
+            },
+            {
               "@type": "WebSite",
               "@id": "https://alyxlab.com/#website",
               name: "Alyxlab",
