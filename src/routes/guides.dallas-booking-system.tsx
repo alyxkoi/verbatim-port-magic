@@ -12,6 +12,8 @@ export const Route = createFileRoute("/guides/dallas-booking-system")({
       { name: "description", content: DESC },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESC },
+      { name: "twitter:title", content: TITLE },
+      { name: "twitter:description", content: DESC },
       { property: "og:type", content: "article" },
       { property: "og:url", content: "https://alyxlab.com/guides/dallas-booking-system" },
       { name: "twitter:card", content: "summary_large_image" },
