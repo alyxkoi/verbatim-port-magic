@@ -2,6 +2,18 @@ import { useEffect } from "react";
 import { GradientShimmer } from "@/components/ui/gradient-shimmer";
 import { supabase } from "@/integrations/supabase/client";
 
+const iconUrls = Object.values(
+  import.meta.glob("../assets/icons/*.{png,webp,svg}", {
+    eager: true,
+    query: "?url",
+    import: "default",
+  }),
+) as string[];
+const railOne = iconUrls.slice(0, Math.ceil(iconUrls.length / 2));
+const railTwo = iconUrls.slice(Math.ceil(iconUrls.length / 2));
+
+
+
 export default function Index() {
   useEffect(() => {
     document.documentElement.classList.add("js");
@@ -493,6 +505,63 @@ export default function Index() {
       ).observe(onesys);
     }
 
+    /* connections strip · seamless marquee + reveal */
+    const SPEED = 62; /* px per second, same for both rails */
+    const railEls = [...document.querySelectorAll<HTMLElement>(".rail")];
+    const railOriginals = new Map<HTMLElement, Element[]>();
+    railEls.forEach((r) => railOriginals.set(r, [...r.children]));
+    const buildRail = (rail: HTMLElement) => {
+      const originals = railOriginals.get(rail) ?? [];
+      if (!originals.length) return;
+      const setWidth = () =>
+        originals.reduce((w, el) => {
+          const cs = getComputedStyle(el);
+          return w + el.getBoundingClientRect().width + parseFloat(cs.marginRight || "0");
+        }, 0);
+      rail.replaceChildren(...originals);
+      const shift = setWidth();
+      if (shift < 1) return;
+      const need = Math.max(2, Math.ceil(((rail.parentElement?.clientWidth ?? 0) * 2) / shift));
+      for (let i = 1; i < need; i++) {
+        originals.forEach((el) => {
+          const clone = el.cloneNode(true) as HTMLElement;
+          clone.setAttribute("aria-hidden", "true");
+          rail.appendChild(clone);
+        });
+      }
+      rail.style.setProperty("--shift", shift.toFixed(2) + "px");
+      rail.style.setProperty("--dur", (shift / SPEED).toFixed(2) + "s");
+    };
+    const layout = () => railEls.forEach(buildRail);
+    /* wait for the images so the measurement is taken at real width, not zero */
+    if (document.readyState === "complete") layout();
+    else on(window, "load", layout);
+    let rt: ReturnType<typeof setTimeout> | null = null;
+    on(window, "resize", () => {
+      if (rt) clearTimeout(rt);
+      rt = setTimeout(layout, 180);
+    });
+    offs.push(() => {
+      if (rt) clearTimeout(rt);
+    });
+
+    const conns = document.getElementById("conns");
+    if (conns) {
+      mkIO(
+        (entries, o) => {
+          entries.forEach((x) => {
+            if (x.isIntersecting) {
+              x.target.classList.add("in");
+              o.unobserve(x.target);
+            }
+          });
+        },
+        { threshold: 0.2 },
+      ).observe(conns);
+    }
+
+
+
 
 
 
@@ -627,6 +696,28 @@ export default function Index() {
         </div>
       </div>
     </section>
+
+    {/* ============ CONNECTIONS STRIP ============ */}
+    <section className="conns" id="conns">
+      <p className="clead">You keep what already works. <b>The system connects to it.</b></p>
+
+      <div className="rails">
+        <div className="rail r1" id="rail1" aria-hidden="true">
+          {railOne.map((src) => (
+            <img className="cicon" src={src} alt="" key={src} />
+          ))}
+        </div>
+        <div className="rail r2" id="rail2" aria-hidden="true">
+          {railTwo.map((src) => (
+            <img className="cicon" src={src} alt="" key={src} />
+          ))}
+        </div>
+      </div>
+
+      <p className="cnote">Not on the list? Tell me what you use and I will tell you honestly whether it connects.</p>
+    </section>
+    
+
     
     {/* ============ 4 · PRODUCT VIEWER ============ */}
     <section className="viewer light" id="gets">

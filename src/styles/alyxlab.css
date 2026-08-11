@@ -668,3 +668,47 @@ footer .end{margin-left:auto}
   .lines path{stroke-dashoffset:0}
   .one:before{opacity:1}
 }
+
+/* ===== CONNECTIONS STRIP ===== */
+.conns{position:relative;overflow:hidden;background:var(--void);color:var(--text);
+  padding:clamp(48px,6vw,80px) 0 clamp(56px,7vw,90px)}
+.clead{text-align:center;padding:0 var(--pad);
+  font-size:clamp(15px,1.5vw,18px);font-weight:600;letter-spacing:-.015em;color:var(--mute);
+  opacity:0;transform:translateY(14px);
+  transition:opacity .8s var(--ease),transform .9s var(--ease)}
+.conns.in .clead{opacity:1;transform:none}
+.clead b{color:var(--text);font-weight:700}
+
+.rails{margin-top:clamp(26px,3vw,38px);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent);
+  mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent)}
+.rail{display:flex;width:max-content;align-items:center;will-change:transform}
+.rail + .rail{margin-top:clamp(14px,1.8vw,24px)}
+/* the shift is one exact set width, measured in px, so the seam never drifts */
+.r1{animation:slideL var(--dur,24s) linear infinite}
+.r2{animation:slideR var(--dur,24s) linear infinite}
+@keyframes slideL{from{transform:translateX(0)}to{transform:translateX(calc(var(--shift,0px) * -1))}}
+@keyframes slideR{from{transform:translateX(calc(var(--shift,0px) * -1))}to{transform:translateX(0)}}
+.rails:hover .rail{animation-play-state:paused}
+
+.cicon{flex:none;width:clamp(48px,5vw,64px);height:clamp(48px,5vw,64px);object-fit:contain;
+  margin-right:clamp(20px,2.6vw,36px);
+  filter:grayscale(1) brightness(1.25) contrast(.92);opacity:.6;
+  transition:filter .5s var(--ease),opacity .5s var(--ease),transform .5s var(--ease)}
+.cicon:hover{filter:none;opacity:1;transform:translateY(-3px)}
+
+.cnote{margin-top:clamp(26px,3vw,36px);text-align:center;padding:0 var(--pad);
+  font-size:13.5px;color:var(--faint)}
+
+@media(max-width:640px){
+  .cicon{margin-right:18px}
+  .r1{animation-duration:34s}
+  .r2{animation-duration:38s}
+}
+@media(prefers-reduced-motion:reduce){
+  .rail{animation:none!important}
+  .rails{overflow-x:auto;scrollbar-width:none;
+    -webkit-mask-image:none;mask-image:none}
+  .rails::-webkit-scrollbar{display:none}
+  .clead{opacity:1;transform:none;transition:none}
+}
