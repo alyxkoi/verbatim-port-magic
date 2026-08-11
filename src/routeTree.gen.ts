@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as GuidesIndexRouteImport } from './routes/guides.index'
+import { Route as GuidesBookingSystemCostRouteImport } from './routes/guides.booking-system-cost'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,34 +29,48 @@ const GuidesIndexRoute = GuidesIndexRouteImport.update({
   path: '/guides/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuidesBookingSystemCostRoute = GuidesBookingSystemCostRouteImport.update({
+  id: '/guides/booking-system-cost',
+  path: '/guides/booking-system-cost',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/': typeof GuidesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides': typeof GuidesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/': typeof GuidesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/sitemap.xml' | '/guides/'
+  fullPaths: '/' | '/sitemap.xml' | '/guides/booking-system-cost' | '/guides/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/sitemap.xml' | '/guides'
-  id: '__root__' | '/' | '/sitemap.xml' | '/guides/'
+  to: '/' | '/sitemap.xml' | '/guides/booking-system-cost' | '/guides'
+  id:
+    | '__root__'
+    | '/'
+    | '/sitemap.xml'
+    | '/guides/booking-system-cost'
+    | '/guides/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  GuidesBookingSystemCostRoute: typeof GuidesBookingSystemCostRoute
   GuidesIndexRoute: typeof GuidesIndexRoute
 }
 
@@ -82,12 +97,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuidesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guides/booking-system-cost': {
+      id: '/guides/booking-system-cost'
+      path: '/guides/booking-system-cost'
+      fullPath: '/guides/booking-system-cost'
+      preLoaderRoute: typeof GuidesBookingSystemCostRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  GuidesBookingSystemCostRoute: GuidesBookingSystemCostRoute,
   GuidesIndexRoute: GuidesIndexRoute,
 }
 export const routeTree = rootRouteImport
