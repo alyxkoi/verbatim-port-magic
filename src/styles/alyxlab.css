@@ -552,7 +552,9 @@ footer .end{margin-left:auto}
   /* tighter deck so the side phones still fit on a narrow screen */
   .pdeck{--pw:clamp(150px,42vw,196px);--poff:58%}
   .tiers{grid-template-columns:1fr}
-  .tiers .tier:nth-child(2){order:-1}
+  .tiers .tier:nth-child(1){order:0}
+  .tiers .tier:nth-child(2){order:2}
+  .tiers .tier:nth-child(3){order:1}
   .cbox{grid-template-columns:1fr;gap:28px}
 }
 @media(max-width:560px){
