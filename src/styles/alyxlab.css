@@ -759,3 +759,60 @@ footer a:focus-visible,footer button:focus-visible{outline:2px solid var(--volt)
   .rails::-webkit-scrollbar{display:none}
   .clead{opacity:1;transform:none;transition:none}
 }
+
+/* ===== GUIDES · content pages ===== */
+.gpage{position:relative;background:var(--void);
+  padding:clamp(112px,13vh,150px) var(--pad) clamp(72px,9vw,120px)}
+.gcol{position:relative;z-index:2;max-width:720px;margin:0 auto}
+a.nbtn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+.gback{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:600;
+  color:var(--faint);transition:color .35s var(--ease)}
+.gback:hover{color:var(--text)}
+.gback svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.4;
+  stroke-linecap:round;stroke-linejoin:round}
+.gmeta{margin-top:14px;font-size:13px;font-weight:600;letter-spacing:.02em;color:var(--faint)}
+.gcol h1{font-size:clamp(34px,5vw,60px);font-weight:900;letter-spacing:-.045em;
+  line-height:1.02;margin-top:14px}
+.gcol h2{font-size:clamp(22px,2.6vw,32px);font-weight:800;letter-spacing:-.032em;
+  line-height:1.15;margin-top:clamp(46px,5vw,68px)}
+.gcol p{font-size:17px;line-height:1.7;color:var(--mute);margin-top:18px}
+.gcol ul{margin-top:18px;padding-left:20px;display:flex;flex-direction:column;gap:12px}
+.gcol li{font-size:17px;line-height:1.7;color:var(--mute)}
+.gcol li::marker{color:rgba(0,255,135,.55)}
+.gcol strong{color:var(--text);font-weight:700}
+.gcol a:not(.btn):not(.gback):not(.gcard){color:var(--text);
+  border-bottom:1px solid rgba(0,255,135,.45);transition:color .35s var(--ease)}
+.gcol a:not(.btn):not(.gback):not(.gcard):hover{color:var(--volt)}
+.gcol a:focus-visible,.gpage button:focus-visible{outline:2px solid var(--volt);
+  outline-offset:3px;border-radius:4px}
+
+/* answer box · first thing under the H1 */
+.ganswer{margin-top:26px;padding:clamp(20px,2.4vw,28px);border-radius:18px;
+  border:1px solid rgba(0,255,135,.26);background:rgba(0,255,135,.055)}
+.ganswer p{margin:0;font-size:17px;line-height:1.7;color:var(--text)}
+.ganswer h2{margin:0 0 10px;font-size:12.5px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--volt);line-height:1}
+
+/* end of post CTA */
+.gcta{margin-top:clamp(52px,6vw,80px);padding-top:clamp(30px,4vw,42px);
+  border-top:1px solid rgba(255,255,255,.09)}
+.gcta p{margin-top:0;font-size:17px;line-height:1.7;color:var(--text);max-width:56ch}
+.gcta .btn{margin-top:20px}
+.gcta-alt{margin-top:22px;font-size:14.5px;color:var(--faint)}
+
+/* index cards */
+.glist{margin-top:clamp(38px,5vw,54px);display:flex;flex-direction:column;gap:16px}
+.gcard{display:block;padding:clamp(22px,2.6vw,30px);border-radius:20px;
+  border:1px solid rgba(255,255,255,.11);background:rgba(255,255,255,.035);
+  transition:transform .5s var(--ease),background .5s var(--ease),border-color .5s var(--ease)}
+.gcard:hover{transform:translateY(-3px);background:rgba(255,255,255,.06);
+  border-color:rgba(0,255,135,.3)}
+.gcard h2{margin-top:0;font-size:clamp(20px,2.2vw,26px);font-weight:800;
+  letter-spacing:-.03em;line-height:1.2;color:var(--text)}
+.gcard p{margin-top:10px;font-size:16px;line-height:1.6}
+.gcard .gmeta{margin-top:14px}
+.gcol .lede{margin-top:18px}
+@media(max-width:560px){
+  .gcol h1{line-height:1.06}
+  .gcol p,.gcol li,.ganswer p{font-size:16.5px}
+}

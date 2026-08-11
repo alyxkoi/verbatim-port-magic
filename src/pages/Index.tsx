@@ -1481,12 +1481,11 @@ export default function Index() {
           <div className="fcol">
             <h3>Guides</h3>
             <ul>
-              <li><a href="/guides/missed-calls-after-hours">Why shops miss calls after hours</a></li>
-              <li><a href="/guides/booking-system-cost-dallas">What a booking system costs</a></li>
-              <li><a href="/guides/deposits-stop-no-shows">Using deposits to stop no shows</a></li>
-              <li><a href="/guides/one-system-vs-five-apps">One system or five apps</a></li>
+              <li><a href="/guides/booking-system-cost">What a booking system costs</a></li>
+              <li><a href="/guides/dallas-booking-system">Hiring someone in Dallas</a></li>
               <li><a className="fall" href="/guides">All guides</a></li>
             </ul>
+
           </div>
 
           <div className="fcol fstart">
