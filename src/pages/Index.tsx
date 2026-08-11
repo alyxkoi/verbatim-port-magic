@@ -772,7 +772,7 @@ export default function Index() {
             <figure className="pmock">
               <div className="pframe">
                 <div className="shot phone" data-src="/img/phone-1.jpg">
-                  <img alt="Morning summary screen showing messages answered, missed calls handled, and new bookings" loading="lazy" />
+                  <img alt="Morning summary screen showing messages answered, missed calls handled, and new bookings" fetchPriority="high" />
                   <div className="ph"><b>Morning summary</b><i>1080 × 1935</i></div>
                 </div>
               </div>
@@ -781,7 +781,7 @@ export default function Index() {
             <figure className="pmock">
               <div className="pframe">
                 <div className="shot phone" data-src="/img/phone-2.jpg">
-                  <img alt="Revenue dashboard showing the weekly total, leads, bookings, and close rate" loading="lazy" />
+                  <img alt="Revenue dashboard showing the weekly total, leads, bookings, and close rate" />
                   <div className="ph"><b>Revenue</b><i>1080 × 1935</i></div>
                 </div>
               </div>
@@ -790,7 +790,7 @@ export default function Index() {
             <figure className="pmock">
               <div className="pframe">
                 <div className="shot phone" data-src="/img/phone-3.jpg">
-                  <img alt="Booking calendar showing the appointments scheduled for today" loading="lazy" />
+                  <img alt="Booking calendar showing the appointments scheduled for today" />
                   <div className="ph"><b>Today</b><i>1080 × 1935</i></div>
                 </div>
               </div>
