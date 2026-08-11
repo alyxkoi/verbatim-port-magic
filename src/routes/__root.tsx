@@ -103,6 +103,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { rel: "stylesheet", href: alyxlabCss },
       { rel: "preload", as: "image", href: "/img/hero-dashboard.webp", fetchPriority: "high" },
+      { rel: "preload", as: "image", href: "/img/phone-1.jpg" },
+      { rel: "preload", as: "image", href: "/img/phone-2.jpg" },
+      { rel: "preload", as: "image", href: "/img/phone-3.jpg" },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
     scripts: [
