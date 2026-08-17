@@ -72,8 +72,9 @@ export const STATUS_MAP: Record<string, [string, string]> = {
  */
 export function deriveDisplayStatus(
   lead: LeadMachine,
-  opts: { hasPlan?: boolean } = {},
+  opts: { hasPlan?: boolean; manual?: DisplayStatus | null } = {},
 ): DisplayStatus {
+  // Opted out beats everything, and no manual change overrides it (3.5).
   if (lead.opted_out_at || lead.automation_state === "opted_out") return "closed";
   if (lead.stage === "closed" || lead.screening_state === "junk") return "closed";
   if (lead.stage === "won") return "won";
@@ -84,9 +85,31 @@ export function deriveDisplayStatus(
   ) {
     return "review";
   }
+  if (opts.manual) return opts.manual;
   if (opts.hasPlan) return "drafted";
   if (lead.stage === "talking") return "talking";
   return "new";
+}
+
+/**
+ * A manual status choice is kept as a `status:<value>` marker on `lead.tags`
+ * so the visible status stays derived rather than stored in its own column.
+ */
+export const MANUAL_STATUS_PREFIX = "status:";
+
+export function manualStatusFromTags(tags: string[] | null | undefined) {
+  const marker = (tags ?? []).find((tag) => tag.startsWith(MANUAL_STATUS_PREFIX));
+  if (!marker) return null;
+  const value = marker.slice(MANUAL_STATUS_PREFIX.length) as DisplayStatus;
+  return LEAD_MANUAL_STATUS_OPTIONS.some(([status]) => status === value) ? value : null;
+}
+
+export function withManualStatusTag(
+  tags: string[] | null | undefined,
+  status: DisplayStatus | null,
+) {
+  const rest = (tags ?? []).filter((tag) => !tag.startsWith(MANUAL_STATUS_PREFIX));
+  return status ? [...rest, `${MANUAL_STATUS_PREFIX}${status}`] : rest;
 }
 
 export const LEAD_FILTERS: Array<[string, string]> = [
