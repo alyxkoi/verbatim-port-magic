@@ -29,6 +29,7 @@ import { Route as ApiPublicDailyMaintenanceRouteImport } from './routes/api/publ
 import { Route as ApiPublicLeadIntakeRouteImport } from './routes/api/public/lead-intake'
 import { Route as ApiPublicMessageWorkerRouteImport } from './routes/api/public/message-worker'
 import { Route as ApiPublicSentWebhookRouteImport } from './routes/api/public/sent-webhook'
+import { Route as ApiPublicStripePlatformWebhookRouteImport } from './routes/api/public/stripe-platform-webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -139,6 +140,12 @@ const ApiPublicSentWebhookRoute = ApiPublicSentWebhookRouteImport.update({
   path: '/api/public/sent-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicStripePlatformWebhookRoute =
+  ApiPublicStripePlatformWebhookRouteImport.update({
+    id: '/api/public/stripe-platform-webhook',
+    path: '/api/public/stripe-platform-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -159,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/api/public/lead-intake': typeof ApiPublicLeadIntakeRoute
   '/api/public/message-worker': typeof ApiPublicMessageWorkerRoute
   '/api/public/sent-webhook': typeof ApiPublicSentWebhookRoute
+  '/api/public/stripe-platform-webhook': typeof ApiPublicStripePlatformWebhookRoute
   '/console/': typeof AuthenticatedConsoleIndexRoute
 }
 export interface FileRoutesByTo {
@@ -179,6 +187,7 @@ export interface FileRoutesByTo {
   '/api/public/lead-intake': typeof ApiPublicLeadIntakeRoute
   '/api/public/message-worker': typeof ApiPublicMessageWorkerRoute
   '/api/public/sent-webhook': typeof ApiPublicSentWebhookRoute
+  '/api/public/stripe-platform-webhook': typeof ApiPublicStripePlatformWebhookRoute
   '/console': typeof AuthenticatedConsoleIndexRoute
 }
 export interface FileRoutesById {
@@ -202,6 +211,7 @@ export interface FileRoutesById {
   '/api/public/lead-intake': typeof ApiPublicLeadIntakeRoute
   '/api/public/message-worker': typeof ApiPublicMessageWorkerRoute
   '/api/public/sent-webhook': typeof ApiPublicSentWebhookRoute
+  '/api/public/stripe-platform-webhook': typeof ApiPublicStripePlatformWebhookRoute
   '/_authenticated/console/': typeof AuthenticatedConsoleIndexRoute
 }
 export interface FileRouteTypes {
@@ -225,6 +235,7 @@ export interface FileRouteTypes {
     | '/api/public/lead-intake'
     | '/api/public/message-worker'
     | '/api/public/sent-webhook'
+    | '/api/public/stripe-platform-webhook'
     | '/console/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -245,6 +256,7 @@ export interface FileRouteTypes {
     | '/api/public/lead-intake'
     | '/api/public/message-worker'
     | '/api/public/sent-webhook'
+    | '/api/public/stripe-platform-webhook'
     | '/console'
   id:
     | '__root__'
@@ -267,6 +279,7 @@ export interface FileRouteTypes {
     | '/api/public/lead-intake'
     | '/api/public/message-worker'
     | '/api/public/sent-webhook'
+    | '/api/public/stripe-platform-webhook'
     | '/_authenticated/console/'
   fileRoutesById: FileRoutesById
 }
@@ -282,6 +295,7 @@ export interface RootRouteChildren {
   ApiPublicLeadIntakeRoute: typeof ApiPublicLeadIntakeRoute
   ApiPublicMessageWorkerRoute: typeof ApiPublicMessageWorkerRoute
   ApiPublicSentWebhookRoute: typeof ApiPublicSentWebhookRoute
+  ApiPublicStripePlatformWebhookRoute: typeof ApiPublicStripePlatformWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -426,6 +440,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicSentWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/stripe-platform-webhook': {
+      id: '/api/public/stripe-platform-webhook'
+      path: '/api/public/stripe-platform-webhook'
+      fullPath: '/api/public/stripe-platform-webhook'
+      preLoaderRoute: typeof ApiPublicStripePlatformWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -477,6 +498,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicLeadIntakeRoute: ApiPublicLeadIntakeRoute,
   ApiPublicMessageWorkerRoute: ApiPublicMessageWorkerRoute,
   ApiPublicSentWebhookRoute: ApiPublicSentWebhookRoute,
+  ApiPublicStripePlatformWebhookRoute: ApiPublicStripePlatformWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
