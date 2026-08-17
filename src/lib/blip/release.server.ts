@@ -56,8 +56,24 @@ export function canonicalConfig(config: BlipConfig): BlipConfig {
   };
 }
 
+/**
+ * Deep key-sorted bytes. JSONB does not preserve object key order, so a config
+ * read back from the database must serialise identically to the same config in
+ * memory or the draft would always look dirty.
+ */
+function stableStringify(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
+  if (value && typeof value === "object") {
+    const entries = Object.entries(value as Record<string, unknown>)
+      .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+      .map(([key, item]) => `${JSON.stringify(key)}:${stableStringify(item)}`);
+    return `{${entries.join(",")}}`;
+  }
+  return JSON.stringify(value) ?? "null";
+}
+
 function serialise(config: BlipConfig) {
-  return JSON.stringify(canonicalConfig(config));
+  return stableStringify(canonicalConfig(config));
 }
 
 /** The draft: granular config items, one row per area. */
