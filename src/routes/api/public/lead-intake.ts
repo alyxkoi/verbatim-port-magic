@@ -134,7 +134,6 @@ export const Route = createFileRoute("/api/public/lead-intake")({
             body: parsed.message,
             status: "delivered",
             sent_at: new Date().toISOString(),
-            authored_by: "lead",
             segments: Math.max(1, Math.ceil(parsed.message.length / 160)),
           });
         }

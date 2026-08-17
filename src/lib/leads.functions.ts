@@ -463,7 +463,6 @@ export const recordInboundMessage = createServerFn({ method: "POST" })
       body: data.body,
       status: "delivered",
       sent_at: now,
-      authored_by: "lead",
       segments: segmentsFor(data.body),
     });
     if (error) throw error;
