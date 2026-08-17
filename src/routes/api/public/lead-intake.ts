@@ -163,6 +163,23 @@ export const Route = createFileRoute("/api/public/lead-intake")({
           await sendConfirmationEmail(parsed.email, parsed.business);
         }
 
+        // Generate at receive (reference 4.3). The precedence stack inside the
+        // pipeline decides whether anything is drafted at all, and a failure
+        // here must never lose the lead.
+        if (screening.state === "clean" || screening.state === "soft_flag") {
+          try {
+            const { runInboundPipeline } = await import("@/lib/blip/pipeline.server");
+            await runInboundPipeline(supabaseAdmin, lead.id);
+          } catch (error) {
+            await supabaseAdmin.from("event_log").insert({
+              entity: "lead",
+              entity_id: lead.id,
+              action: "blip_failed",
+              detail: { job: "pipeline", message: (error as Error).message },
+            });
+          }
+        }
+
         // The public response never reveals the screening decision.
         return json({ ok: true });
       },
