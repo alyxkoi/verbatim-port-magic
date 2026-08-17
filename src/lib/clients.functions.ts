@@ -179,3 +179,36 @@ export const disconnectStripe = createServerFn({ method: "POST" })
 
     return { ok: true };
   });
+
+/**
+ * Clients past 80 percent of their included segments, surfaced in the Today
+ * queue. Nothing here blocks a send; it is a heads up only.
+ */
+export const listUsageWarnings = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase } = context;
+    const [{ data: clients }, { data: usage }] = await Promise.all([
+      supabase.from("client").select("id, name, tier, started_at, status").eq("status", "active"),
+      supabase.from("client_usage").select("client_id, period_start, segments_used"),
+    ]);
+
+    return (clients ?? [])
+      .map((client) => {
+        const period = periodStart(client.started_at);
+        const row = (usage ?? []).find(
+          (item) => item.client_id === client.id && item.period_start === period,
+        );
+        const segments = row?.segments_used ?? 0;
+        return {
+          id: client.id,
+          name: client.name,
+          pct: usagePct(segments, client.tier),
+          segments,
+          allowance: allowanceFor(client.tier),
+          overage: overageDollars(segments, client.tier),
+        };
+      })
+      .filter((row) => row.pct >= 80)
+      .sort((a, b) => b.pct - a.pct);
+  });
