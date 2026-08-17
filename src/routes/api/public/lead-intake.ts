@@ -131,6 +131,7 @@ export const Route = createFileRoute("/api/public/lead-intake")({
           const { error: messageError } = await supabaseAdmin.from("message").insert({
             lead_id: lead.id,
             direction: "inbound",
+            authored_by: "lead",
             body: parsed.message,
             status: "delivered",
             sent_at: new Date().toISOString(),

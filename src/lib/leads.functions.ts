@@ -508,6 +508,7 @@ export const recordInboundMessage = createServerFn({ method: "POST" })
     const { error } = await supabase.from("message").insert({
       lead_id: data.leadId,
       direction: "inbound",
+      authored_by: "lead",
       body: data.body,
       status: "delivered",
       sent_at: now,
