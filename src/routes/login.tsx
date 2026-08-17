@@ -247,10 +247,7 @@ function LoginPage() {
       <main className="shell">
         <section className="card">
           <div className="card-head">
-            <div className="logo" aria-hidden="true">
-              al
-            </div>
-            <h1>Alyx Lab</h1>
+            <img className="brand-mark" src="/img/logo.png" alt="Alyx Lab" width="1500" height="1500" />
             <p>Sign in to the console.</p>
           </div>
 
