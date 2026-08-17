@@ -162,7 +162,7 @@ export const saveNotifications = createServerFn({ method: "POST" })
     const { error } = await supabase.from("blip_config_item").upsert(
       {
         key: NOTIFICATION_KEY,
-        area: "operations",
+        area: "behavior",
         value: data.notifications,
         updated_at: new Date().toISOString(),
       },
