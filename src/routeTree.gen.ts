@@ -29,6 +29,7 @@ import { Route as ApiPublicDailyMaintenanceRouteImport } from './routes/api/publ
 import { Route as ApiPublicLeadIntakeRouteImport } from './routes/api/public/lead-intake'
 import { Route as ApiPublicMessageWorkerRouteImport } from './routes/api/public/message-worker'
 import { Route as ApiPublicSentWebhookRouteImport } from './routes/api/public/sent-webhook'
+import { Route as ApiPublicStripeConnectCallbackRouteImport } from './routes/api/public/stripe-connect-callback'
 import { Route as ApiPublicStripeConnectWebhookRouteImport } from './routes/api/public/stripe-connect-webhook'
 import { Route as ApiPublicStripePlatformWebhookRouteImport } from './routes/api/public/stripe-platform-webhook'
 
@@ -141,6 +142,12 @@ const ApiPublicSentWebhookRoute = ApiPublicSentWebhookRouteImport.update({
   path: '/api/public/sent-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicStripeConnectCallbackRoute =
+  ApiPublicStripeConnectCallbackRouteImport.update({
+    id: '/api/public/stripe-connect-callback',
+    path: '/api/public/stripe-connect-callback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicStripeConnectWebhookRoute =
   ApiPublicStripeConnectWebhookRouteImport.update({
     id: '/api/public/stripe-connect-webhook',
@@ -173,6 +180,7 @@ export interface FileRoutesByFullPath {
   '/api/public/lead-intake': typeof ApiPublicLeadIntakeRoute
   '/api/public/message-worker': typeof ApiPublicMessageWorkerRoute
   '/api/public/sent-webhook': typeof ApiPublicSentWebhookRoute
+  '/api/public/stripe-connect-callback': typeof ApiPublicStripeConnectCallbackRoute
   '/api/public/stripe-connect-webhook': typeof ApiPublicStripeConnectWebhookRoute
   '/api/public/stripe-platform-webhook': typeof ApiPublicStripePlatformWebhookRoute
   '/console/': typeof AuthenticatedConsoleIndexRoute
@@ -195,6 +203,7 @@ export interface FileRoutesByTo {
   '/api/public/lead-intake': typeof ApiPublicLeadIntakeRoute
   '/api/public/message-worker': typeof ApiPublicMessageWorkerRoute
   '/api/public/sent-webhook': typeof ApiPublicSentWebhookRoute
+  '/api/public/stripe-connect-callback': typeof ApiPublicStripeConnectCallbackRoute
   '/api/public/stripe-connect-webhook': typeof ApiPublicStripeConnectWebhookRoute
   '/api/public/stripe-platform-webhook': typeof ApiPublicStripePlatformWebhookRoute
   '/console': typeof AuthenticatedConsoleIndexRoute
@@ -220,6 +229,7 @@ export interface FileRoutesById {
   '/api/public/lead-intake': typeof ApiPublicLeadIntakeRoute
   '/api/public/message-worker': typeof ApiPublicMessageWorkerRoute
   '/api/public/sent-webhook': typeof ApiPublicSentWebhookRoute
+  '/api/public/stripe-connect-callback': typeof ApiPublicStripeConnectCallbackRoute
   '/api/public/stripe-connect-webhook': typeof ApiPublicStripeConnectWebhookRoute
   '/api/public/stripe-platform-webhook': typeof ApiPublicStripePlatformWebhookRoute
   '/_authenticated/console/': typeof AuthenticatedConsoleIndexRoute
@@ -245,6 +255,7 @@ export interface FileRouteTypes {
     | '/api/public/lead-intake'
     | '/api/public/message-worker'
     | '/api/public/sent-webhook'
+    | '/api/public/stripe-connect-callback'
     | '/api/public/stripe-connect-webhook'
     | '/api/public/stripe-platform-webhook'
     | '/console/'
@@ -267,6 +278,7 @@ export interface FileRouteTypes {
     | '/api/public/lead-intake'
     | '/api/public/message-worker'
     | '/api/public/sent-webhook'
+    | '/api/public/stripe-connect-callback'
     | '/api/public/stripe-connect-webhook'
     | '/api/public/stripe-platform-webhook'
     | '/console'
@@ -291,6 +303,7 @@ export interface FileRouteTypes {
     | '/api/public/lead-intake'
     | '/api/public/message-worker'
     | '/api/public/sent-webhook'
+    | '/api/public/stripe-connect-callback'
     | '/api/public/stripe-connect-webhook'
     | '/api/public/stripe-platform-webhook'
     | '/_authenticated/console/'
@@ -308,6 +321,7 @@ export interface RootRouteChildren {
   ApiPublicLeadIntakeRoute: typeof ApiPublicLeadIntakeRoute
   ApiPublicMessageWorkerRoute: typeof ApiPublicMessageWorkerRoute
   ApiPublicSentWebhookRoute: typeof ApiPublicSentWebhookRoute
+  ApiPublicStripeConnectCallbackRoute: typeof ApiPublicStripeConnectCallbackRoute
   ApiPublicStripeConnectWebhookRoute: typeof ApiPublicStripeConnectWebhookRoute
   ApiPublicStripePlatformWebhookRoute: typeof ApiPublicStripePlatformWebhookRoute
 }
@@ -454,6 +468,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicSentWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/stripe-connect-callback': {
+      id: '/api/public/stripe-connect-callback'
+      path: '/api/public/stripe-connect-callback'
+      fullPath: '/api/public/stripe-connect-callback'
+      preLoaderRoute: typeof ApiPublicStripeConnectCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/stripe-connect-webhook': {
       id: '/api/public/stripe-connect-webhook'
       path: '/api/public/stripe-connect-webhook'
@@ -519,6 +540,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicLeadIntakeRoute: ApiPublicLeadIntakeRoute,
   ApiPublicMessageWorkerRoute: ApiPublicMessageWorkerRoute,
   ApiPublicSentWebhookRoute: ApiPublicSentWebhookRoute,
+  ApiPublicStripeConnectCallbackRoute: ApiPublicStripeConnectCallbackRoute,
   ApiPublicStripeConnectWebhookRoute: ApiPublicStripeConnectWebhookRoute,
   ApiPublicStripePlatformWebhookRoute: ApiPublicStripePlatformWebhookRoute,
 }
