@@ -20,6 +20,7 @@ import {
   runReplay,
   saveBlipArea,
   selectCorrectionAreas,
+  setAutonomy,
 } from "@/lib/blip.functions";
 import {
   AUTONOMY_LEVELS,
@@ -866,10 +867,7 @@ function AutonomyButton({
   active: boolean;
   onDone: (message: string) => void;
 }) {
-  const setLevel = useServerFn(
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    autonomyFn,
-  );
+  const setLevel = useServerFn(setAutonomy);
   const mutation = useMutation({
     mutationFn: () => setLevel({ data: { level: id as "draft" | "assisted" | "live" } }),
     onSuccess: () =>
