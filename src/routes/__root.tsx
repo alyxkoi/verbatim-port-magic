@@ -10,7 +10,6 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import alyxlabCss from "../styles/alyxlab.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
@@ -101,7 +100,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "stylesheet", href: alyxlabCss },
       { rel: "preload", as: "image", href: "/img/hero-dashboard.webp", fetchPriority: "high" },
       { rel: "preload", as: "image", href: "/img/phone-1.jpg" },
       { rel: "preload", as: "image", href: "/img/phone-2.jpg" },

@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import alyxlabCss from "@/styles/alyxlab.css?url";
 import Index from "../pages/Index";
 
 const HOME_TITLE = "Booking, Payments and Reviews in One System | Dallas | ALYXLAB";
@@ -18,7 +19,7 @@ export const Route = createFileRoute("/")({
       { property: "og:url", content: "https://alyxlab.com/" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://alyxlab.com/" }],
+    links: [{ rel: "stylesheet", href: alyxlabCss }, { rel: "canonical", href: "https://alyxlab.com/" }],
     scripts: [
       {
         type: "application/ld+json",
