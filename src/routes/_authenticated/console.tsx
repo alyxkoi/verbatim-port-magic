@@ -1,16 +1,36 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useRouter, useRouterState } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
+import { Icon } from "@/components/console/icons";
+import { NAV, SCREEN_META, daypartForNow, viewFromPathname } from "@/components/console/nav";
 import { supabase } from "@/integrations/supabase/client";
+import consoleCss from "../../styles/console.css?url";
 
 export const Route = createFileRoute("/_authenticated/console")({
   head: () => ({
     meta: [
       { title: "Console · Alyx Lab" },
       { name: "robots", content: "noindex, nofollow" },
-      { name: "description", content: "Alyx Lab operator console." },
+      { name: "theme-color", content: "#000000" },
+      {
+        name: "description",
+        content: "Alyx Lab's private lead-to-plan operations console.",
+      },
       { property: "og:title", content: "Console · Alyx Lab" },
-      { property: "og:description", content: "Alyx Lab operator console." },
+      {
+        property: "og:description",
+        content: "Alyx Lab's private lead-to-plan operations console.",
+      },
+    ],
+    links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap",
+      },
+      { rel: "stylesheet", href: consoleCss },
     ],
   }),
   component: ConsoleShell,
@@ -19,7 +39,39 @@ export const Route = createFileRoute("/_authenticated/console")({
 function ConsoleShell() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { user } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const view = viewFromPathname(pathname);
+  const [title, subtitle] = SCREEN_META[view];
+
+  // The clock and the daypart scene both tick off the same 30s interval the
+  // prototype used.
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 30000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const daypart = daypartForNow(now);
+
+  // The stylesheet keys the daypart scenes and the view off body attributes.
+  useEffect(() => {
+    document.body.dataset["daypart"] = daypart;
+    document.body.dataset["view"] = view;
+    return () => {
+      delete document.body.dataset["daypart"];
+      delete document.body.dataset["view"];
+    };
+  }, [daypart, view]);
+
+  const liveTime = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(now);
+  const todayDate = new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  }).format(now);
 
   async function handleSignOut() {
     await queryClient.cancelQueries();
@@ -29,75 +81,90 @@ function ConsoleShell() {
   }
 
   return (
-    <div
-      style={{
-        minHeight: "100dvh",
-        background: "#000000",
-        color: "#ffffff",
-        fontFamily:
-          '"Lufga", "Outfit", -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif',
-        display: "grid",
-        gridTemplateRows: "auto 1fr",
-      }}
-    >
-      <header
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "16px",
-          padding: "18px 22px",
-          borderBottom: "1px solid rgba(255, 255, 255, .105)",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <div
-            style={{
-              display: "grid",
-              placeItems: "center",
-              width: "34px",
-              height: "34px",
-              borderRadius: "11px",
-              background: "#d7ff00",
-              color: "#0d0f08",
-              fontSize: "13px",
-              fontWeight: 800,
-              letterSpacing: "-.06em",
-            }}
-            aria-hidden="true"
-          >
-            al
-          </div>
-          <span style={{ fontSize: "14.5px", fontWeight: 600, letterSpacing: "-.02em" }}>Console</span>
+    <>
+      <a className="skip-link" href="#main-content">
+        Skip to content
+      </a>
+      <aside className="desktop-rail" aria-label="Primary navigation">
+        <div className="brand-mark" aria-label="Alyx Lab">
+          <span className="brand-compact">al</span>
+          <span className="brand-full">Alyx Lab</span>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
-          <span style={{ fontSize: "12.5px", color: "rgba(255, 255, 255, .64)" }}>{user.email}</span>
-          <button
-            type="button"
-            onClick={() => void handleSignOut()}
-            style={{
-              minHeight: "38px",
-              padding: "0 16px",
-              border: "1px solid rgba(255, 255, 255, .105)",
-              borderRadius: "12px",
-              background: "transparent",
-              color: "#ffffff",
-              font: "inherit",
-              fontSize: "13px",
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-          >
-            Sign out
-          </button>
-        </div>
-      </header>
+        <nav className="rail-nav" id="desktopNav">
+          {NAV.map((item) => (
+            <Link
+              key={item.id}
+              className={`nav-button ${view === item.id ? "is-active" : ""}`}
+              to={item.to}
+              data-label={item.label}
+              aria-label={item.label}
+              aria-current={view === item.id ? "page" : "false"}
+              style={{ textDecoration: "none" }}
+            >
+              <Icon name={item.icon} />
+              <span className="nav-text">{item.label}</span>
+            </Link>
+          ))}
+        </nav>
+        <button
+          className="rail-profile"
+          type="button"
+          title="Sign out of the Alyx account"
+          aria-label="Sign out of the Alyx account"
+          onClick={() => void handleSignOut()}
+        >
+          A
+        </button>
+      </aside>
 
-      <main style={{ display: "grid", placeItems: "center", padding: "40px 22px" }}>
-        <p style={{ margin: 0, fontSize: "13px", color: "rgba(255, 255, 255, .38)" }}>
-          Console shell. Nothing here yet.
-        </p>
-      </main>
-    </div>
+      <nav className="mobile-nav" id="mobileNav" aria-label="Primary navigation">
+        {NAV.map((item) => (
+          <Link
+            key={item.id}
+            className={`nav-button ${view === item.id ? "is-active" : ""}`}
+            to={item.to}
+            aria-label={item.label}
+            aria-current={view === item.id ? "page" : "false"}
+            style={{ textDecoration: "none" }}
+          >
+            <Icon name={item.icon} />
+            <span>{item.label}</span>
+          </Link>
+        ))}
+      </nav>
+
+      <div className="app-shell">
+        <header className="topbar">
+          <div>
+            <p className="wordmark">Alyx Lab</p>
+            <h1 className="screen-title" id="screenTitle">
+              {title}
+            </h1>
+            <p className="screen-subtitle" id="screenSubtitle">
+              {subtitle}
+            </p>
+          </div>
+          <div className="topbar-meta" aria-label="Console status">
+            <div className="date-block">
+              <strong id="liveTime">{liveTime}</strong>
+              <span id="todayDate">{todayDate}</span>
+            </div>
+            <div className="sync-block" id="automationConsoleStatus">
+              <strong className="live-line">
+                <span className="live-dot" aria-hidden="true"></span>
+                <span id="automationStatusLabel">Automation live</span>
+              </strong>
+              <span id="automationStatusDetail">All systems ready</span>
+            </div>
+          </div>
+        </header>
+        <main id="main-content" tabIndex={-1}>
+          <Outlet />
+        </main>
+      </div>
+
+      <div className="panel-layer" id="panelLayer" aria-hidden="true"></div>
+      <div className="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+    </>
   );
 }
