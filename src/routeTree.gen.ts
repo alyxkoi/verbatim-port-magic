@@ -14,7 +14,6 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as AuthenticatedConsoleRouteImport } from './routes/_authenticated/console'
-import { Route as ApiBootstrapOperatorRouteImport } from './routes/api/bootstrap-operator'
 import { Route as GuidesIndexRouteImport } from './routes/guides.index'
 import { Route as GuidesBookingSystemCostRouteImport } from './routes/guides.booking-system-cost'
 import { Route as GuidesDallasBookingSystemRouteImport } from './routes/guides.dallas-booking-system'
@@ -43,11 +42,6 @@ const AuthenticatedConsoleRoute = AuthenticatedConsoleRouteImport.update({
   path: '/console',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const ApiBootstrapOperatorRoute = ApiBootstrapOperatorRouteImport.update({
-  id: '/api/bootstrap-operator',
-  path: '/api/bootstrap-operator',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const GuidesIndexRoute = GuidesIndexRouteImport.update({
   id: '/guides/',
   path: '/guides/',
@@ -70,7 +64,6 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/console': typeof AuthenticatedConsoleRoute
-  '/api/bootstrap-operator': typeof ApiBootstrapOperatorRoute
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
   '/guides/': typeof GuidesIndexRoute
@@ -80,7 +73,6 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/console': typeof AuthenticatedConsoleRoute
-  '/api/bootstrap-operator': typeof ApiBootstrapOperatorRoute
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
   '/guides': typeof GuidesIndexRoute
@@ -92,7 +84,6 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/console': typeof AuthenticatedConsoleRoute
-  '/api/bootstrap-operator': typeof ApiBootstrapOperatorRoute
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
   '/guides/': typeof GuidesIndexRoute
@@ -104,7 +95,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/sitemap.xml'
     | '/console'
-    | '/api/bootstrap-operator'
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
     | '/guides/'
@@ -114,7 +104,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/sitemap.xml'
     | '/console'
-    | '/api/bootstrap-operator'
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
     | '/guides'
@@ -125,7 +114,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/sitemap.xml'
     | '/_authenticated/console'
-    | '/api/bootstrap-operator'
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
     | '/guides/'
@@ -136,7 +124,6 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   LoginRoute: typeof LoginRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  ApiBootstrapOperatorRoute: typeof ApiBootstrapOperatorRoute
   GuidesBookingSystemCostRoute: typeof GuidesBookingSystemCostRoute
   GuidesDallasBookingSystemRoute: typeof GuidesDallasBookingSystemRoute
   GuidesIndexRoute: typeof GuidesIndexRoute
@@ -179,13 +166,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedConsoleRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/api/bootstrap-operator': {
-      id: '/api/bootstrap-operator'
-      path: '/api/bootstrap-operator'
-      fullPath: '/api/bootstrap-operator'
-      preLoaderRoute: typeof ApiBootstrapOperatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/guides/': {
       id: '/guides/'
       path: '/guides'
@@ -226,7 +206,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   LoginRoute: LoginRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  ApiBootstrapOperatorRoute: ApiBootstrapOperatorRoute,
   GuidesBookingSystemCostRoute: GuidesBookingSystemCostRoute,
   GuidesDallasBookingSystemRoute: GuidesDallasBookingSystemRoute,
   GuidesIndexRoute: GuidesIndexRoute,
