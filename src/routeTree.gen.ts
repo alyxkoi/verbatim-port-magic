@@ -17,6 +17,14 @@ import { Route as AuthenticatedConsoleRouteImport } from './routes/_authenticate
 import { Route as GuidesIndexRouteImport } from './routes/guides.index'
 import { Route as GuidesBookingSystemCostRouteImport } from './routes/guides.booking-system-cost'
 import { Route as GuidesDallasBookingSystemRouteImport } from './routes/guides.dallas-booking-system'
+import { Route as AuthenticatedConsoleIndexRouteImport } from './routes/_authenticated/console.index'
+import { Route as AuthenticatedConsoleBlipRouteImport } from './routes/_authenticated/console.blip'
+import { Route as AuthenticatedConsoleCalendarRouteImport } from './routes/_authenticated/console.calendar'
+import { Route as AuthenticatedConsoleClientsRouteImport } from './routes/_authenticated/console.clients'
+import { Route as AuthenticatedConsoleLeadsRouteImport } from './routes/_authenticated/console.leads'
+import { Route as AuthenticatedConsoleLinksRouteImport } from './routes/_authenticated/console.links'
+import { Route as AuthenticatedConsolePlansRouteImport } from './routes/_authenticated/console.plans'
+import { Route as AuthenticatedConsoleSettingsRouteImport } from './routes/_authenticated/console.settings'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,24 +66,87 @@ const GuidesDallasBookingSystemRoute =
     path: '/guides/dallas-booking-system',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedConsoleIndexRoute =
+  AuthenticatedConsoleIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedConsoleRoute,
+  } as any)
+const AuthenticatedConsoleBlipRoute =
+  AuthenticatedConsoleBlipRouteImport.update({
+    id: '/blip',
+    path: '/blip',
+    getParentRoute: () => AuthenticatedConsoleRoute,
+  } as any)
+const AuthenticatedConsoleCalendarRoute =
+  AuthenticatedConsoleCalendarRouteImport.update({
+    id: '/calendar',
+    path: '/calendar',
+    getParentRoute: () => AuthenticatedConsoleRoute,
+  } as any)
+const AuthenticatedConsoleClientsRoute =
+  AuthenticatedConsoleClientsRouteImport.update({
+    id: '/clients',
+    path: '/clients',
+    getParentRoute: () => AuthenticatedConsoleRoute,
+  } as any)
+const AuthenticatedConsoleLeadsRoute =
+  AuthenticatedConsoleLeadsRouteImport.update({
+    id: '/leads',
+    path: '/leads',
+    getParentRoute: () => AuthenticatedConsoleRoute,
+  } as any)
+const AuthenticatedConsoleLinksRoute =
+  AuthenticatedConsoleLinksRouteImport.update({
+    id: '/links',
+    path: '/links',
+    getParentRoute: () => AuthenticatedConsoleRoute,
+  } as any)
+const AuthenticatedConsolePlansRoute =
+  AuthenticatedConsolePlansRouteImport.update({
+    id: '/plans',
+    path: '/plans',
+    getParentRoute: () => AuthenticatedConsoleRoute,
+  } as any)
+const AuthenticatedConsoleSettingsRoute =
+  AuthenticatedConsoleSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedConsoleRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/console': typeof AuthenticatedConsoleRoute
+  '/console': typeof AuthenticatedConsoleRouteWithChildren
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
   '/guides/': typeof GuidesIndexRoute
+  '/console/blip': typeof AuthenticatedConsoleBlipRoute
+  '/console/calendar': typeof AuthenticatedConsoleCalendarRoute
+  '/console/clients': typeof AuthenticatedConsoleClientsRoute
+  '/console/leads': typeof AuthenticatedConsoleLeadsRoute
+  '/console/links': typeof AuthenticatedConsoleLinksRoute
+  '/console/plans': typeof AuthenticatedConsolePlansRoute
+  '/console/settings': typeof AuthenticatedConsoleSettingsRoute
+  '/console/': typeof AuthenticatedConsoleIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/console': typeof AuthenticatedConsoleRoute
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
   '/guides': typeof GuidesIndexRoute
+  '/console/blip': typeof AuthenticatedConsoleBlipRoute
+  '/console/calendar': typeof AuthenticatedConsoleCalendarRoute
+  '/console/clients': typeof AuthenticatedConsoleClientsRoute
+  '/console/leads': typeof AuthenticatedConsoleLeadsRoute
+  '/console/links': typeof AuthenticatedConsoleLinksRoute
+  '/console/plans': typeof AuthenticatedConsolePlansRoute
+  '/console/settings': typeof AuthenticatedConsoleSettingsRoute
+  '/console': typeof AuthenticatedConsoleIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -83,10 +154,18 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/_authenticated/console': typeof AuthenticatedConsoleRoute
+  '/_authenticated/console': typeof AuthenticatedConsoleRouteWithChildren
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
   '/guides/': typeof GuidesIndexRoute
+  '/_authenticated/console/blip': typeof AuthenticatedConsoleBlipRoute
+  '/_authenticated/console/calendar': typeof AuthenticatedConsoleCalendarRoute
+  '/_authenticated/console/clients': typeof AuthenticatedConsoleClientsRoute
+  '/_authenticated/console/leads': typeof AuthenticatedConsoleLeadsRoute
+  '/_authenticated/console/links': typeof AuthenticatedConsoleLinksRoute
+  '/_authenticated/console/plans': typeof AuthenticatedConsolePlansRoute
+  '/_authenticated/console/settings': typeof AuthenticatedConsoleSettingsRoute
+  '/_authenticated/console/': typeof AuthenticatedConsoleIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -98,15 +177,30 @@ export interface FileRouteTypes {
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
     | '/guides/'
+    | '/console/blip'
+    | '/console/calendar'
+    | '/console/clients'
+    | '/console/leads'
+    | '/console/links'
+    | '/console/plans'
+    | '/console/settings'
+    | '/console/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
     | '/sitemap.xml'
-    | '/console'
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
     | '/guides'
+    | '/console/blip'
+    | '/console/calendar'
+    | '/console/clients'
+    | '/console/leads'
+    | '/console/links'
+    | '/console/plans'
+    | '/console/settings'
+    | '/console'
   id:
     | '__root__'
     | '/'
@@ -117,6 +211,14 @@ export interface FileRouteTypes {
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
     | '/guides/'
+    | '/_authenticated/console/blip'
+    | '/_authenticated/console/calendar'
+    | '/_authenticated/console/clients'
+    | '/_authenticated/console/leads'
+    | '/_authenticated/console/links'
+    | '/_authenticated/console/plans'
+    | '/_authenticated/console/settings'
+    | '/_authenticated/console/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -187,15 +289,96 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuidesDallasBookingSystemRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/console/': {
+      id: '/_authenticated/console/'
+      path: '/'
+      fullPath: '/console/'
+      preLoaderRoute: typeof AuthenticatedConsoleIndexRouteImport
+      parentRoute: typeof AuthenticatedConsoleRoute
+    }
+    '/_authenticated/console/blip': {
+      id: '/_authenticated/console/blip'
+      path: '/blip'
+      fullPath: '/console/blip'
+      preLoaderRoute: typeof AuthenticatedConsoleBlipRouteImport
+      parentRoute: typeof AuthenticatedConsoleRoute
+    }
+    '/_authenticated/console/calendar': {
+      id: '/_authenticated/console/calendar'
+      path: '/calendar'
+      fullPath: '/console/calendar'
+      preLoaderRoute: typeof AuthenticatedConsoleCalendarRouteImport
+      parentRoute: typeof AuthenticatedConsoleRoute
+    }
+    '/_authenticated/console/clients': {
+      id: '/_authenticated/console/clients'
+      path: '/clients'
+      fullPath: '/console/clients'
+      preLoaderRoute: typeof AuthenticatedConsoleClientsRouteImport
+      parentRoute: typeof AuthenticatedConsoleRoute
+    }
+    '/_authenticated/console/leads': {
+      id: '/_authenticated/console/leads'
+      path: '/leads'
+      fullPath: '/console/leads'
+      preLoaderRoute: typeof AuthenticatedConsoleLeadsRouteImport
+      parentRoute: typeof AuthenticatedConsoleRoute
+    }
+    '/_authenticated/console/links': {
+      id: '/_authenticated/console/links'
+      path: '/links'
+      fullPath: '/console/links'
+      preLoaderRoute: typeof AuthenticatedConsoleLinksRouteImport
+      parentRoute: typeof AuthenticatedConsoleRoute
+    }
+    '/_authenticated/console/plans': {
+      id: '/_authenticated/console/plans'
+      path: '/plans'
+      fullPath: '/console/plans'
+      preLoaderRoute: typeof AuthenticatedConsolePlansRouteImport
+      parentRoute: typeof AuthenticatedConsoleRoute
+    }
+    '/_authenticated/console/settings': {
+      id: '/_authenticated/console/settings'
+      path: '/settings'
+      fullPath: '/console/settings'
+      preLoaderRoute: typeof AuthenticatedConsoleSettingsRouteImport
+      parentRoute: typeof AuthenticatedConsoleRoute
+    }
   }
 }
 
+interface AuthenticatedConsoleRouteChildren {
+  AuthenticatedConsoleBlipRoute: typeof AuthenticatedConsoleBlipRoute
+  AuthenticatedConsoleCalendarRoute: typeof AuthenticatedConsoleCalendarRoute
+  AuthenticatedConsoleClientsRoute: typeof AuthenticatedConsoleClientsRoute
+  AuthenticatedConsoleLeadsRoute: typeof AuthenticatedConsoleLeadsRoute
+  AuthenticatedConsoleLinksRoute: typeof AuthenticatedConsoleLinksRoute
+  AuthenticatedConsolePlansRoute: typeof AuthenticatedConsolePlansRoute
+  AuthenticatedConsoleSettingsRoute: typeof AuthenticatedConsoleSettingsRoute
+  AuthenticatedConsoleIndexRoute: typeof AuthenticatedConsoleIndexRoute
+}
+
+const AuthenticatedConsoleRouteChildren: AuthenticatedConsoleRouteChildren = {
+  AuthenticatedConsoleBlipRoute: AuthenticatedConsoleBlipRoute,
+  AuthenticatedConsoleCalendarRoute: AuthenticatedConsoleCalendarRoute,
+  AuthenticatedConsoleClientsRoute: AuthenticatedConsoleClientsRoute,
+  AuthenticatedConsoleLeadsRoute: AuthenticatedConsoleLeadsRoute,
+  AuthenticatedConsoleLinksRoute: AuthenticatedConsoleLinksRoute,
+  AuthenticatedConsolePlansRoute: AuthenticatedConsolePlansRoute,
+  AuthenticatedConsoleSettingsRoute: AuthenticatedConsoleSettingsRoute,
+  AuthenticatedConsoleIndexRoute: AuthenticatedConsoleIndexRoute,
+}
+
+const AuthenticatedConsoleRouteWithChildren =
+  AuthenticatedConsoleRoute._addFileChildren(AuthenticatedConsoleRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedConsoleRoute: typeof AuthenticatedConsoleRoute
+  AuthenticatedConsoleRoute: typeof AuthenticatedConsoleRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedConsoleRoute: AuthenticatedConsoleRoute,
+  AuthenticatedConsoleRoute: AuthenticatedConsoleRouteWithChildren,
 }
 
 const AuthenticatedRouteRouteWithChildren =

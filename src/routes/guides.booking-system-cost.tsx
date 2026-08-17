@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import alyxlabCss from "@/styles/alyxlab.css?url";
 import { GuideShell, GuideCta } from "@/components/site/SiteChrome";
 
 const TITLE = "How Much Does a Booking System Actually Cost? (2026)";
@@ -18,7 +19,7 @@ export const Route = createFileRoute("/guides/booking-system-cost")({
       { property: "og:url", content: "https://alyxlab.com/guides/booking-system-cost" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://alyxlab.com/guides/booking-system-cost" }],
+    links: [{ rel: "stylesheet", href: alyxlabCss }, { rel: "canonical", href: "https://alyxlab.com/guides/booking-system-cost" }],
     scripts: [
       {
         type: "application/ld+json",
