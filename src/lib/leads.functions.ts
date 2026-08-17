@@ -417,6 +417,54 @@ export const sendManualMessage = createServerFn({ method: "POST" })
       })
       .eq("id", data.leadId);
 
+    // Takeover is the strongest training signal there is: Blip's draft and the
+    // words Alyx actually sent, stored together (spec 8.1).
+    const { data: shadow } = await supabase
+      .from("message")
+      .select("id, body, blip_release_id")
+      .eq("lead_id", data.leadId)
+      .eq("authored_by", "blip")
+      .eq("direction", "outbound")
+      .in("status", ["held", "queued", "cancelled"])
+      .order("created_at", { ascending: false })
+      .limit(1);
+    const draftMessage = shadow?.[0];
+    if (draftMessage && draftMessage.body.trim() !== body) {
+      const { data: correction } = await supabase
+        .from("blip_correction")
+        .insert({
+          lead_id: data.leadId,
+          message_id: draftMessage.id,
+          blip_release_id: draftMessage.blip_release_id,
+          blip_draft: draftMessage.body,
+          alyx_actual: body,
+          kind: "takeover",
+        })
+        .select("id")
+        .single();
+      if (correction) {
+        const { getActiveRelease } = await import("@/lib/blip/release.server");
+        const { correctionSignals } = await import("@/lib/blip/corrections");
+        const release = await getActiveRelease(supabase);
+        await supabase.from("blip_correction_learning").insert(
+          correctionSignals(
+            draftMessage.body,
+            body,
+            release.config.behavior.bannedWords,
+          ).map((signal) => ({
+            correction_id: correction.id,
+            area: signal.area,
+            status: "proposed",
+          })),
+        );
+      }
+      await supabase
+        .from("message")
+        .update({ status: "cancelled" })
+        .eq("id", draftMessage.id)
+        .in("status", ["held", "queued"]);
+    }
+
     await supabase.from("event_log").insert({
       entity: "message",
       entity_id: inserted.id,
@@ -476,5 +524,23 @@ export const recordInboundMessage = createServerFn({ method: "POST" })
       .from("lead")
       .update({ last_inbound_at: now, engagement_state: "replying", stage: "talking" })
       .eq("id", data.leadId);
-    return { ok: true as const, cancelled: cancelled?.length ?? 0 };
+
+    // Generate at receive, while the context is fresh (reference 4.3).
+    const { runInboundPipeline } = await import("@/lib/blip/pipeline.server");
+    let blip: Awaited<ReturnType<typeof runInboundPipeline>> = {
+      outcome: "skipped",
+      reason: "not_run",
+    };
+    try {
+      blip = await runInboundPipeline(supabase, data.leadId);
+    } catch (error) {
+      await supabase.from("event_log").insert({
+        entity: "lead",
+        entity_id: data.leadId,
+        action: "blip_failed",
+        detail: { job: "pipeline", message: (error as Error).message },
+      });
+    }
+
+    return { ok: true as const, cancelled: cancelled?.length ?? 0, blip };
   });
