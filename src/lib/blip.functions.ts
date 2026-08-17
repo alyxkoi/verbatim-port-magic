@@ -43,7 +43,7 @@ export const getBlipScreen = createServerFn({ method: "GET" })
         .limit(1),
     ]);
 
-    const [{ data: corrections }, { data: learning }, { data: blipMessages }, { data: heldRows }, { data: replayRows }] =
+    const [{ data: corrections }, { data: learning }, { data: blipMessages }, { count: heldCount }, { data: replayRows }] =
       await Promise.all([
         supabase
           .from("blip_correction")
@@ -97,7 +97,7 @@ export const getBlipScreen = createServerFn({ method: "GET" })
       ]),
       metrics: {
         uneditedRate,
-        heldForYou: heldRows ? 0 : 0,
+        heldForYou: heldCount ?? 0,
         openCorrections: (corrections ?? []).length,
       },
       corrections: (corrections ?? []).map((row) => {
@@ -118,17 +118,6 @@ export const getBlipScreen = createServerFn({ method: "GET" })
       }),
       replay: metricsRow,
     };
-  });
-
-/** Held count needs its own read because head:true does not return rows. */
-export const getBlipHeldCount = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const { count } = await context.supabase
-      .from("message")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "held");
-    return { held: count ?? 0 };
   });
 
 /** Autonomy is runtime state, outside any release, so it changes instantly. */
