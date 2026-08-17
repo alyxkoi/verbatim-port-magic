@@ -1,0 +1,243 @@
+/* Values copied verbatim from alyxlab-login.html; selectors scoped to .login-page. */
+
+  /* Tokens copied verbatim from alyxlab-console.html so the two cannot drift. */
+  .login-page {
+    color-scheme: dark;
+    --page: #000000;
+    --surface: #11120f;
+    --surface-raised: #181a15;
+    --text: #ffffff;
+    --muted: rgba(255, 255, 255, .64);
+    --faint: rgba(255, 255, 255, .38);
+    --border: rgba(255, 255, 255, .105);
+    --lime: #d7ff00;
+    --blue: #547dde;
+    --attention: #f05a28;
+    --conversation-lead: #f2c75b;
+    --danger: #ff6a77;
+    --curve: cubic-bezier(.22, .9, .28, 1);
+    --radius-card: 28px;
+    --radius-control: 14px;
+  }
+
+  .login-page * { box-sizing: border-box; }
+
+  .login-page, .login-page {
+    margin: 0;
+    min-height: 100%;
+    background: var(--page);
+    color: var(--text);
+    font-family: "Lufga", "Outfit", -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
+    font-variant-numeric: tabular-nums lining-nums;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .login-page {
+    display: grid;
+    place-items: center;
+    min-height: 100dvh;
+    padding: 32px 20px calc(32px + env(safe-area-inset-bottom));
+  }
+
+  /* One mesh anchor, the same single-gradient rule the console follows. */
+  .login-page .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(680px 420px at 18% 8%, rgba(215, 255, 0, .10), transparent 62%),
+      radial-gradient(760px 520px at 88% 92%, rgba(84, 125, 222, .12), transparent 64%);
+  }
+
+  .login-page .shell { position: relative; z-index: 1; width: 100%; max-width: 424px; }
+
+  /* ---- card ---- */
+  .login-page .card {
+    position: relative;
+    padding: 40px 36px 34px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 30px 70px rgba(0, 0, 0, .55);
+  }
+  .login-page .card-head { display: grid; justify-items: center; text-align: center; margin-bottom: 30px; }
+
+  .login-page .logo {
+    display: grid;
+    place-items: center;
+    width: 62px;
+    height: 62px;
+    margin-bottom: 22px;
+    border-radius: 20px;
+    background: var(--lime);
+    color: #0d0f08;
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: -.06em;
+  }
+
+  .login-page .card-head h1 { margin: 0 0 8px; font-size: 27px; font-weight: 600; letter-spacing: -.045em; }
+  .login-page .card-head p { margin: 0; max-width: 30ch; font-size: 13px; line-height: 1.5; color: var(--muted); }
+
+  /* ---- fields ---- */
+  .login-page .fields { display: grid; gap: 16px; }
+  .login-page .field { display: grid; gap: 7px; }
+  .login-page .field > label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .login-page .field-shell { position: relative; display: grid; }
+  .login-page .input {
+    width: 100%;
+    min-height: 52px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-control);
+    background: #0c0d0a;
+    color: var(--text);
+    font: inherit;
+    font-size: 14.5px;
+    transition: border-color 160ms var(--curve), background 160ms var(--curve);
+  }
+  .login-page .has-reveal .input { padding-right: 52px; }
+  .login-page .input::placeholder { color: rgba(255, 255, 255, .26); }
+  .login-page .input:hover { border-color: rgba(255, 255, 255, .2); }
+  .login-page .input:focus { outline: none; border-color: var(--blue); background: #0e0f0b; }
+  .login-page .input[aria-invalid="true"] { border-color: var(--danger); }
+
+  .login-page .reveal {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    margin-top: -19px;
+    padding: 0;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--faint);
+    cursor: pointer;
+    transition: background 150ms var(--curve), color 150ms var(--curve);
+  }
+  .login-page .reveal:hover { background: rgba(255, 255, 255, .07); color: var(--text); }
+  .login-page .reveal svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+  .login-page .field-error { min-height: 15px; margin: 0; font-size: 11.5px; color: var(--danger); }
+  .login-page .field-error:empty { min-height: 0; }
+
+  /* ---- row ---- */
+  .login-page .row { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 4px 0 22px; }
+  .login-page .remember { display: inline-flex; align-items: center; gap: 9px; font-size: 12.5px; color: var(--muted); cursor: pointer; user-select: none; }
+  .login-page .remember input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .login-page .box {
+    display: grid;
+    place-items: center;
+    width: 19px;
+    height: 19px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #0c0d0a;
+    transition: background 150ms var(--curve), border-color 150ms var(--curve);
+  }
+  .login-page .box svg { width: 12px; height: 12px; opacity: 0; fill: none; stroke: #0d0f08; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+  .login-page .remember input:checked + .box { background: var(--lime); border-color: var(--lime); }
+  .login-page .remember input:checked + .box svg { opacity: 1; }
+  .login-page .remember input:focus-visible + .box { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  .login-page .link { color: var(--muted); font-size: 12.5px; text-decoration: none; border-bottom: 1px solid transparent; }
+  .login-page .link:hover { color: var(--text); border-bottom-color: rgba(255, 255, 255, .3); }
+
+  /* ---- submit ---- */
+  .login-page .submit {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    min-height: 52px;
+    border: 0;
+    border-radius: var(--radius-control);
+    background: var(--lime);
+    color: #0d0f08;
+    font: inherit;
+    font-size: 14.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 160ms var(--curve), transform 160ms var(--curve), opacity 160ms var(--curve);
+  }
+  .login-page .submit:hover:not(:disabled) { background: #e4ff3d; transform: translateY(-1px); }
+  .login-page .submit:active:not(:disabled) { transform: translateY(0); }
+  .login-page .submit:disabled { cursor: default; opacity: .7; }
+  .login-page .submit .label { transition: opacity 140ms var(--curve); }
+  .login-page .is-busy .label { opacity: 0; }
+
+  .login-page .spinner {
+    position: absolute;
+    width: 19px;
+    height: 19px;
+    border: 2px solid rgba(13, 15, 8, .28);
+    border-top-color: #0d0f08;
+    border-radius: 50%;
+    opacity: 0;
+    animation: spin 620ms linear infinite;
+  }
+  .login-page .is-busy .spinner { opacity: 1; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---- alert ---- */
+  .login-page .alert {
+    display: none;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 13px 15px;
+    border-radius: var(--radius-control);
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+  .login-page .alert.is-shown { display: flex; }
+  .login-page .alert svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 1px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .login-page .alert[data-tone="error"] { background: rgba(255, 106, 119, .12); color: #ffb3ba; }
+  .login-page .alert[data-tone="locked"] { background: rgba(240, 90, 40, .14); color: #ffb599; }
+  .login-page .alert[data-tone="ok"] { background: rgba(215, 255, 0, .12); color: var(--lime); }
+
+  /* ---- footer ---- */
+  .login-page .foot { margin-top: 26px; padding-top: 20px; border-top: 1px solid var(--border); text-align: center; }
+  .login-page .foot p { margin: 0; font-size: 11.5px; line-height: 1.6; color: var(--muted); }
+  .login-page .back { display: inline-flex; align-items: center; gap: 7px; margin-top: 22px; color: var(--muted); font-size: 12.5px; text-decoration: none; }
+  .login-page .back:hover { color: var(--text); }
+  .login-page .back svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transform: rotate(180deg); }
+  .login-page .shell > .back-wrap { display: grid; justify-items: center; }
+
+  /* Explicit focus rings so keyboard users get the same treatment everywhere. */
+  .login-page .submit:focus-visible, .login-page .reveal:focus-visible, .login-page .link:focus-visible, .login-page .back:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 3px;
+    border-radius: 8px;
+  }
+  .login-page .submit:focus-visible { outline-color: #fff; }
+
+  .login-page .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+  @media (max-width: 420px) {
+    .login-page .card { padding: 32px 22px 26px; border-radius: 24px; }
+    .login-page .card-head h1 { font-size: 24px; }
+    .login-page .logo { width: 56px; height: 56px; border-radius: 18px; font-size: 21px; }
+  }
+
+  /* Below this the two controls cannot sit side by side without wrapping. */
+  @media (max-width: 370px) {
+    .row { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .card { padding: 28px 18px 24px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .login-page *, .login-page *::before, .login-page *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
