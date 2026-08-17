@@ -132,10 +132,13 @@ function TodayScreen() {
         </Link>
       </section>
 
+      <UsageWarnings />
+
       <div className="today-section-label">
         <h2>What needs you</h2>
         <span>No decisions right now</span>
       </div>
+
       <div className="today-workbench">
         <article className="surface action-card">
           <div className="section-heading">
