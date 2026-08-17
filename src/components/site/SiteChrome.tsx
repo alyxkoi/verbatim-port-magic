@@ -92,6 +92,8 @@ export function GuideFooter() {
         <div className="fbar-links">
           <a href="/privacy">Privacy</a>
           <a href="/terms">Terms</a>
+          <a href="/login">Operator login</a>
+
         </div>
       </div>
     </footer>
