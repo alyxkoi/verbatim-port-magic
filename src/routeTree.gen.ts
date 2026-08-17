@@ -10,8 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as AuthenticatedConsoleRouteImport } from './routes/_authenticated/console'
 import { Route as GuidesIndexRouteImport } from './routes/guides.index'
 import { Route as GuidesBookingSystemCostRouteImport } from './routes/guides.booking-system-cost'
 import { Route as GuidesDallasBookingSystemRouteImport } from './routes/guides.dallas-booking-system'
@@ -19,6 +21,10 @@ import { Route as GuidesDallasBookingSystemRouteImport } from './routes/guides.d
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -30,6 +36,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedConsoleRoute = AuthenticatedConsoleRouteImport.update({
+  id: '/console',
+  path: '/console',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const GuidesIndexRoute = GuidesIndexRouteImport.update({
   id: '/guides/',
@@ -52,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/console': typeof AuthenticatedConsoleRoute
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
   '/guides/': typeof GuidesIndexRoute
@@ -60,6 +72,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/console': typeof AuthenticatedConsoleRoute
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
   '/guides': typeof GuidesIndexRoute
@@ -67,8 +80,10 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/_authenticated/console': typeof AuthenticatedConsoleRoute
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
   '/guides/': typeof GuidesIndexRoute
@@ -79,6 +94,7 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/sitemap.xml'
+    | '/console'
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
     | '/guides/'
@@ -87,14 +103,17 @@ export interface FileRouteTypes {
     | '/'
     | '/login'
     | '/sitemap.xml'
+    | '/console'
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
     | '/guides'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/login'
     | '/sitemap.xml'
+    | '/_authenticated/console'
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
     | '/guides/'
@@ -102,6 +121,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   LoginRoute: typeof LoginRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   GuidesBookingSystemCostRoute: typeof GuidesBookingSystemCostRoute
@@ -118,6 +138,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -131,6 +158,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/console': {
+      id: '/_authenticated/console'
+      path: '/console'
+      fullPath: '/console'
+      preLoaderRoute: typeof AuthenticatedConsoleRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/guides/': {
       id: '/guides/'
@@ -156,8 +190,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedConsoleRoute: typeof AuthenticatedConsoleRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedConsoleRoute: AuthenticatedConsoleRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   LoginRoute: LoginRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   GuidesBookingSystemCostRoute: GuidesBookingSystemCostRoute,

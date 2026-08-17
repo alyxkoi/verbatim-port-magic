@@ -48,7 +48,7 @@ function LoginPage() {
     const alertBox = document.getElementById("alert") as HTMLElement;
     const alertText = document.getElementById("alertText") as HTMLElement;
     const reveal = document.getElementById("reveal") as HTMLButtonElement;
-    const revealIcon = document.getElementById("revealIcon") as SVGElement;
+    const revealIcon = document.getElementById("revealIcon") as unknown as SVGElement;
     const forgot = document.getElementById("forgot") as HTMLAnchorElement;
     const backHome = document.getElementById("backHome") as HTMLAnchorElement;
 
