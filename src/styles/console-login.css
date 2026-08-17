@@ -63,18 +63,13 @@
   }
   .login-page .card-head { display: grid; justify-items: center; text-align: center; margin-bottom: 30px; }
 
-  .login-page .logo {
-    display: grid;
-    place-items: center;
-    width: 62px;
-    height: 62px;
-    margin-bottom: 22px;
-    border-radius: 20px;
-    background: var(--lime);
-    color: #0d0f08;
-    font-size: 23px;
-    font-weight: 800;
-    letter-spacing: -.06em;
+  .login-page .brand-mark {
+    display: block;
+    width: auto;
+    height: 46px;
+    margin-bottom: 20px;
+    /* Force the mark to pure white without shipping a second asset. */
+    filter: brightness(0) invert(1);
   }
 
   .login-page .card-head h1 { margin: 0 0 8px; font-size: 27px; font-weight: 600; letter-spacing: -.045em; }
