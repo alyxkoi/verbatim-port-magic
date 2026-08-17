@@ -25,7 +25,10 @@ import { Route as AuthenticatedConsoleLeadsRouteImport } from './routes/_authent
 import { Route as AuthenticatedConsoleLinksRouteImport } from './routes/_authenticated/console.links'
 import { Route as AuthenticatedConsolePlansRouteImport } from './routes/_authenticated/console.plans'
 import { Route as AuthenticatedConsoleSettingsRouteImport } from './routes/_authenticated/console.settings'
+import { Route as ApiPublicDailyMaintenanceRouteImport } from './routes/api/public/daily-maintenance'
 import { Route as ApiPublicLeadIntakeRouteImport } from './routes/api/public/lead-intake'
+import { Route as ApiPublicMessageWorkerRouteImport } from './routes/api/public/message-worker'
+import { Route as ApiPublicSentWebhookRouteImport } from './routes/api/public/sent-webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -115,9 +118,25 @@ const AuthenticatedConsoleSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedConsoleRoute,
   } as any)
+const ApiPublicDailyMaintenanceRoute =
+  ApiPublicDailyMaintenanceRouteImport.update({
+    id: '/api/public/daily-maintenance',
+    path: '/api/public/daily-maintenance',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicLeadIntakeRoute = ApiPublicLeadIntakeRouteImport.update({
   id: '/api/public/lead-intake',
   path: '/api/public/lead-intake',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicMessageWorkerRoute = ApiPublicMessageWorkerRouteImport.update({
+  id: '/api/public/message-worker',
+  path: '/api/public/message-worker',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicSentWebhookRoute = ApiPublicSentWebhookRouteImport.update({
+  id: '/api/public/sent-webhook',
+  path: '/api/public/sent-webhook',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -136,7 +155,10 @@ export interface FileRoutesByFullPath {
   '/console/links': typeof AuthenticatedConsoleLinksRoute
   '/console/plans': typeof AuthenticatedConsolePlansRoute
   '/console/settings': typeof AuthenticatedConsoleSettingsRoute
+  '/api/public/daily-maintenance': typeof ApiPublicDailyMaintenanceRoute
   '/api/public/lead-intake': typeof ApiPublicLeadIntakeRoute
+  '/api/public/message-worker': typeof ApiPublicMessageWorkerRoute
+  '/api/public/sent-webhook': typeof ApiPublicSentWebhookRoute
   '/console/': typeof AuthenticatedConsoleIndexRoute
 }
 export interface FileRoutesByTo {
@@ -153,7 +175,10 @@ export interface FileRoutesByTo {
   '/console/links': typeof AuthenticatedConsoleLinksRoute
   '/console/plans': typeof AuthenticatedConsolePlansRoute
   '/console/settings': typeof AuthenticatedConsoleSettingsRoute
+  '/api/public/daily-maintenance': typeof ApiPublicDailyMaintenanceRoute
   '/api/public/lead-intake': typeof ApiPublicLeadIntakeRoute
+  '/api/public/message-worker': typeof ApiPublicMessageWorkerRoute
+  '/api/public/sent-webhook': typeof ApiPublicSentWebhookRoute
   '/console': typeof AuthenticatedConsoleIndexRoute
 }
 export interface FileRoutesById {
@@ -173,7 +198,10 @@ export interface FileRoutesById {
   '/_authenticated/console/links': typeof AuthenticatedConsoleLinksRoute
   '/_authenticated/console/plans': typeof AuthenticatedConsolePlansRoute
   '/_authenticated/console/settings': typeof AuthenticatedConsoleSettingsRoute
+  '/api/public/daily-maintenance': typeof ApiPublicDailyMaintenanceRoute
   '/api/public/lead-intake': typeof ApiPublicLeadIntakeRoute
+  '/api/public/message-worker': typeof ApiPublicMessageWorkerRoute
+  '/api/public/sent-webhook': typeof ApiPublicSentWebhookRoute
   '/_authenticated/console/': typeof AuthenticatedConsoleIndexRoute
 }
 export interface FileRouteTypes {
@@ -193,7 +221,10 @@ export interface FileRouteTypes {
     | '/console/links'
     | '/console/plans'
     | '/console/settings'
+    | '/api/public/daily-maintenance'
     | '/api/public/lead-intake'
+    | '/api/public/message-worker'
+    | '/api/public/sent-webhook'
     | '/console/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -210,7 +241,10 @@ export interface FileRouteTypes {
     | '/console/links'
     | '/console/plans'
     | '/console/settings'
+    | '/api/public/daily-maintenance'
     | '/api/public/lead-intake'
+    | '/api/public/message-worker'
+    | '/api/public/sent-webhook'
     | '/console'
   id:
     | '__root__'
@@ -229,7 +263,10 @@ export interface FileRouteTypes {
     | '/_authenticated/console/links'
     | '/_authenticated/console/plans'
     | '/_authenticated/console/settings'
+    | '/api/public/daily-maintenance'
     | '/api/public/lead-intake'
+    | '/api/public/message-worker'
+    | '/api/public/sent-webhook'
     | '/_authenticated/console/'
   fileRoutesById: FileRoutesById
 }
@@ -241,7 +278,10 @@ export interface RootRouteChildren {
   GuidesBookingSystemCostRoute: typeof GuidesBookingSystemCostRoute
   GuidesDallasBookingSystemRoute: typeof GuidesDallasBookingSystemRoute
   GuidesIndexRoute: typeof GuidesIndexRoute
+  ApiPublicDailyMaintenanceRoute: typeof ApiPublicDailyMaintenanceRoute
   ApiPublicLeadIntakeRoute: typeof ApiPublicLeadIntakeRoute
+  ApiPublicMessageWorkerRoute: typeof ApiPublicMessageWorkerRoute
+  ApiPublicSentWebhookRoute: typeof ApiPublicSentWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -358,11 +398,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedConsoleSettingsRouteImport
       parentRoute: typeof AuthenticatedConsoleRoute
     }
+    '/api/public/daily-maintenance': {
+      id: '/api/public/daily-maintenance'
+      path: '/api/public/daily-maintenance'
+      fullPath: '/api/public/daily-maintenance'
+      preLoaderRoute: typeof ApiPublicDailyMaintenanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/lead-intake': {
       id: '/api/public/lead-intake'
       path: '/api/public/lead-intake'
       fullPath: '/api/public/lead-intake'
       preLoaderRoute: typeof ApiPublicLeadIntakeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/message-worker': {
+      id: '/api/public/message-worker'
+      path: '/api/public/message-worker'
+      fullPath: '/api/public/message-worker'
+      preLoaderRoute: typeof ApiPublicMessageWorkerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/sent-webhook': {
+      id: '/api/public/sent-webhook'
+      path: '/api/public/sent-webhook'
+      fullPath: '/api/public/sent-webhook'
+      preLoaderRoute: typeof ApiPublicSentWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -412,7 +473,10 @@ const rootRouteChildren: RootRouteChildren = {
   GuidesBookingSystemCostRoute: GuidesBookingSystemCostRoute,
   GuidesDallasBookingSystemRoute: GuidesDallasBookingSystemRoute,
   GuidesIndexRoute: GuidesIndexRoute,
+  ApiPublicDailyMaintenanceRoute: ApiPublicDailyMaintenanceRoute,
   ApiPublicLeadIntakeRoute: ApiPublicLeadIntakeRoute,
+  ApiPublicMessageWorkerRoute: ApiPublicMessageWorkerRoute,
+  ApiPublicSentWebhookRoute: ApiPublicSentWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
