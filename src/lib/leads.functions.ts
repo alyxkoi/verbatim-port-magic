@@ -244,24 +244,31 @@ export const setLeadStatus = createServerFn({ method: "POST" })
     // No manual change overrides opted out (3.5).
     if (lead.opted_out_at) return { ok: false as const, reason: "opted_out" };
 
-    const patch: Record<string, unknown> = {
+    const patch: {
+      tags: string[];
+      call_requested_at: null;
+      qualification_state: string;
+      screening_state?: string;
+      stage?: string;
+      automation_state?: string;
+    } = {
       tags: withManualStatusTag(lead.tags, data.status),
       call_requested_at: null,
       qualification_state: "incomplete",
     };
-    if (lead.screening_state === "held") patch["screening_state"] = "soft_flag";
+    if (lead.screening_state === "held") patch.screening_state = "soft_flag";
 
-    if (data.status === "new") patch["stage"] = "new";
-    if (data.status === "talking") patch["stage"] = "talking";
-    if (data.status === "review") patch["qualification_state"] = "needs_review";
+    if (data.status === "new") patch.stage = "new";
+    if (data.status === "talking") patch.stage = "talking";
+    if (data.status === "review") patch.qualification_state = "needs_review";
     if (data.status === "drafted") {
-      patch["stage"] = "talking";
-      patch["qualification_state"] = "complete";
+      patch.stage = "talking";
+      patch.qualification_state = "complete";
     }
-    if (data.status === "won") patch["stage"] = "won";
+    if (data.status === "won") patch.stage = "won";
     if (data.status === "closed") {
-      patch["stage"] = "closed";
-      patch["automation_state"] = "paused_call";
+      patch.stage = "closed";
+      patch.automation_state = "paused_call";
     }
 
     const { error } = await supabase.from("lead").update(patch).eq("id", data.leadId);
