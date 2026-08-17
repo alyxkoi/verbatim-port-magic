@@ -347,6 +347,53 @@ export type Database = {
           },
         ]
       }
+      client_customer_payment: {
+        Row: {
+          amount_cents: number
+          client_id: string
+          created_at: string
+          currency: string
+          id: string
+          kind: string
+          occurred_at: string
+          status: string
+          stripe_account_id: string
+          stripe_object_id: string
+        }
+        Insert: {
+          amount_cents?: number
+          client_id: string
+          created_at?: string
+          currency?: string
+          id?: string
+          kind: string
+          occurred_at?: string
+          status?: string
+          stripe_account_id: string
+          stripe_object_id: string
+        }
+        Update: {
+          amount_cents?: number
+          client_id?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          kind?: string
+          occurred_at?: string
+          status?: string
+          stripe_account_id?: string
+          stripe_object_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_customer_payment_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_payment_connection: {
         Row: {
           client_id: string
@@ -397,7 +444,7 @@ export type Database = {
           {
             foreignKeyName: "client_payment_connection_client_id_fkey"
             columns: ["client_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "client"
             referencedColumns: ["id"]
           },
@@ -407,23 +454,29 @@ export type Database = {
         Row: {
           client_id: string
           id: string
+          overage_segments: number
           period_start: string
           segments_used: number
           warned_at_80: string | null
+          warned_email_at: string | null
         }
         Insert: {
           client_id: string
           id?: string
+          overage_segments?: number
           period_start: string
           segments_used?: number
           warned_at_80?: string | null
+          warned_email_at?: string | null
         }
         Update: {
           client_id?: string
           id?: string
+          overage_segments?: number
           period_start?: string
           segments_used?: number
           warned_at_80?: string | null
+          warned_email_at?: string | null
         }
         Relationships: [
           {
@@ -802,6 +855,59 @@ export type Database = {
           tiers?: Json
         }
         Relationships: []
+      }
+      retainer_payment: {
+        Row: {
+          amount_cents: number
+          client_id: string | null
+          created_at: string
+          currency: string
+          customer_email: string | null
+          description: string | null
+          id: string
+          kind: string
+          matched_at: string | null
+          occurred_at: string
+          status: string
+          stripe_object_id: string
+        }
+        Insert: {
+          amount_cents?: number
+          client_id?: string | null
+          created_at?: string
+          currency?: string
+          customer_email?: string | null
+          description?: string | null
+          id?: string
+          kind: string
+          matched_at?: string | null
+          occurred_at?: string
+          status?: string
+          stripe_object_id: string
+        }
+        Update: {
+          amount_cents?: number
+          client_id?: string | null
+          created_at?: string
+          currency?: string
+          customer_email?: string | null
+          description?: string | null
+          id?: string
+          kind?: string
+          matched_at?: string | null
+          occurred_at?: string
+          status?: string
+          stripe_object_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "retainer_payment_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       runtime_state: {
         Row: {

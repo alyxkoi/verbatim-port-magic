@@ -25,7 +25,13 @@ import { Route as AuthenticatedConsoleLeadsRouteImport } from './routes/_authent
 import { Route as AuthenticatedConsoleLinksRouteImport } from './routes/_authenticated/console.links'
 import { Route as AuthenticatedConsolePlansRouteImport } from './routes/_authenticated/console.plans'
 import { Route as AuthenticatedConsoleSettingsRouteImport } from './routes/_authenticated/console.settings'
+import { Route as ApiPublicDailyMaintenanceRouteImport } from './routes/api/public/daily-maintenance'
 import { Route as ApiPublicLeadIntakeRouteImport } from './routes/api/public/lead-intake'
+import { Route as ApiPublicMessageWorkerRouteImport } from './routes/api/public/message-worker'
+import { Route as ApiPublicSentWebhookRouteImport } from './routes/api/public/sent-webhook'
+import { Route as ApiPublicStripeConnectCallbackRouteImport } from './routes/api/public/stripe-connect-callback'
+import { Route as ApiPublicStripeConnectWebhookRouteImport } from './routes/api/public/stripe-connect-webhook'
+import { Route as ApiPublicStripePlatformWebhookRouteImport } from './routes/api/public/stripe-platform-webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -115,11 +121,45 @@ const AuthenticatedConsoleSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedConsoleRoute,
   } as any)
+const ApiPublicDailyMaintenanceRoute =
+  ApiPublicDailyMaintenanceRouteImport.update({
+    id: '/api/public/daily-maintenance',
+    path: '/api/public/daily-maintenance',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicLeadIntakeRoute = ApiPublicLeadIntakeRouteImport.update({
   id: '/api/public/lead-intake',
   path: '/api/public/lead-intake',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicMessageWorkerRoute = ApiPublicMessageWorkerRouteImport.update({
+  id: '/api/public/message-worker',
+  path: '/api/public/message-worker',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicSentWebhookRoute = ApiPublicSentWebhookRouteImport.update({
+  id: '/api/public/sent-webhook',
+  path: '/api/public/sent-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicStripeConnectCallbackRoute =
+  ApiPublicStripeConnectCallbackRouteImport.update({
+    id: '/api/public/stripe-connect-callback',
+    path: '/api/public/stripe-connect-callback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicStripeConnectWebhookRoute =
+  ApiPublicStripeConnectWebhookRouteImport.update({
+    id: '/api/public/stripe-connect-webhook',
+    path: '/api/public/stripe-connect-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicStripePlatformWebhookRoute =
+  ApiPublicStripePlatformWebhookRouteImport.update({
+    id: '/api/public/stripe-platform-webhook',
+    path: '/api/public/stripe-platform-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -136,7 +176,13 @@ export interface FileRoutesByFullPath {
   '/console/links': typeof AuthenticatedConsoleLinksRoute
   '/console/plans': typeof AuthenticatedConsolePlansRoute
   '/console/settings': typeof AuthenticatedConsoleSettingsRoute
+  '/api/public/daily-maintenance': typeof ApiPublicDailyMaintenanceRoute
   '/api/public/lead-intake': typeof ApiPublicLeadIntakeRoute
+  '/api/public/message-worker': typeof ApiPublicMessageWorkerRoute
+  '/api/public/sent-webhook': typeof ApiPublicSentWebhookRoute
+  '/api/public/stripe-connect-callback': typeof ApiPublicStripeConnectCallbackRoute
+  '/api/public/stripe-connect-webhook': typeof ApiPublicStripeConnectWebhookRoute
+  '/api/public/stripe-platform-webhook': typeof ApiPublicStripePlatformWebhookRoute
   '/console/': typeof AuthenticatedConsoleIndexRoute
 }
 export interface FileRoutesByTo {
@@ -153,7 +199,13 @@ export interface FileRoutesByTo {
   '/console/links': typeof AuthenticatedConsoleLinksRoute
   '/console/plans': typeof AuthenticatedConsolePlansRoute
   '/console/settings': typeof AuthenticatedConsoleSettingsRoute
+  '/api/public/daily-maintenance': typeof ApiPublicDailyMaintenanceRoute
   '/api/public/lead-intake': typeof ApiPublicLeadIntakeRoute
+  '/api/public/message-worker': typeof ApiPublicMessageWorkerRoute
+  '/api/public/sent-webhook': typeof ApiPublicSentWebhookRoute
+  '/api/public/stripe-connect-callback': typeof ApiPublicStripeConnectCallbackRoute
+  '/api/public/stripe-connect-webhook': typeof ApiPublicStripeConnectWebhookRoute
+  '/api/public/stripe-platform-webhook': typeof ApiPublicStripePlatformWebhookRoute
   '/console': typeof AuthenticatedConsoleIndexRoute
 }
 export interface FileRoutesById {
@@ -173,7 +225,13 @@ export interface FileRoutesById {
   '/_authenticated/console/links': typeof AuthenticatedConsoleLinksRoute
   '/_authenticated/console/plans': typeof AuthenticatedConsolePlansRoute
   '/_authenticated/console/settings': typeof AuthenticatedConsoleSettingsRoute
+  '/api/public/daily-maintenance': typeof ApiPublicDailyMaintenanceRoute
   '/api/public/lead-intake': typeof ApiPublicLeadIntakeRoute
+  '/api/public/message-worker': typeof ApiPublicMessageWorkerRoute
+  '/api/public/sent-webhook': typeof ApiPublicSentWebhookRoute
+  '/api/public/stripe-connect-callback': typeof ApiPublicStripeConnectCallbackRoute
+  '/api/public/stripe-connect-webhook': typeof ApiPublicStripeConnectWebhookRoute
+  '/api/public/stripe-platform-webhook': typeof ApiPublicStripePlatformWebhookRoute
   '/_authenticated/console/': typeof AuthenticatedConsoleIndexRoute
 }
 export interface FileRouteTypes {
@@ -193,7 +251,13 @@ export interface FileRouteTypes {
     | '/console/links'
     | '/console/plans'
     | '/console/settings'
+    | '/api/public/daily-maintenance'
     | '/api/public/lead-intake'
+    | '/api/public/message-worker'
+    | '/api/public/sent-webhook'
+    | '/api/public/stripe-connect-callback'
+    | '/api/public/stripe-connect-webhook'
+    | '/api/public/stripe-platform-webhook'
     | '/console/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -210,7 +274,13 @@ export interface FileRouteTypes {
     | '/console/links'
     | '/console/plans'
     | '/console/settings'
+    | '/api/public/daily-maintenance'
     | '/api/public/lead-intake'
+    | '/api/public/message-worker'
+    | '/api/public/sent-webhook'
+    | '/api/public/stripe-connect-callback'
+    | '/api/public/stripe-connect-webhook'
+    | '/api/public/stripe-platform-webhook'
     | '/console'
   id:
     | '__root__'
@@ -229,7 +299,13 @@ export interface FileRouteTypes {
     | '/_authenticated/console/links'
     | '/_authenticated/console/plans'
     | '/_authenticated/console/settings'
+    | '/api/public/daily-maintenance'
     | '/api/public/lead-intake'
+    | '/api/public/message-worker'
+    | '/api/public/sent-webhook'
+    | '/api/public/stripe-connect-callback'
+    | '/api/public/stripe-connect-webhook'
+    | '/api/public/stripe-platform-webhook'
     | '/_authenticated/console/'
   fileRoutesById: FileRoutesById
 }
@@ -241,7 +317,13 @@ export interface RootRouteChildren {
   GuidesBookingSystemCostRoute: typeof GuidesBookingSystemCostRoute
   GuidesDallasBookingSystemRoute: typeof GuidesDallasBookingSystemRoute
   GuidesIndexRoute: typeof GuidesIndexRoute
+  ApiPublicDailyMaintenanceRoute: typeof ApiPublicDailyMaintenanceRoute
   ApiPublicLeadIntakeRoute: typeof ApiPublicLeadIntakeRoute
+  ApiPublicMessageWorkerRoute: typeof ApiPublicMessageWorkerRoute
+  ApiPublicSentWebhookRoute: typeof ApiPublicSentWebhookRoute
+  ApiPublicStripeConnectCallbackRoute: typeof ApiPublicStripeConnectCallbackRoute
+  ApiPublicStripeConnectWebhookRoute: typeof ApiPublicStripeConnectWebhookRoute
+  ApiPublicStripePlatformWebhookRoute: typeof ApiPublicStripePlatformWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -358,11 +440,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedConsoleSettingsRouteImport
       parentRoute: typeof AuthenticatedConsoleRoute
     }
+    '/api/public/daily-maintenance': {
+      id: '/api/public/daily-maintenance'
+      path: '/api/public/daily-maintenance'
+      fullPath: '/api/public/daily-maintenance'
+      preLoaderRoute: typeof ApiPublicDailyMaintenanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/lead-intake': {
       id: '/api/public/lead-intake'
       path: '/api/public/lead-intake'
       fullPath: '/api/public/lead-intake'
       preLoaderRoute: typeof ApiPublicLeadIntakeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/message-worker': {
+      id: '/api/public/message-worker'
+      path: '/api/public/message-worker'
+      fullPath: '/api/public/message-worker'
+      preLoaderRoute: typeof ApiPublicMessageWorkerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/sent-webhook': {
+      id: '/api/public/sent-webhook'
+      path: '/api/public/sent-webhook'
+      fullPath: '/api/public/sent-webhook'
+      preLoaderRoute: typeof ApiPublicSentWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/stripe-connect-callback': {
+      id: '/api/public/stripe-connect-callback'
+      path: '/api/public/stripe-connect-callback'
+      fullPath: '/api/public/stripe-connect-callback'
+      preLoaderRoute: typeof ApiPublicStripeConnectCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/stripe-connect-webhook': {
+      id: '/api/public/stripe-connect-webhook'
+      path: '/api/public/stripe-connect-webhook'
+      fullPath: '/api/public/stripe-connect-webhook'
+      preLoaderRoute: typeof ApiPublicStripeConnectWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/stripe-platform-webhook': {
+      id: '/api/public/stripe-platform-webhook'
+      path: '/api/public/stripe-platform-webhook'
+      fullPath: '/api/public/stripe-platform-webhook'
+      preLoaderRoute: typeof ApiPublicStripePlatformWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -412,7 +536,13 @@ const rootRouteChildren: RootRouteChildren = {
   GuidesBookingSystemCostRoute: GuidesBookingSystemCostRoute,
   GuidesDallasBookingSystemRoute: GuidesDallasBookingSystemRoute,
   GuidesIndexRoute: GuidesIndexRoute,
+  ApiPublicDailyMaintenanceRoute: ApiPublicDailyMaintenanceRoute,
   ApiPublicLeadIntakeRoute: ApiPublicLeadIntakeRoute,
+  ApiPublicMessageWorkerRoute: ApiPublicMessageWorkerRoute,
+  ApiPublicSentWebhookRoute: ApiPublicSentWebhookRoute,
+  ApiPublicStripeConnectCallbackRoute: ApiPublicStripeConnectCallbackRoute,
+  ApiPublicStripeConnectWebhookRoute: ApiPublicStripeConnectWebhookRoute,
+  ApiPublicStripePlatformWebhookRoute: ApiPublicStripePlatformWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

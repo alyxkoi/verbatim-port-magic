@@ -1,9 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 
 import { EmptyState } from "@/components/console/EmptyState";
 import { Icon } from "@/components/console/icons";
 import { daypartForNow, greetingForDaypart } from "@/components/console/nav";
+import { listUsageWarnings } from "@/lib/clients.functions";
 
 export const Route = createFileRoute("/_authenticated/console/")({
   component: TodayScreen,
@@ -132,10 +135,13 @@ function TodayScreen() {
         </Link>
       </section>
 
+      <UsageWarnings />
+
       <div className="today-section-label">
         <h2>What needs you</h2>
         <span>No decisions right now</span>
       </div>
+
       <div className="today-workbench">
         <article className="surface action-card">
           <div className="section-heading">
@@ -217,6 +223,51 @@ function Counter({ label, tone, count }: { label: string; tone: string; count: n
         0
       </strong>
       <i aria-hidden="true"></i>
+    </div>
+  );
+}
+
+/**
+ * Texts running out is a warning, never a block. The cap is recorded and shown;
+ * it does not stop a live conversation.
+ */
+function UsageWarnings() {
+  const fetchWarnings = useServerFn(listUsageWarnings);
+  const { data } = useQuery({ queryKey: ["usage-warnings"], queryFn: () => fetchWarnings() });
+  if (!data?.length) return null;
+
+  return (
+    <div className="today-workbench" aria-label="Text allowance warnings">
+      <article className="surface action-card">
+        <div className="section-heading">
+          <h2>Texts running low</h2>
+          <span>
+            {data.length} client{data.length === 1 ? "" : "s"} past 80%
+          </span>
+        </div>
+        {data.map((row) => (
+          <div key={row.id} className="client-usage">
+            <div className="client-usage-head">
+              <span className="usage-pct" data-tone={row.pct > 90 ? "danger" : "attention"}>
+                <em>{row.name}</em> {row.segments.toLocaleString()} of {row.allowance.toLocaleString()}
+              </span>
+              {row.overage > 0 ? (
+                <em className="tabular" data-tone="danger">
+                  +${row.overage.toFixed(2)} absorbed
+                </em>
+              ) : null}
+            </div>
+            <div className="meter">
+              <span
+                className="meter-fill"
+                data-tone={row.pct > 90 ? "danger" : "attention"}
+                style={{ width: `${Math.min(100, row.pct)}%` }}
+              />
+            </div>
+          </div>
+        ))}
+        <p className="pillar-note">Nothing is blocked and nothing is charged. Conversations keep running.</p>
+      </article>
     </div>
   );
 }
