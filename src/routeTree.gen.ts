@@ -25,6 +25,7 @@ import { Route as AuthenticatedConsoleLeadsRouteImport } from './routes/_authent
 import { Route as AuthenticatedConsoleLinksRouteImport } from './routes/_authenticated/console.links'
 import { Route as AuthenticatedConsolePlansRouteImport } from './routes/_authenticated/console.plans'
 import { Route as AuthenticatedConsoleSettingsRouteImport } from './routes/_authenticated/console.settings'
+import { Route as ApiPublicLeadIntakeRouteImport } from './routes/api/public/lead-intake'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -114,6 +115,11 @@ const AuthenticatedConsoleSettingsRoute =
     path: '/settings',
     getParentRoute: () => AuthenticatedConsoleRoute,
   } as any)
+const ApiPublicLeadIntakeRoute = ApiPublicLeadIntakeRouteImport.update({
+  id: '/api/public/lead-intake',
+  path: '/api/public/lead-intake',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/console/links': typeof AuthenticatedConsoleLinksRoute
   '/console/plans': typeof AuthenticatedConsolePlansRoute
   '/console/settings': typeof AuthenticatedConsoleSettingsRoute
+  '/api/public/lead-intake': typeof ApiPublicLeadIntakeRoute
   '/console/': typeof AuthenticatedConsoleIndexRoute
 }
 export interface FileRoutesByTo {
@@ -146,6 +153,7 @@ export interface FileRoutesByTo {
   '/console/links': typeof AuthenticatedConsoleLinksRoute
   '/console/plans': typeof AuthenticatedConsolePlansRoute
   '/console/settings': typeof AuthenticatedConsoleSettingsRoute
+  '/api/public/lead-intake': typeof ApiPublicLeadIntakeRoute
   '/console': typeof AuthenticatedConsoleIndexRoute
 }
 export interface FileRoutesById {
@@ -165,6 +173,7 @@ export interface FileRoutesById {
   '/_authenticated/console/links': typeof AuthenticatedConsoleLinksRoute
   '/_authenticated/console/plans': typeof AuthenticatedConsolePlansRoute
   '/_authenticated/console/settings': typeof AuthenticatedConsoleSettingsRoute
+  '/api/public/lead-intake': typeof ApiPublicLeadIntakeRoute
   '/_authenticated/console/': typeof AuthenticatedConsoleIndexRoute
 }
 export interface FileRouteTypes {
@@ -184,6 +193,7 @@ export interface FileRouteTypes {
     | '/console/links'
     | '/console/plans'
     | '/console/settings'
+    | '/api/public/lead-intake'
     | '/console/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/console/links'
     | '/console/plans'
     | '/console/settings'
+    | '/api/public/lead-intake'
     | '/console'
   id:
     | '__root__'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/_authenticated/console/links'
     | '/_authenticated/console/plans'
     | '/_authenticated/console/settings'
+    | '/api/public/lead-intake'
     | '/_authenticated/console/'
   fileRoutesById: FileRoutesById
 }
@@ -229,6 +241,7 @@ export interface RootRouteChildren {
   GuidesBookingSystemCostRoute: typeof GuidesBookingSystemCostRoute
   GuidesDallasBookingSystemRoute: typeof GuidesDallasBookingSystemRoute
   GuidesIndexRoute: typeof GuidesIndexRoute
+  ApiPublicLeadIntakeRoute: typeof ApiPublicLeadIntakeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -345,6 +358,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedConsoleSettingsRouteImport
       parentRoute: typeof AuthenticatedConsoleRoute
     }
+    '/api/public/lead-intake': {
+      id: '/api/public/lead-intake'
+      path: '/api/public/lead-intake'
+      fullPath: '/api/public/lead-intake'
+      preLoaderRoute: typeof ApiPublicLeadIntakeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -392,6 +412,7 @@ const rootRouteChildren: RootRouteChildren = {
   GuidesBookingSystemCostRoute: GuidesBookingSystemCostRoute,
   GuidesDallasBookingSystemRoute: GuidesDallasBookingSystemRoute,
   GuidesIndexRoute: GuidesIndexRoute,
+  ApiPublicLeadIntakeRoute: ApiPublicLeadIntakeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
