@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 
 import { Icon } from "@/components/console/icons";
+import { approveDraft, generateDraft } from "@/lib/blip.functions";
 import {
   cancelQueuedMessage,
   getLead,
@@ -80,6 +81,7 @@ export function LeadDrawer({
   const [pillarErrors, setPillarErrors] = useState<Record<string, string>>({});
   const [saveState, setSaveState] = useState("");
   const [compose, setCompose] = useState("");
+  const [blipEdit, setBlipEdit] = useState<string | null>(null);
 
   const { data: lead } = useQuery({
     queryKey: ["console", "lead", leadId],
@@ -154,6 +156,21 @@ export function LeadDrawer({
   const restoreFn = useServerFn(restoreLead);
   const restoreMutation = useMutation({
     mutationFn: () => restoreFn({ data: { leadId } }),
+    onSuccess: invalidate,
+  });
+
+  const approveFn = useServerFn(approveDraft);
+  const approveMutation = useMutation({
+    mutationFn: (input: { messageId: string; body: string }) => approveFn({ data: input }),
+    onSuccess: () => {
+      setBlipEdit(null);
+      invalidate();
+    },
+  });
+
+  const generateFn = useServerFn(generateDraft);
+  const generateMutation = useMutation({
+    mutationFn: () => generateFn({ data: { leadId } }),
     onSuccess: invalidate,
   });
 
@@ -264,6 +281,89 @@ export function LeadDrawer({
               <span className="context-state">{statusLabel}</span>
             </div>
           )}
+
+          {(() => {
+            // Blip drafts and holds are shown before the transcript, because the
+            // draft is the thing that needs a decision (spec 5).
+            const draft = [...lead.messages]
+              .reverse()
+              .find(
+                (message) =>
+                  message.direction === "outbound" &&
+                  message.authored_by === "blip" &&
+                  (message.status === "held" || message.status === "queued"),
+              );
+            if (!draft) {
+              return (
+                <div className="blip-draft-empty">
+                  <span>No Blip draft waiting</span>
+                  <button
+                    className="button ghost"
+                    type="button"
+                    disabled={generateMutation.isPending}
+                    onClick={() => generateMutation.mutate()}
+                  >
+                    <Icon name="spark" /> {generateMutation.isPending ? "Writing" : "Draft a reply"}
+                  </button>
+                </div>
+              );
+            }
+            const violations = Array.isArray(
+              (draft as { gate_violations?: unknown }).gate_violations,
+            )
+              ? ((draft as { gate_violations?: string[] }).gate_violations ?? [])
+              : [];
+            const heldReason = (draft as { held_reason?: string | null }).held_reason;
+            return (
+              <div className="blip-draft" data-status={draft.status}>
+                <div className="blip-draft-head">
+                  <Icon name="spark" />
+                  <strong>Blip drafted this</strong>
+                  <span className="status" data-tone={draft.status === "held" ? "attention" : "muted"}>
+                    {draft.status === "held" ? "Held for you" : "Queued"}
+                  </span>
+                </div>
+                <div className="grow-wrap" data-replicated-value={blipEdit ?? draft.body}>
+                  <textarea
+                    className="textarea"
+                    rows={2}
+                    aria-label="Blip draft"
+                    value={blipEdit ?? draft.body}
+                    onChange={(event) => setBlipEdit(event.target.value)}
+                  />
+                </div>
+                {heldReason ? (
+                  <p className="blip-draft-reason">
+                    {heldReason.replace(/_/g, " ")}
+                    {violations.length ? `: ${violations.join(", ")}` : ""}
+                  </p>
+                ) : null}
+                <div className="blip-draft-actions">
+                  <button
+                    className="button ghost"
+                    type="button"
+                    disabled={generateMutation.isPending}
+                    onClick={() => generateMutation.mutate()}
+                  >
+                    <Icon name="refresh" /> Rewrite
+                  </button>
+                  <button
+                    className="button"
+                    type="button"
+                    disabled={approveMutation.isPending}
+                    onClick={() =>
+                      approveMutation.mutate({
+                        messageId: draft.id,
+                        body: (blipEdit ?? draft.body).trim(),
+                      })
+                    }
+                  >
+                    <Icon name="check" /> Approve and send
+                  </button>
+                </div>
+              </div>
+            );
+          })()}
 
           <section className="detail-section conversation-section" data-drawer-section="conversation">
             <div className="drawer-section-head">
