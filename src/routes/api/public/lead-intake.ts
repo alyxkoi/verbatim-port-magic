@@ -128,7 +128,7 @@ export const Route = createFileRoute("/api/public/lead-intake")({
         if (error) return json({ ok: false, error: "Could not save the request." }, 500);
 
         if (parsed.message) {
-          await supabaseAdmin.from("message").insert({
+          const { error: messageError } = await supabaseAdmin.from("message").insert({
             lead_id: lead.id,
             direction: "inbound",
             body: parsed.message,
@@ -136,6 +136,7 @@ export const Route = createFileRoute("/api/public/lead-intake")({
             sent_at: new Date().toISOString(),
             segments: Math.max(1, Math.ceil(parsed.message.length / 160)),
           });
+          if (messageError) return json({ ok: false, error: "Could not save the request." }, 500);
         }
 
         await supabaseAdmin.from("event_log").insert([
