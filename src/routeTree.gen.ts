@@ -17,6 +17,7 @@ import { Route as AuthenticatedConsoleRouteImport } from './routes/_authenticate
 import { Route as GuidesIndexRouteImport } from './routes/guides.index'
 import { Route as GuidesBookingSystemCostRouteImport } from './routes/guides.booking-system-cost'
 import { Route as GuidesDallasBookingSystemRouteImport } from './routes/guides.dallas-booking-system'
+import { Route as AuthenticatedConsoleIndexRouteImport } from './routes/_authenticated/console.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,24 +59,31 @@ const GuidesDallasBookingSystemRoute =
     path: '/guides/dallas-booking-system',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedConsoleIndexRoute =
+  AuthenticatedConsoleIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedConsoleRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/console': typeof AuthenticatedConsoleRoute
+  '/console': typeof AuthenticatedConsoleRouteWithChildren
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
   '/guides/': typeof GuidesIndexRoute
+  '/console/': typeof AuthenticatedConsoleIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/console': typeof AuthenticatedConsoleRoute
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
   '/guides': typeof GuidesIndexRoute
+  '/console': typeof AuthenticatedConsoleIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -83,10 +91,11 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/_authenticated/console': typeof AuthenticatedConsoleRoute
+  '/_authenticated/console': typeof AuthenticatedConsoleRouteWithChildren
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
   '/guides/': typeof GuidesIndexRoute
+  '/_authenticated/console/': typeof AuthenticatedConsoleIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -98,15 +107,16 @@ export interface FileRouteTypes {
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
     | '/guides/'
+    | '/console/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
     | '/sitemap.xml'
-    | '/console'
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
     | '/guides'
+    | '/console'
   id:
     | '__root__'
     | '/'
@@ -117,6 +127,7 @@ export interface FileRouteTypes {
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
     | '/guides/'
+    | '/_authenticated/console/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -187,15 +198,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuidesDallasBookingSystemRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/console/': {
+      id: '/_authenticated/console/'
+      path: '/'
+      fullPath: '/console/'
+      preLoaderRoute: typeof AuthenticatedConsoleIndexRouteImport
+      parentRoute: typeof AuthenticatedConsoleRoute
+    }
   }
 }
 
+interface AuthenticatedConsoleRouteChildren {
+  AuthenticatedConsoleIndexRoute: typeof AuthenticatedConsoleIndexRoute
+}
+
+const AuthenticatedConsoleRouteChildren: AuthenticatedConsoleRouteChildren = {
+  AuthenticatedConsoleIndexRoute: AuthenticatedConsoleIndexRoute,
+}
+
+const AuthenticatedConsoleRouteWithChildren =
+  AuthenticatedConsoleRoute._addFileChildren(AuthenticatedConsoleRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedConsoleRoute: typeof AuthenticatedConsoleRoute
+  AuthenticatedConsoleRoute: typeof AuthenticatedConsoleRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedConsoleRoute: AuthenticatedConsoleRoute,
+  AuthenticatedConsoleRoute: AuthenticatedConsoleRouteWithChildren,
 }
 
 const AuthenticatedRouteRouteWithChildren =

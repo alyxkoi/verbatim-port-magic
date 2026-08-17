@@ -188,7 +188,7 @@ function TodayScreen() {
 
 // Counts tween up on mount, exactly like animateCounters() in the prototype.
 function Counter({ label, tone, count }: { label: string; tone: string; count: number }) {
-  const ref = useRef<HTMLStrongElement>(null);
+  const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const node = ref.current;
