@@ -56,6 +56,15 @@ function GuidesIndex() {
           </p>
           <div className="gmeta">5 min read</div>
         </a>
+
+        <a className="gcard rv" href="/guides/missed-call-text-back">
+          <h2>Missed call text back: how it works</h2>
+          <p>
+            What the automatic text sends, why a missed call is the costliest loss, and what it
+            costs to run.
+          </p>
+          <div className="gmeta">4 min read</div>
+        </a>
       </div>
     </GuideShell>
   );

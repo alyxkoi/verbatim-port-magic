@@ -21,6 +21,7 @@ import { Route as GuidesIndexRouteImport } from './routes/guides.index'
 import { Route as GuidesBookingSystemCostRouteImport } from './routes/guides.booking-system-cost'
 import { Route as GuidesDallasBookingSystemRouteImport } from './routes/guides.dallas-booking-system'
 import { Route as GuidesHiringSomeoneInDallasRouteImport } from './routes/guides.hiring-someone-in-dallas'
+import { Route as GuidesMissedCallTextBackRouteImport } from './routes/guides.missed-call-text-back'
 import { Route as GuidesWhatABookingSystemCostsRouteImport } from './routes/guides.what-a-booking-system-costs'
 import { Route as AuthenticatedConsoleIndexRouteImport } from './routes/_authenticated/console.index'
 import { Route as AuthenticatedConsoleBlipRouteImport } from './routes/_authenticated/console.blip'
@@ -97,6 +98,12 @@ const GuidesHiringSomeoneInDallasRoute =
   GuidesHiringSomeoneInDallasRouteImport.update({
     id: '/guides/hiring-someone-in-dallas',
     path: '/guides/hiring-someone-in-dallas',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const GuidesMissedCallTextBackRoute =
+  GuidesMissedCallTextBackRouteImport.update({
+    id: '/guides/missed-call-text-back',
+    path: '/guides/missed-call-text-back',
     getParentRoute: () => rootRouteImport,
   } as any)
 const GuidesWhatABookingSystemCostsRoute =
@@ -204,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
   '/guides/hiring-someone-in-dallas': typeof GuidesHiringSomeoneInDallasRoute
+  '/guides/missed-call-text-back': typeof GuidesMissedCallTextBackRoute
   '/guides/what-a-booking-system-costs': typeof GuidesWhatABookingSystemCostsRoute
   '/guides/': typeof GuidesIndexRoute
   '/console/blip': typeof AuthenticatedConsoleBlipRoute
@@ -232,6 +240,7 @@ export interface FileRoutesByTo {
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
   '/guides/hiring-someone-in-dallas': typeof GuidesHiringSomeoneInDallasRoute
+  '/guides/missed-call-text-back': typeof GuidesMissedCallTextBackRoute
   '/guides/what-a-booking-system-costs': typeof GuidesWhatABookingSystemCostsRoute
   '/guides': typeof GuidesIndexRoute
   '/console/blip': typeof AuthenticatedConsoleBlipRoute
@@ -263,6 +272,7 @@ export interface FileRoutesById {
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
   '/guides/hiring-someone-in-dallas': typeof GuidesHiringSomeoneInDallasRoute
+  '/guides/missed-call-text-back': typeof GuidesMissedCallTextBackRoute
   '/guides/what-a-booking-system-costs': typeof GuidesWhatABookingSystemCostsRoute
   '/guides/': typeof GuidesIndexRoute
   '/_authenticated/console/blip': typeof AuthenticatedConsoleBlipRoute
@@ -294,6 +304,7 @@ export interface FileRouteTypes {
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
     | '/guides/hiring-someone-in-dallas'
+    | '/guides/missed-call-text-back'
     | '/guides/what-a-booking-system-costs'
     | '/guides/'
     | '/console/blip'
@@ -322,6 +333,7 @@ export interface FileRouteTypes {
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
     | '/guides/hiring-someone-in-dallas'
+    | '/guides/missed-call-text-back'
     | '/guides/what-a-booking-system-costs'
     | '/guides'
     | '/console/blip'
@@ -352,6 +364,7 @@ export interface FileRouteTypes {
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
     | '/guides/hiring-someone-in-dallas'
+    | '/guides/missed-call-text-back'
     | '/guides/what-a-booking-system-costs'
     | '/guides/'
     | '/_authenticated/console/blip'
@@ -382,6 +395,7 @@ export interface RootRouteChildren {
   GuidesBookingSystemCostRoute: typeof GuidesBookingSystemCostRoute
   GuidesDallasBookingSystemRoute: typeof GuidesDallasBookingSystemRoute
   GuidesHiringSomeoneInDallasRoute: typeof GuidesHiringSomeoneInDallasRoute
+  GuidesMissedCallTextBackRoute: typeof GuidesMissedCallTextBackRoute
   GuidesWhatABookingSystemCostsRoute: typeof GuidesWhatABookingSystemCostsRoute
   GuidesIndexRoute: typeof GuidesIndexRoute
   ApiPublicDailyMaintenanceRoute: typeof ApiPublicDailyMaintenanceRoute
@@ -477,6 +491,13 @@ declare module '@tanstack/react-router' {
       path: '/guides/hiring-someone-in-dallas'
       fullPath: '/guides/hiring-someone-in-dallas'
       preLoaderRoute: typeof GuidesHiringSomeoneInDallasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/missed-call-text-back': {
+      id: '/guides/missed-call-text-back'
+      path: '/guides/missed-call-text-back'
+      fullPath: '/guides/missed-call-text-back'
+      preLoaderRoute: typeof GuidesMissedCallTextBackRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/guides/what-a-booking-system-costs': {
@@ -641,6 +662,7 @@ const rootRouteChildren: RootRouteChildren = {
   GuidesBookingSystemCostRoute: GuidesBookingSystemCostRoute,
   GuidesDallasBookingSystemRoute: GuidesDallasBookingSystemRoute,
   GuidesHiringSomeoneInDallasRoute: GuidesHiringSomeoneInDallasRoute,
+  GuidesMissedCallTextBackRoute: GuidesMissedCallTextBackRoute,
   GuidesWhatABookingSystemCostsRoute: GuidesWhatABookingSystemCostsRoute,
   GuidesIndexRoute: GuidesIndexRoute,
   ApiPublicDailyMaintenanceRoute: ApiPublicDailyMaintenanceRoute,
