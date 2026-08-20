@@ -20,6 +20,7 @@ import { Route as AuthenticatedConsoleRouteImport } from './routes/_authenticate
 import { Route as GuidesIndexRouteImport } from './routes/guides.index'
 import { Route as GuidesBookingSystemCostRouteImport } from './routes/guides.booking-system-cost'
 import { Route as GuidesDallasBookingSystemRouteImport } from './routes/guides.dallas-booking-system'
+import { Route as GuidesHiringSomeoneInDallasRouteImport } from './routes/guides.hiring-someone-in-dallas'
 import { Route as GuidesWhatABookingSystemCostsRouteImport } from './routes/guides.what-a-booking-system-costs'
 import { Route as AuthenticatedConsoleIndexRouteImport } from './routes/_authenticated/console.index'
 import { Route as AuthenticatedConsoleBlipRouteImport } from './routes/_authenticated/console.blip'
@@ -90,6 +91,12 @@ const GuidesDallasBookingSystemRoute =
   GuidesDallasBookingSystemRouteImport.update({
     id: '/guides/dallas-booking-system',
     path: '/guides/dallas-booking-system',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const GuidesHiringSomeoneInDallasRoute =
+  GuidesHiringSomeoneInDallasRouteImport.update({
+    id: '/guides/hiring-someone-in-dallas',
+    path: '/guides/hiring-someone-in-dallas',
     getParentRoute: () => rootRouteImport,
   } as any)
 const GuidesWhatABookingSystemCostsRoute =
@@ -196,6 +203,7 @@ export interface FileRoutesByFullPath {
   '/console': typeof AuthenticatedConsoleRouteWithChildren
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
+  '/guides/hiring-someone-in-dallas': typeof GuidesHiringSomeoneInDallasRoute
   '/guides/what-a-booking-system-costs': typeof GuidesWhatABookingSystemCostsRoute
   '/guides/': typeof GuidesIndexRoute
   '/console/blip': typeof AuthenticatedConsoleBlipRoute
@@ -223,6 +231,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
+  '/guides/hiring-someone-in-dallas': typeof GuidesHiringSomeoneInDallasRoute
   '/guides/what-a-booking-system-costs': typeof GuidesWhatABookingSystemCostsRoute
   '/guides': typeof GuidesIndexRoute
   '/console/blip': typeof AuthenticatedConsoleBlipRoute
@@ -253,6 +262,7 @@ export interface FileRoutesById {
   '/_authenticated/console': typeof AuthenticatedConsoleRouteWithChildren
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
+  '/guides/hiring-someone-in-dallas': typeof GuidesHiringSomeoneInDallasRoute
   '/guides/what-a-booking-system-costs': typeof GuidesWhatABookingSystemCostsRoute
   '/guides/': typeof GuidesIndexRoute
   '/_authenticated/console/blip': typeof AuthenticatedConsoleBlipRoute
@@ -283,6 +293,7 @@ export interface FileRouteTypes {
     | '/console'
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
+    | '/guides/hiring-someone-in-dallas'
     | '/guides/what-a-booking-system-costs'
     | '/guides/'
     | '/console/blip'
@@ -310,6 +321,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
+    | '/guides/hiring-someone-in-dallas'
     | '/guides/what-a-booking-system-costs'
     | '/guides'
     | '/console/blip'
@@ -339,6 +351,7 @@ export interface FileRouteTypes {
     | '/_authenticated/console'
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
+    | '/guides/hiring-someone-in-dallas'
     | '/guides/what-a-booking-system-costs'
     | '/guides/'
     | '/_authenticated/console/blip'
@@ -368,6 +381,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   GuidesBookingSystemCostRoute: typeof GuidesBookingSystemCostRoute
   GuidesDallasBookingSystemRoute: typeof GuidesDallasBookingSystemRoute
+  GuidesHiringSomeoneInDallasRoute: typeof GuidesHiringSomeoneInDallasRoute
   GuidesWhatABookingSystemCostsRoute: typeof GuidesWhatABookingSystemCostsRoute
   GuidesIndexRoute: typeof GuidesIndexRoute
   ApiPublicDailyMaintenanceRoute: typeof ApiPublicDailyMaintenanceRoute
@@ -456,6 +470,13 @@ declare module '@tanstack/react-router' {
       path: '/guides/dallas-booking-system'
       fullPath: '/guides/dallas-booking-system'
       preLoaderRoute: typeof GuidesDallasBookingSystemRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/hiring-someone-in-dallas': {
+      id: '/guides/hiring-someone-in-dallas'
+      path: '/guides/hiring-someone-in-dallas'
+      fullPath: '/guides/hiring-someone-in-dallas'
+      preLoaderRoute: typeof GuidesHiringSomeoneInDallasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/guides/what-a-booking-system-costs': {
@@ -619,6 +640,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   GuidesBookingSystemCostRoute: GuidesBookingSystemCostRoute,
   GuidesDallasBookingSystemRoute: GuidesDallasBookingSystemRoute,
+  GuidesHiringSomeoneInDallasRoute: GuidesHiringSomeoneInDallasRoute,
   GuidesWhatABookingSystemCostsRoute: GuidesWhatABookingSystemCostsRoute,
   GuidesIndexRoute: GuidesIndexRoute,
   ApiPublicDailyMaintenanceRoute: ApiPublicDailyMaintenanceRoute,
