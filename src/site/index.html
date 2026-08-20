@@ -902,11 +902,7 @@ body.nav-scrolled .desktop-nav{background:rgba(10,12,9,.62)}
 /* Mobile keeps two annotations per screen instead of three. The third pointed
    from outside the image on a narrow viewport and was being clipped. */
 @media(max-width:760px){
-  .sketch-note.sketch-c{display:none}
   .sketch-note .sketch-label{font-size:clamp(13px,3.5vw,16px)}
-  .sketch-note .sketch-arrow{--aw:82px;--ah:46px}
-  .sketch-stage .sketch-a{left:2%;top:8%;--rot:-3deg;--ax:64%;--ay:26px;--ar:14deg}
-  .sketch-stage .sketch-b{left:auto;right:2%;top:auto;bottom:6%;text-align:right;--rot:2deg;--ax:-72px;--ay:-40px;--fx:-1;--fy:-1;--ar:-12deg}
 }
 
 /* The compact nav shrank links to 9.5px on scroll, below the legible floor. */
@@ -920,11 +916,6 @@ body.nav-compact .desktop-links a{font-size:10.5px}
   .hero .shell{padding-bottom:206px}
   .hero-scene{height:302px;bottom:0}
   .layer-globe{bottom:-24%}
-
-  /* One annotation per screen. The lower label pointed across the image from
-     outside the frame and never landed on anything. */
-  .sketch-note.sketch-b{display:none}
-  .sketch-stage .sketch-a{left:3%;top:6%;--rot:-3deg;--ax:62%;--ay:24px;--aw:86px;--ah:48px;--ar:16deg}
 
   /* Real glass instead of a near solid slab. */
   .mobile-nav{
@@ -1018,14 +1009,13 @@ body.nav-compact .desktop-links a{font-size:10.5px}
   .layer-analytics{bottom:20%;width:132px}
 }
 
-/* 3. One annotation per screenshot at every width, matching what mobile already
-   did. The second and third arrows pointed at nothing and cluttered the frame. */
-.sketch-note.sketch-b,.sketch-note.sketch-c{display:none!important}
-.blueprint .sketch-stage .sketch-a{left:3.5%;right:auto;top:7%;bottom:auto;text-align:left;--rot:-3deg;--fx:1;--fy:1;--ax:62%;--ay:26px;--aw:132px;--ah:62px;--ar:15deg}
-.blueprint .sketch-control .sketch-a{top:9%}
-.blueprint .sketch-booking .sketch-a{top:8%;--ay:32px;--ah:104px;--ar:30deg}
-.blueprint .sketch-follow .sketch-a{top:8%;--ay:32px;--ah:112px;--ar:28deg}
-.blueprint .sketch-logic .sketch-a{top:9%;--ar:13deg}
+/* 3. Three annotations above 1080px; tablet and mobile keep only the top-left
+   one, repositioned inside the frame with a shorter arrow. */
+@media(max-width:1080px){
+  .sketch-note.sketch-b,
+  .sketch-note.sketch-c{display:none}
+  .blueprint .sketch-stage .sketch-a{left:3%;right:auto;top:6%;bottom:auto;text-align:left;--rot:-3deg;--fx:1;--fy:1;--ax:62%;--ay:24px;--aw:86px;--ah:48px;--ar:16deg}
+}
 
 /* 4. No black flash while a screenshot loads: the stage carries a placeholder in
    the section's own blues, and each image fades in when it decodes. */
