@@ -178,8 +178,8 @@ export function GuideFooter() {
 
           <nav className="footer-col" aria-label="Guides">
             <h3>Guides</h3>
-            <a href="/guides/what-a-booking-system-costs">What a booking system costs</a>
-            <a href="/guides/hiring-someone-in-dallas">Hiring someone in Dallas</a>
+            <a href="/guides/booking-system-cost">What a booking system costs</a>
+            <a href="/guides/dallas-booking-system">Hiring someone in Dallas</a>
             <a className="footer-accent-link" href="/guides">All guides</a>
           </nav>
 
@@ -187,16 +187,6 @@ export function GuideFooter() {
             <h3>Get started</h3>
             <a className="footer-cta" href="/#start">Get my free plan</a>
             <p>A written plan for your business, usually within a day. No cost.</p>
-            <div className="footer-contact-links">
-              <a href="tel:+14699431560" aria-label="Call Alyx Lab">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.7 3.8 9 3.2l2.1 5-1.8 1.5a14.3 14.3 0 0 0 5 5l1.5-1.8 5 2.1-.6 2.3c-.3 1.2-1.4 2-2.6 1.9C10.8 18.4 5.6 13.2 4.8 6.4c-.1-1.2.7-2.3 1.9-2.6Z" /></svg>
-                <span>(469) 943 1560</span>
-              </a>
-              <a href="mailto:alyxlabwork@gmail.com" aria-label="Email Alyx Lab">
-                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="13" rx="2" /><path d="m5 7 7 5 7-5" /></svg>
-                <span>alyxlabwork@gmail.com</span>
-              </a>
-            </div>
           </div>
         </div>
 
@@ -205,7 +195,7 @@ export function GuideFooter() {
           <nav aria-label="Legal">
             <a href="/privacy">Privacy</a>
             <a href="/terms">Terms</a>
-            <a href="/operator-login">Operator login</a>
+            <a href="/login">Operator login</a>
           </nav>
         </div>
       </div>

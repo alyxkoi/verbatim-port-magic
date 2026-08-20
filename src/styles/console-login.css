@@ -27,7 +27,7 @@
     min-height: 100%;
     background: var(--page);
     color: var(--text);
-    font-family: "Lufga", "Outfit", -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
+    font-family: "Geist", -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
     font-variant-numeric: tabular-nums lining-nums;
     -webkit-font-smoothing: antialiased;
   }

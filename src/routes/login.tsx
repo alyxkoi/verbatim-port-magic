@@ -6,7 +6,6 @@ import { signIn, requestPasswordReset } from "@/lib/auth.functions";
 import loginCss from "../styles/console-login.css?url";
 
 export const Route = createFileRoute("/login")({
-  ssr: false,
   head: () => ({
     meta: [
       { title: "Sign in · Alyx Lab" },
@@ -16,13 +15,7 @@ export const Route = createFileRoute("/login")({
       { property: "og:description", content: "Alyx Lab operator console sign in." },
     ],
     links: [
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "preconnect", href: "https://xlpclvovydtuxbssetga.supabase.co" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap",
-      },
       { rel: "stylesheet", href: loginCss },
     ],
   }),

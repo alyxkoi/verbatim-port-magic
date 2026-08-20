@@ -633,10 +633,9 @@ body.nav-compact .mobile-nav,body.nav-scrolled .mobile-nav{height:58px;border-ra
 .footer-col,.footer-cta-col{display:flex;flex-direction:column;align-items:flex-start;min-width:0}.footer-col h3,.footer-cta-col h3{margin:0 0 22px;font-size:11px;line-height:1;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.5);font-weight:900}.footer-col a{display:block;margin:0 0 14px;color:rgba(255,255,255,.74);font-size:13px;font-weight:650;line-height:1.35;text-transform:none;letter-spacing:0;transition:color .24s ease,transform .24s ease}.footer-col a:hover{color:#fff;transform:translateX(2px)}.footer-col .footer-accent-link{color:var(--lime)}.footer-col .footer-accent-link:hover{color:#fff}
 .footer-cta{display:flex;align-items:center;justify-content:center;width:100%;min-height:44px;padding:0 22px;border-radius:999px;background:var(--lime);color:#080a07;font-size:12px;font-weight:850;text-transform:none;letter-spacing:0;box-shadow:0 0 0 1px rgba(215,255,0,.16),0 10px 24px rgba(0,0,0,.16);transition:transform .28s var(--curve),background .28s ease,color .28s ease,box-shadow .28s ease}.footer-cta:hover{transform:translateY(-2px);background:#fff;color:#080a07;box-shadow:0 12px 30px rgba(0,0,0,.22)}
 .footer-cta-col>p{margin:13px 0 0;font-size:12px;line-height:1.55;color:rgba(255,255,255,.62);max-width:30ch}
-.footer-contact-links{display:grid;gap:10px;margin-top:18px}.footer-contact-links a{display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.74);font-size:12px;font-weight:600;text-transform:none;letter-spacing:0;transition:color .24s ease}.footer-contact-links a:hover{color:#fff}.footer-contact-links svg{width:15px;height:15px;flex:0 0 auto;fill:none;stroke:var(--lime);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .footer-bottom{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:25px;border-top:1px solid rgba(255,255,255,.11);font-size:10px;line-height:1.4;color:rgba(255,255,255,.5);text-transform:none;letter-spacing:0}.footer-bottom nav{display:flex;align-items:center;gap:24px;flex-wrap:wrap}.footer-bottom a{color:rgba(255,255,255,.5);text-transform:none;letter-spacing:0;transition:color .24s ease}.footer-bottom a:hover{color:var(--lime)}
-@media(max-width:1040px){.footer-main{grid-template-columns:1.25fr .75fr 1fr;gap:44px 34px}.footer-cta-col{grid-column:1 / -1;display:grid;grid-template-columns:minmax(180px,.72fr) minmax(220px,1fr);column-gap:30px;align-items:start}.footer-cta-col h3{grid-column:1/-1;margin-bottom:16px}.footer-cta{grid-column:1}.footer-cta-col>p{grid-column:2;grid-row:2;margin:5px 0 0}.footer-contact-links{grid-column:2;grid-row:3;margin-top:14px}}
-@media(max-width:760px){.footer-shell{padding-top:58px;padding-bottom:24px}.footer-main{grid-template-columns:1fr 1fr;gap:42px 24px;padding-bottom:46px}.footer-brand-col{grid-column:1 / -1}.footer-blurb{font-size:13px;max-width:36ch}.footer-company{font-size:12px}.footer-col h3,.footer-cta-col h3{margin-bottom:18px}.footer-col a{font-size:12px;margin-bottom:12px}.footer-cta-col{grid-column:1/-1;display:flex;gap:0}.footer-cta-col>p{margin:12px 0 0}.footer-contact-links{margin-top:17px}.footer-bottom{align-items:flex-start;flex-direction:column;gap:15px;padding-top:20px}.footer-bottom nav{gap:18px}}
+@media(min-width:761px) and (max-width:1040px){.footer-main{grid-template-columns:1.25fr .75fr 1fr;column-gap:34px;row-gap:38px;padding-bottom:50px}.footer-cta-col{grid-column:1 / -1;display:grid;grid-template-columns:minmax(100px,.45fr) minmax(220px,1.15fr) minmax(220px,1fr);column-gap:24px;align-items:center;padding-top:30px;border-top:1px solid rgba(255,255,255,.11)}.footer-cta-col h3{grid-column:1;margin:0}.footer-cta{grid-column:2}.footer-cta-col>p{grid-column:3;margin:0;max-width:33ch}}
+@media(max-width:760px){.footer-shell{padding-top:58px;padding-bottom:24px}.footer-main{grid-template-columns:1fr 1fr;gap:42px 24px;padding-bottom:46px}.footer-brand-col{grid-column:1 / -1}.footer-blurb{font-size:13px;max-width:36ch}.footer-company{font-size:12px}.footer-col h3,.footer-cta-col h3{margin-bottom:18px}.footer-col a{font-size:12px;margin-bottom:12px}.footer-cta-col{grid-column:1/-1;display:flex;gap:0}.footer-cta-col>p{margin:12px 0 0}.footer-bottom{align-items:flex-start;flex-direction:column;gap:15px;padding-top:20px}.footer-bottom nav{gap:18px}}
 @media(max-width:480px){.footer-main{grid-template-columns:1fr;gap:34px}.footer-brand-col,.footer-cta-col{grid-column:1}.footer-mark{margin-bottom:20px}.footer-col{padding-top:2px}.footer-cta{width:100%}.footer-bottom nav{width:100%;justify-content:space-between;gap:12px}}
 @media(max-width:760px){
   .footer.footer-rich::before{--footer-cloud-scale:1.55;left:-12%;top:74px;opacity:.28}
@@ -860,7 +859,6 @@ body.nav-compact .mobile-nav,body.nav-scrolled .mobile-nav{height:58px;border-ra
 .systems-dot::after{content:"";position:absolute;inset:-10px;border-radius:50%}
 .desktop-links a{display:inline-block;padding:7px 0;font-size:10.5px}
 .hero-actions .text-link{display:inline-flex;align-items:center;padding:6px 0}
-.footer-contact-links a{display:inline-block;padding:5px 0}
 
 /* Card name was clipping at ~1180px, where 40% of the card is narrower than
    "DriveOffDallas" renders. */
@@ -1000,8 +998,8 @@ body.nav-compact .desktop-links a{font-size:10.5px}
 @media(min-width:761px) and (max-width:1080px){
   .hero{padding:106px 0 0}
   .hero .shell{padding-bottom:clamp(240px,30vw,320px)}
-  .hero-scene{height:clamp(320px,36vw,400px);bottom:0;width:min(1180px,116%)}
-  .layer-globe{width:min(118vw,1060px);bottom:-24%}
+  .hero-scene{height:clamp(320px,36vw,400px);bottom:-2px;width:min(1180px,116%)}
+  .layer-globe{width:min(118vw,1060px);bottom:-32%}
   .layer-cursor{left:12%;bottom:62%;width:110px}
   .layer-envelope{left:18%;bottom:28%;width:104px}
   .layer-calendar{right:12%;bottom:61%;width:106px}
@@ -1039,6 +1037,24 @@ html{scroll-behavior:auto}
 /* The two widest blur radii cost the most per frame and read the same smaller. */
 .contact-panel::after{filter:blur(38px)!important}
 .mobile-menu::before,.mobile-menu::after{filter:blur(26px)}
+
+/* Mobile performance: retain the composition while avoiding continuous GPU
+   work and large blur repaints during touch scrolling. */
+@media(max-width:760px){
+  .motion-ready .rv{filter:none;transition:opacity .62s var(--curve),transform .68s var(--curve)}
+  .motion-ready .hero h1.rv{filter:none;transition-duration:.72s,.76s}
+  .motion-ready .d1{transition-delay:.06s}
+  .motion-ready .d2{transition-delay:.12s}
+  .motion-ready .d3{transition-delay:.18s}
+  .hero-layer,.support-card,.support-icon-stage,.contact-pixel-cloud{will-change:auto}
+  .hero-icon{animation:none!important}
+  .mobile-nav{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(10,12,9,.88)}
+  .support-card{-webkit-backdrop-filter:none;backdrop-filter:none}
+  .contact-panel{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:rgba(8,26,70,.7)!important}
+  .contact-form{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:rgba(255,255,255,.13)!important}
+  .contact-panel::after{display:none!important}
+  .contact-pixel-cloud,.footer.footer-rich::before,.footer.footer-rich::after{animation:none!important;will-change:auto}
+}
 </style>
 </head>
 <body>
@@ -1196,7 +1212,7 @@ html{scroll-behavior:auto}
 <div class="layer-stack">
 <article class="layer-stack-card layer-front" style="--stack:0;--layer-accent:#d7ff00">
 <div class="layer-stack-copy"><span>01</span><div><h3>Front door</h3><p>Website, offers, intake, and first contact turn attention into a lead you can actually work.</p></div></div>
-<div class="layer-shot sketch-stage sketch-front"><img fetchpriority="high" decoding="async" alt="Morrow Tattoo front door website hero shown inside a laptop mockup with cloud-themed branding and consultation intake" src="assets/2bb176f356d9.webp" width="1448" height="1086"/><div class="sketch-note sketch-a" style="--i:0"><span class="sketch-label">strong first impression</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-b" style="--i:1"><span class="sketch-label">lead captured here</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-c" style="--i:2"><span class="sketch-label">trust before booking</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div></div>
+<div class="layer-shot sketch-stage sketch-front"><img loading="lazy" decoding="async" alt="Morrow Tattoo front door website hero shown inside a laptop mockup with cloud-themed branding and consultation intake" src="assets/2bb176f356d9.webp" width="1448" height="1086"/><div class="sketch-note sketch-a" style="--i:0"><span class="sketch-label">strong first impression</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-b" style="--i:1"><span class="sketch-label">lead captured here</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-c" style="--i:2"><span class="sketch-label">trust before booking</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div></div>
 <div class="layer-handoff"><span>Front door captures the lead.</span><strong>Then it hands the work to the Control center.</strong></div>
 </article>
 <article class="layer-stack-card layer-control" style="--stack:1;--layer-accent:#d7ff00">
@@ -1367,8 +1383,8 @@ html{scroll-behavior:auto}
 
       <nav class="footer-col" aria-label="Guides">
         <h3>Guides</h3>
-        <a href="/guides/what-a-booking-system-costs">What a booking system costs</a>
-        <a href="/guides/hiring-someone-in-dallas">Hiring someone in Dallas</a>
+        <a href="/guides/booking-system-cost">What a booking system costs</a>
+        <a href="/guides/dallas-booking-system">Hiring someone in Dallas</a>
         <a class="footer-accent-link" href="/guides">All guides</a>
       </nav>
 
@@ -1376,16 +1392,6 @@ html{scroll-behavior:auto}
         <h3>Get started</h3>
         <a class="footer-cta" href="#start">Get my free plan</a>
         <p>A written plan for your business, usually within a day. No cost.</p>
-        <div class="footer-contact-links">
-          <a href="tel:+14699431560" aria-label="Call Alyx Lab">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.7 3.8 9 3.2l2.1 5-1.8 1.5a14.3 14.3 0 0 0 5 5l1.5-1.8 5 2.1-.6 2.3c-.3 1.2-1.4 2-2.6 1.9C10.8 18.4 5.6 13.2 4.8 6.4c-.1-1.2.7-2.3 1.9-2.6Z"/></svg>
-            <span>(469) 943 1560</span>
-          </a>
-          <a href="mailto:alyxlabwork@gmail.com" aria-label="Email Alyx Lab">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="m5 7 7 5 7-5"/></svg>
-            <span>alyxlabwork@gmail.com</span>
-          </a>
-        </div>
       </div>
     </div>
 
@@ -1394,7 +1400,7 @@ html{scroll-behavior:auto}
       <nav aria-label="Legal">
         <a href="/privacy">Privacy</a>
         <a href="/terms">Terms</a>
-        <a href="/operator-login">Operator login</a>
+        <a href="/login">Operator login</a>
       </nav>
     </div>
   </div>
@@ -1403,6 +1409,7 @@ html{scroll-behavior:auto}
 (() => {
   "use strict";
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const mobilePerformanceMode = matchMedia("(max-width: 760px), (pointer: coarse)").matches;
 
   // Critical motion setup runs before any visual effects. Content remains
   // visible unless this observer is successfully initialized.
@@ -1593,6 +1600,7 @@ html{scroll-behavior:auto}
     const resLoc=gl.getUniformLocation(program,"u_resolution");
     const timeLoc=gl.getUniformLocation(program,"u_time");
 
+    const animateShader=!reduce&&!mobilePerformanceMode;
     let bounds=canvas.getBoundingClientRect(), raf=0, inView=true, visible=document.visibilityState==="visible";
     const start=performance.now();
     const resize=()=>{
@@ -1609,9 +1617,9 @@ html{scroll-behavior:auto}
       if(!visible||!inView)return;
       resize();
       gl.uniform2f(resLoc,canvas.width,canvas.height);
-      gl.uniform1f(timeLoc,reduce?0:((now-start)/1000));
+      gl.uniform1f(timeLoc,animateShader?((now-start)/1000):0);
       gl.drawArrays(gl.TRIANGLES,0,3);
-      if(!reduce)raf=requestAnimationFrame(draw);
+      if(animateShader)raf=requestAnimationFrame(draw);
     };
     const requestDraw=()=>{if(!raf&&visible&&inView)raf=requestAnimationFrame(draw);};
     const ro=new ResizeObserver(()=>{resize();requestDraw();});
@@ -1683,7 +1691,7 @@ html{scroll-behavior:auto}
 
   const hero = document.querySelector(".hero");
   const heroScene = document.getElementById("heroScene");
-  if (hero && heroScene && !reduce) {
+  if (hero && heroScene && !reduce && !mobilePerformanceMode) {
     const layers = [...heroScene.querySelectorAll(".hero-layer[data-depth]")];
     let pointerX = 0;
     let pointerY = 0;
@@ -2023,6 +2031,8 @@ html{scroll-behavior:auto}
 <script>
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const canHover = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if(reduce || !canHover) return;
   const cards = document.querySelectorAll('.support-card');
   cards.forEach(card => {
     const stage = card.querySelector('.support-icon-stage');
@@ -2134,7 +2144,7 @@ html{scroll-behavior:auto}
       const cull = Math.max(0, Math.min(1, (1.62 - distance) / .62));
       card.style.transform = `translateX(calc(-50% + ${offset * pitch}px)) translateZ(${-depth * width * ramp}px) rotateY(${-tilt}deg)`;
       card.style.opacity = String(dim * cull);
-      card.style.filter = distance < .04 ? 'none' : `blur(${(Math.min(distance, 1.4) * 2.4).toFixed(2)}px)`;
+      card.style.filter = mobile || distance < .04 ? 'none' : `blur(${(Math.min(distance, 1.4) * 2.4).toFixed(2)}px)`;
       card.style.zIndex = String(100 - Math.round(distance * 10));
       card.style.pointerEvents = distance > 1.25 ? 'none' : 'auto';
     });
@@ -2225,11 +2235,29 @@ html{scroll-behavior:auto}
 
 
 <script>
-/* Round 3: fast anchor jumps and a placeholder state for the five layer shots. */
+/* Offset anchor navigation plus a placeholder state for the five layer shots. */
 (function(){
+  const reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let anchorFrame=0;
   const navOffset=()=>{
     const pill=document.querySelector(".desktop-nav")||document.querySelector(".mobile-nav");
     return pill?Math.round(pill.getBoundingClientRect().height)+18:80;
+  };
+  const scrollToAnchor=(top)=>{
+    if(anchorFrame)cancelAnimationFrame(anchorFrame);
+    if(reduceMotion){window.scrollTo({top,behavior:"auto"});return;}
+    const from=window.scrollY;
+    const distance=top-from;
+    const duration=Math.min(520,Math.max(260,Math.abs(distance)*.055));
+    const started=performance.now();
+    const step=(now)=>{
+      const progress=Math.min(1,(now-started)/duration);
+      const eased=1-Math.pow(1-progress,4);
+      window.scrollTo({top:from+distance*eased,behavior:"auto"});
+      if(progress<1)anchorFrame=requestAnimationFrame(step);
+      else anchorFrame=0;
+    };
+    anchorFrame=requestAnimationFrame(step);
   };
   document.addEventListener("click",(e)=>{
     const link=e.target.closest('a[href^="#"]');
@@ -2240,7 +2268,7 @@ html{scroll-behavior:auto}
     if(!target)return;
     e.preventDefault();
     const top=Math.max(0,target.getBoundingClientRect().top+window.scrollY-navOffset());
-    window.scrollTo({top,behavior:"auto"});
+    scrollToAnchor(top);
     if(history.replaceState)history.replaceState(null,"","#"+id);
   });
 
@@ -2253,6 +2281,26 @@ html{scroll-behavior:auto}
     img.addEventListener("load",done,{once:true});
     img.addEventListener("error",done,{once:true});
   });
+
+  /* Native lazy loading often starts too late during fast mobile scrolling.
+     Begin decoding roughly one viewport ahead without competing with the hero. */
+  const warmImage=(img)=>{
+    img.loading="eager";
+    if(typeof img.decode==="function") void img.decode().catch(()=>{});
+  };
+  const lazyImages=[...document.querySelectorAll('img[loading="lazy"]')];
+  if("IntersectionObserver" in window){
+    const imageWarmup=new IntersectionObserver((entries)=>{
+      entries.forEach((entry)=>{
+        if(!entry.isIntersecting)return;
+        warmImage(entry.target);
+        imageWarmup.unobserve(entry.target);
+      });
+    },{rootMargin:"125% 0px"});
+    lazyImages.forEach((img)=>imageWarmup.observe(img));
+  }else{
+    lazyImages.forEach(warmImage);
+  }
 })();
 </script>
 
