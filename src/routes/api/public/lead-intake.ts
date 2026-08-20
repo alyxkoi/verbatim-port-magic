@@ -1,21 +1,36 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 
+import { SMS_DOUBLE_OPT_IN } from "@/lib/consent";
 import { isOutOfArea, screenLead } from "@/lib/screening";
+import { normalizePhone, sendText } from "@/lib/sms.server";
 
-const payloadSchema = z.object({
-  business: z.string().trim().min(1).max(120),
-  contact: z.string().trim().max(120).optional().default(""),
-  phone: z.string().trim().max(40).optional().default(""),
-  email: z.string().trim().max(160).optional().default(""),
-  message: z.string().trim().max(2000).optional().default(""),
-  source: z.string().trim().max(80).optional().default("Website"),
-  vertical: z.string().trim().max(80).optional().default(""),
-  // Honeypot: a real person never fills this.
-  company_url: z.string().optional().default(""),
-  /** Milliseconds the form was on screen before submit. */
-  fill_ms: z.coerce.number().optional().default(0),
-});
+const payloadSchema = z
+  .object({
+    business: z.string().trim().min(1).max(120),
+    contact: z.string().trim().max(120).optional().default(""),
+    phone: z.string().trim().max(40).optional().default(""),
+    email: z.string().trim().max(160).optional().default(""),
+    message: z.string().trim().max(2000).optional().default(""),
+    source: z.string().trim().max(80).optional().default("Website"),
+    vertical: z.string().trim().max(80).optional().default(""),
+    sms_consent: z.boolean().optional().default(false),
+    email_consent: z.boolean().optional().default(false),
+    // Honeypot: a real person never fills this.
+    company_url: z.string().optional().default(""),
+    /** Milliseconds the form was on screen before submit. */
+    fill_ms: z.coerce.number().optional().default(0),
+  })
+  .superRefine((value, context) => {
+    const phoneDigits = value.phone.replace(/\D/g, "");
+    if (value.sms_consent && (phoneDigits.length < 10 || phoneDigits.length > 15)) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["phone"],
+        message: "A valid phone number is required to request text messages.",
+      });
+    }
+  });
 
 const WINDOW_MINUTES = 10;
 const MAX_PER_IP = 5;
@@ -50,12 +65,37 @@ async function sendConfirmationEmail(to: string, business: string) {
         from: "ALYXLAB <hello@alyxlab.com>",
         to: [to],
         subject: "We got your request",
-        text: `Thanks for reaching out about ${business}. We read every message ourselves and will text you back shortly.\n\n— ALYXLAB, Dallas TX`,
+        text: `Thanks for reaching out about ${business}. We read every message ourselves and will reply by email shortly.\n\nALYXLAB, Dallas TX`,
+        headers: {
+          "List-Unsubscribe": "<mailto:alyxlabwork@gmail.com?subject=Unsubscribe>",
+        },
       }),
     });
   } catch {
     // A failed confirmation email must never lose the lead.
   }
+}
+
+async function sendDoubleOptInText(leadId: string, phone: string) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const result = await sendText({
+    to: normalizePhone(phone),
+    body: SMS_DOUBLE_OPT_IN,
+    from: process.env["SENT_DEFAULT_NUMBER"] ?? null,
+    subaccountId: process.env["SENT_DEFAULT_SUBACCOUNT_ID"] ?? null,
+  });
+
+  const { error } = await supabaseAdmin.from("message").insert({
+    lead_id: leadId,
+    direction: "outbound",
+    authored_by: "alyx",
+    body: SMS_DOUBLE_OPT_IN,
+    status: "sent",
+    sent_at: new Date().toISOString(),
+    provider_id: result.providerId,
+    segments: result.segments || Math.max(1, Math.ceil(SMS_DOUBLE_OPT_IN.length / 160)),
+  });
+  if (error) throw error;
 }
 
 export const Route = createFileRoute("/api/public/lead-intake")({
@@ -90,10 +130,7 @@ export const Route = createFileRoute("/api/public/lead-intake")({
               .from("lead")
               .select("id")
               .or(
-                [
-                  `phone.eq.${parsed.phone}`,
-                  parsed.email ? `email.eq.${parsed.email}` : null,
-                ]
+                [`phone.eq.${parsed.phone}`, parsed.email ? `email.eq.${parsed.email}` : null]
                   .filter(Boolean)
                   .join(","),
               )
@@ -109,6 +146,7 @@ export const Route = createFileRoute("/api/public/lead-intake")({
           outOfArea: isOutOfArea(parsed.phone),
         });
 
+        const submittedAt = new Date().toISOString();
         const { data: lead, error } = await supabaseAdmin
           .from("lead")
           .insert({
@@ -121,7 +159,9 @@ export const Route = createFileRoute("/api/public/lead-intake")({
             stage: "new",
             screening_state: screening.state,
             automation_state: screening.state === "junk" ? "killed" : "active",
-            last_inbound_at: new Date().toISOString(),
+            last_inbound_at: submittedAt,
+            sms_consent_requested_at: parsed.sms_consent ? submittedAt : null,
+            email_consent_at: parsed.email_consent ? submittedAt : null,
           })
           .select("id")
           .single();
@@ -145,7 +185,14 @@ export const Route = createFileRoute("/api/public/lead-intake")({
             entity: "lead",
             entity_id: lead.id,
             action: "intake",
-            detail: { ip, source: parsed.source, fill_ms: parsed.fill_ms },
+            detail: {
+              ip,
+              source: parsed.source,
+              fill_ms: parsed.fill_ms,
+              sms_consent_requested: parsed.sms_consent,
+              email_consent: parsed.email_consent,
+              consent_copy_version: "2026-08-20",
+            },
           },
           {
             entity: "lead",
@@ -160,23 +207,25 @@ export const Route = createFileRoute("/api/public/lead-intake")({
           },
         ]);
 
-        if (screening.state !== "junk") {
+        if (screening.state !== "junk" && parsed.email_consent) {
           await sendConfirmationEmail(parsed.email, parsed.business);
         }
 
-        // Generate at receive (reference 4.3). The precedence stack inside the
-        // pipeline decides whether anything is drafted at all, and a failure
-        // here must never lose the lead.
-        if (screening.state === "clean" || screening.state === "soft_flag") {
+        if (screening.state !== "junk" && parsed.sms_consent && parsed.phone) {
           try {
-            const { runInboundPipeline } = await import("@/lib/blip/pipeline.server");
-            await runInboundPipeline(supabaseAdmin, lead.id);
+            await sendDoubleOptInText(lead.id, parsed.phone);
+            await supabaseAdmin.from("event_log").insert({
+              entity: "lead",
+              entity_id: lead.id,
+              action: "sms_double_opt_in_sent",
+              detail: { consent_copy_version: "2026-08-20" },
+            });
           } catch (error) {
             await supabaseAdmin.from("event_log").insert({
               entity: "lead",
               entity_id: lead.id,
-              action: "blip_failed",
-              detail: { job: "pipeline", message: (error as Error).message },
+              action: "sms_double_opt_in_failed",
+              detail: { message: (error as Error).message },
             });
           }
         }

@@ -14,8 +14,10 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as OperatorLoginRouteImport } from './routes/operator-login'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as TermsAndConditionsRouteImport } from './routes/terms-and-conditions'
 import { Route as AuthenticatedConsoleRouteImport } from './routes/_authenticated/console'
 import { Route as GuidesIndexRouteImport } from './routes/guides.index'
 import { Route as GuidesBookingSystemCostRouteImport } from './routes/guides.booking-system-cost'
@@ -63,6 +65,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -71,6 +78,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsAndConditionsRoute = TermsAndConditionsRouteImport.update({
+  id: '/terms-and-conditions',
+  path: '/terms-and-conditions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedConsoleRoute = AuthenticatedConsoleRouteImport.update({
@@ -205,8 +217,10 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/operator-login': typeof OperatorLoginRoute
   '/privacy': typeof PrivacyRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/console': typeof AuthenticatedConsoleRouteWithChildren
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
@@ -235,8 +249,10 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/operator-login': typeof OperatorLoginRoute
   '/privacy': typeof PrivacyRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
   '/guides/hiring-someone-in-dallas': typeof GuidesHiringSomeoneInDallasRoute
@@ -266,8 +282,10 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/operator-login': typeof OperatorLoginRoute
   '/privacy': typeof PrivacyRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/terms-and-conditions': typeof TermsAndConditionsRoute
   '/_authenticated/console': typeof AuthenticatedConsoleRouteWithChildren
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
@@ -298,8 +316,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/operator-login'
     | '/privacy'
+    | '/privacy-policy'
     | '/sitemap.xml'
     | '/terms'
+    | '/terms-and-conditions'
     | '/console'
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
@@ -328,8 +348,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/operator-login'
     | '/privacy'
+    | '/privacy-policy'
     | '/sitemap.xml'
     | '/terms'
+    | '/terms-and-conditions'
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
     | '/guides/hiring-someone-in-dallas'
@@ -358,8 +380,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/operator-login'
     | '/privacy'
+    | '/privacy-policy'
     | '/sitemap.xml'
     | '/terms'
+    | '/terms-and-conditions'
     | '/_authenticated/console'
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
@@ -390,8 +414,10 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   OperatorLoginRoute: typeof OperatorLoginRoute
   PrivacyRoute: typeof PrivacyRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  TermsAndConditionsRoute: typeof TermsAndConditionsRoute
   GuidesBookingSystemCostRoute: typeof GuidesBookingSystemCostRoute
   GuidesDallasBookingSystemRoute: typeof GuidesDallasBookingSystemRoute
   GuidesHiringSomeoneInDallasRoute: typeof GuidesHiringSomeoneInDallasRoute
@@ -444,6 +470,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy-policy': {
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -456,6 +489,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms-and-conditions': {
+      id: '/terms-and-conditions'
+      path: '/terms-and-conditions'
+      fullPath: '/terms-and-conditions'
+      preLoaderRoute: typeof TermsAndConditionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/console': {
@@ -657,8 +697,10 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   OperatorLoginRoute: OperatorLoginRoute,
   PrivacyRoute: PrivacyRoute,
+  PrivacyPolicyRoute: PrivacyPolicyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  TermsAndConditionsRoute: TermsAndConditionsRoute,
   GuidesBookingSystemCostRoute: GuidesBookingSystemCostRoute,
   GuidesDallasBookingSystemRoute: GuidesDallasBookingSystemRoute,
   GuidesHiringSomeoneInDallasRoute: GuidesHiringSomeoneInDallasRoute,

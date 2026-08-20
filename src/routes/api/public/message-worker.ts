@@ -94,7 +94,13 @@ async function run(request: Request) {
       .maybeSingle();
 
     // Consent is the other hard stop.
-    if (!lead || !lead.phone || lead.opted_out_at || lead.automation_state === "opted_out") {
+    if (
+      !lead ||
+      !lead.phone ||
+      !lead.consent_at ||
+      lead.opted_out_at ||
+      lead.automation_state === "opted_out"
+    ) {
       await supabaseAdmin
         .from("message")
         .update({ status: "cancelled", held_reason: "no consent to text" })
@@ -111,7 +117,8 @@ async function run(request: Request) {
         to: normalizePhone(lead.phone),
         body: message.body,
         from: client?.sent_number ?? process.env["SENT_DEFAULT_NUMBER"] ?? null,
-        subaccountId: client?.sent_subaccount_id ?? process.env["SENT_DEFAULT_SUBACCOUNT_ID"] ?? null,
+        subaccountId:
+          client?.sent_subaccount_id ?? process.env["SENT_DEFAULT_SUBACCOUNT_ID"] ?? null,
       });
 
       await supabaseAdmin

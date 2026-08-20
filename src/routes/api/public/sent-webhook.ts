@@ -2,11 +2,17 @@
 // idempotent on provider_id, and every segment increments client_usage.
 import { createFileRoute } from "@tanstack/react-router";
 
-import { phoneKey, verifySentSignature } from "@/lib/sms.server";
+import { SMS_CONSENT_CONFIRMED } from "@/lib/consent";
+import { normalizePhone, phoneKey, sendText, verifySentSignature } from "@/lib/sms.server";
 import { segmentsFor } from "@/lib/timing";
 import { clientForLead, recordSegments } from "@/lib/usage.server";
 
 const STOP_WORDS = /^\s*(stop|stopall|unsubscribe|cancel|end|quit)\s*$/i;
+const YES_WORDS = /^\s*yes\s*$/i;
+const START_WORDS = /^\s*start\s*$/i;
+const HELP_WORDS = /^\s*help\s*$/i;
+const HELP_MESSAGE =
+  "Alyxlab Customer Care: Reply to this message or email alyxlabwork@gmail.com for help. Reply STOP to cancel.";
 
 function ok(body: unknown = { ok: true }) {
   return new Response(JSON.stringify(body), {
@@ -29,7 +35,7 @@ export const Route = createFileRoute("/api/public/sent-webhook")({
           return new Response("Invalid signature", { status: 401 });
         }
 
-        let event: Record<string, any>;
+        let event: Record<string, unknown>;
         try {
           event = JSON.parse(raw);
         } catch {
@@ -38,21 +44,27 @@ export const Route = createFileRoute("/api/public/sent-webhook")({
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-        const data = (event["data"] ?? event) as Record<string, any>;
+        const data = (event["data"] ?? event) as Record<string, unknown>;
         const providerId = String(data["id"] ?? data["message_id"] ?? event["id"] ?? "");
         const eventId = String(event["event_id"] ?? event["id"] ?? providerId);
         const type = String(event["type"] ?? event["event"] ?? "message.received");
         if (!eventId) return ok({ ok: true, ignored: "no event id" });
 
         // Idempotent on the event, and again on provider_id at insert time.
-        const { error: seenError } = await supabaseAdmin
-          .from("webhook_event")
-          .insert({ event_id: eventId, source: "sent", account_id: String(data["subaccount_id"] ?? "") || null });
+        const { error: seenError } = await supabaseAdmin.from("webhook_event").insert({
+          event_id: eventId,
+          source: "sent",
+          account_id: String(data["subaccount_id"] ?? "") || null,
+        });
         if (seenError) return ok({ ok: true, duplicate: true });
 
         // Delivery receipts only touch the message they name.
         if (/deliver|fail|sent|undeliver/i.test(type) && !/received|inbound/i.test(type)) {
-          const status = /fail|undeliver/i.test(type) ? "failed" : /deliver/i.test(type) ? "delivered" : "sent";
+          const status = /fail|undeliver/i.test(type)
+            ? "failed"
+            : /deliver/i.test(type)
+              ? "delivered"
+              : "sent";
           if (providerId) {
             await supabaseAdmin.from("message").update({ status }).eq("provider_id", providerId);
           }
@@ -70,7 +82,9 @@ export const Route = createFileRoute("/api/public/sent-webhook")({
         // Resolve the lead from the sending number.
         const { data: leads } = await supabaseAdmin
           .from("lead")
-          .select("id, phone, stage, automation_state")
+          .select(
+            "id, phone, stage, automation_state, screening_state, consent_at, opted_out_at, sms_consent_requested_at",
+          )
           .order("created_at", { ascending: false })
           .limit(500);
         const lead = (leads ?? []).find((row) => phoneKey(row.phone) === fromKey);
@@ -100,6 +114,11 @@ export const Route = createFileRoute("/api/public/sent-webhook")({
         if (insertError) return ok({ ok: true, duplicate: true });
 
         const optedOut = STOP_WORDS.test(body);
+        const confirmedByYes =
+          YES_WORDS.test(body) && Boolean(lead.sms_consent_requested_at) && !lead.consent_at;
+        const confirmedByStart = START_WORDS.test(body) && lead.screening_state !== "junk";
+        const consentConfirmed = confirmedByYes || confirmedByStart;
+        const helpRequested = HELP_WORDS.test(body);
 
         // A new inbound cancels anything still queued outbound.
         await supabaseAdmin
@@ -117,11 +136,63 @@ export const Route = createFileRoute("/api/public/sent-webhook")({
             stage: lead.stage === "new" ? "talking" : lead.stage,
             nudge_count: 0,
             ...(optedOut ? { automation_state: "opted_out", opted_out_at: now } : {}),
+            ...(consentConfirmed
+              ? {
+                  automation_state: "active",
+                  consent_at: now,
+                  opted_out_at: null,
+                  sms_consent_requested_at: lead.sms_consent_requested_at ?? now,
+                }
+              : {}),
           })
           .eq("id", lead.id);
 
         const client = await clientForLead(supabaseAdmin, lead.id);
         if (client) await recordSegments(supabaseAdmin, client, segments);
+
+        const sendSystemReply = async (text: string, action: string) => {
+          try {
+            const result = await sendText({
+              to: normalizePhone(lead.phone),
+              body: text,
+              from: client?.sent_number ?? process.env["SENT_DEFAULT_NUMBER"] ?? null,
+              subaccountId:
+                client?.sent_subaccount_id ?? process.env["SENT_DEFAULT_SUBACCOUNT_ID"] ?? null,
+            });
+            const replySegments = result.segments || segmentsFor(text);
+            const { error: replyInsertError } = await supabaseAdmin.from("message").insert({
+              lead_id: lead.id,
+              direction: "outbound",
+              authored_by: "alyx",
+              body: text,
+              status: "sent",
+              sent_at: new Date().toISOString(),
+              provider_id: result.providerId,
+              segments: replySegments,
+            });
+            if (replyInsertError) throw replyInsertError;
+            if (client) await recordSegments(supabaseAdmin, client, replySegments);
+            await supabaseAdmin.from("event_log").insert({
+              entity: "lead",
+              entity_id: lead.id,
+              action,
+              detail: { keyword: body.toUpperCase() },
+            });
+          } catch (error) {
+            await supabaseAdmin.from("event_log").insert({
+              entity: "lead",
+              entity_id: lead.id,
+              action: `${action}_reply_failed`,
+              detail: { message: (error as Error).message },
+            });
+          }
+        };
+
+        if (consentConfirmed) {
+          await sendSystemReply(SMS_CONSENT_CONFIRMED, "sms_consent_confirmed");
+        } else if (helpRequested && !optedOut) {
+          await sendSystemReply(HELP_MESSAGE, "sms_help_sent");
+        }
 
         await supabaseAdmin
           .from("webhook_event")
@@ -129,7 +200,7 @@ export const Route = createFileRoute("/api/public/sent-webhook")({
           .eq("event_id", eventId);
 
         // Generate at receive. A generation failure never loses the message.
-        if (!optedOut) {
+        if (!optedOut && !helpRequested && (!YES_WORDS.test(body) || consentConfirmed)) {
           try {
             const { runInboundPipeline } = await import("@/lib/blip/pipeline.server");
             await runInboundPipeline(supabaseAdmin, lead.id);

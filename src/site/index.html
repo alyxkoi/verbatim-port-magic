@@ -863,6 +863,17 @@ body.nav-compact .mobile-nav,body.nav-scrolled .mobile-nav{height:58px;border-ra
 .contact-direct a span{font-size:10.5px}
 .contact-form .field label{font-size:11px}
 .contact-form .form-note{font-size:11.5px;line-height:1.5}
+.consent-group{grid-column:1/-1;min-width:0;margin:2px 0 0;padding:0;border:0;display:grid;gap:10px}
+.consent-group legend{padding:0 0 2px;font-size:11px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.68)}
+.consent-choice{display:grid;grid-template-columns:20px minmax(0,1fr);gap:12px;align-items:start;padding:14px;border:1px solid rgba(255,255,255,.18);border-radius:15px;background:rgba(4,14,38,.2);cursor:pointer;transition:border-color .2s ease,background-color .2s ease}
+.consent-choice:hover,.consent-choice:focus-within{border-color:rgba(215,255,0,.68);background:rgba(4,14,38,.3)}
+.consent-choice input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--lime);cursor:pointer}
+.consent-choice span{display:grid;gap:5px;min-width:0}
+.consent-choice strong{font-size:12.5px;line-height:1.35;color:#fff}
+.consent-choice small{font-size:11.5px;line-height:1.5;color:rgba(255,255,255,.7)}
+.consent-links{margin:1px 0 0!important;font-size:11.5px!important;line-height:1.5!important;color:rgba(255,255,255,.62)!important}
+.consent-links a{color:var(--lime);text-decoration:underline;text-underline-offset:3px}
+@media(max-width:380px){.consent-choice{padding:12px;gap:10px}.consent-choice small,.consent-links{font-size:11px!important}}
 
 /* Tap targets. WCAG 2.2 asks for 24x24 CSS px; footer links were 14-18px tall
    and the carousel dots were 6x6. Padding here, hit area for the dots. */
@@ -1418,17 +1429,23 @@ body{animation:alyxPageEnter .42s var(--curve) both}
 <span class="contact-kicker">Start a project</span>
 <h2>Tell us what feels harder than it should.</h2>
 <p>Website, leads, calls, booking, payments, follow-up, or all of it. Send the messy version. We will make sense of it.</p>
-<div class="contact-direct"><a href="mailto:alyxlabwork@gmail.com"><span>Email</span><strong>alyxlabwork@gmail.com</strong><b>↗</b></a><a href="tel:+14699431560"><span>Call</span><strong>469 943 1560</strong><b>↗</b></a></div>
 </div>
 <form class="contact-form" id="contactForm">
 <div class="form-grid">
 <div class="field"><label for="contactName">Your name</label><input autocomplete="name" id="contactName" name="name" placeholder="John Appleseed" required type="text"></div>
 <div class="field"><label for="contactEmail">Email</label><input autocomplete="email" id="contactEmail" name="email" placeholder="you@business.com" required type="email"></div>
+<div class="field"><label for="contactPhone">Phone number <span>(optional)</span></label><input autocomplete="tel" id="contactPhone" name="phone" placeholder="(469) 555-0123" type="tel"></div>
 <div class="field"><label for="contactBusiness">Business name</label><input autocomplete="organization" id="contactBusiness" name="business" placeholder="" required type="text"></div>
 <div class="field"><label for="contactBusinessType">Business type</label><input id="contactBusinessType" name="business_type" placeholder="Tattoo shop, plumbing company, dealership..." required type="text"></div>
 <div class="field full"><label for="contactMessage">What feels harder than it should?</label><textarea id="contactMessage" name="message" placeholder="Tell us what happens now and what you wish happened instead." required></textarea></div>
+<fieldset class="consent-group full">
+<legend>Optional communication preferences</legend>
+<label class="consent-choice" for="smsConsent"><input id="smsConsent" name="sms_consent" type="checkbox"><span><strong>Customer care text messages</strong><small id="smsConsentCopy">By checking this box, I consent to receive customer care text messages from Alyxlab at the phone number provided regarding my inquiry, appointments, service details, and project updates. Message frequency varies. Message and data rates may apply. Reply HELP for help or STOP to unsubscribe. Consent is not a condition of purchase.</small></span></label>
+<label class="consent-choice" for="emailConsent"><input id="emailConsent" name="email_consent" type="checkbox"><span><strong>Customer care emails</strong><small>By checking this box, I consent to receive customer care emails from Alyxlab regarding my inquiry, appointments, service details, and project updates. I can unsubscribe at any time.</small></span></label>
+<p class="consent-links">Both choices are optional. Review our <a href="/privacy">Privacy Policy</a> and <a href="/terms">Terms of Service</a>.</p>
+</fieldset>
 <button class="form-submit" type="submit"><span>Send my project</span><span class="arrow">→</span></button>
-<p class="form-note" id="contactStatus">This opens a ready-to-send email with your details filled in.</p>
+<p aria-live="polite" class="form-note" id="contactStatus" role="status">We will review your message and reply shortly.</p>
 </div>
 </form>
 </div>
@@ -2134,13 +2151,25 @@ body{animation:alyxPageEnter .42s var(--curve) both}
 
   const contactForm=document.getElementById("contactForm");
   if(contactForm){
+    const phoneInput=contactForm.querySelector('[name="phone"]');
+    const smsConsentInput=contactForm.querySelector('[name="sms_consent"]');
+    const validateSmsPhone=()=>{
+      if(!phoneInput||!smsConsentInput) return;
+      const digits=phoneInput.value.replace(/\D/g,"");
+      const invalid=smsConsentInput.checked&&(digits.length<10||digits.length>15);
+      phoneInput.setCustomValidity(invalid?"Enter a valid phone number to request text messages.":"");
+    };
+    phoneInput?.addEventListener("input",validateSmsPhone);
+    smsConsentInput?.addEventListener("change",validateSmsPhone);
     contactForm.addEventListener("submit",event=>{
       event.preventDefault();
+      validateSmsPhone();
       if(!contactForm.reportValidity()) return;
       const data=new FormData(contactForm);
       const lines=[
         `Name: ${data.get("name")||""}`,
         `Email: ${data.get("email")||""}`,
+        `Phone: ${data.get("phone")||""}`,
         `Business: ${data.get("business")||""}`,
         `Business type: ${data.get("business_type")||""}`,
         "",
@@ -2159,16 +2188,19 @@ body{animation:alyxPageEnter .42s var(--curve) both}
           business:business,
           contact:(data.get("name")||"").toString(),
           email:(data.get("email")||"").toString(),
+          phone:(data.get("phone")||"").toString(),
           vertical:(data.get("business_type")||"").toString(),
           message:lines.join("\n"),
-          source:"Website"
+          source:"Website",
+          sms_consent:data.get("sms_consent")==="on",
+          email_consent:data.get("email_consent")==="on"
         })
       }).then(response=>response.json().catch(()=>({ok:response.ok}))).then(result=>{
         if(result&&result.ok===false) throw new Error(result.error||"Something went wrong.");
         if(status) status.textContent="Got it. We read every message ourselves and will reply shortly.";
         contactForm.reset();
       }).catch(error=>{
-        if(status) status.textContent=(error&&error.message)||"Could not send. Email alyxlabwork@gmail.com and we will pick it up.";
+        if(status) status.textContent=(error&&error.message)||"Could not send right now. Please try again in a moment.";
       }).finally(()=>{
         if(submitBtn) submitBtn.disabled=false;
       });

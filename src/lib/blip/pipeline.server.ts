@@ -254,6 +254,9 @@ export async function runInboundPipeline(supabase: Db, leadId: string): Promise<
   if (lead.opted_out_at || lead.automation_state === "opted_out") {
     return { outcome: "skipped", reason: "opted_out" };
   }
+  if (!lead.consent_at) {
+    return { outcome: "skipped", reason: "no_sms_consent" };
+  }
   // 2. Kill switch.
   if (runtime?.kill_switch) {
     await log(supabase, "lead", leadId, "blip_skipped", { reason: "kill_switch" });

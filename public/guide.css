@@ -39,6 +39,10 @@
   margin-top:20px;
   font-size:18px;line-height:1.5;color:rgba(255,255,255,.86);max-width:52ch;
 }
+.gpage h3{
+  margin:28px 0 10px;
+  font-size:17px;line-height:1.3;letter-spacing:-.02em;font-weight:800;color:#fff;
+}
 .gpage ul{margin:6px 0 18px;padding-left:20px}
 .gpage li{
   margin-bottom:10px;
@@ -59,6 +63,39 @@
   font-size:10px;font-weight:900;letter-spacing:.085em;text-transform:uppercase;
   color:rgba(255,255,255,.44);
 }
+
+.legal-summary{
+  margin-top:34px;padding:24px 26px;
+  border-left:3px solid var(--lime);border-radius:0 var(--r-md) var(--r-md) 0;
+  background:var(--panel);
+}
+.legal-summary>strong{
+  display:block;margin-bottom:8px;
+  font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--lime);
+}
+.legal-summary p{margin:0;color:rgba(255,255,255,.86)}
+
+.legal-toc{
+  margin-top:24px;padding:24px 26px;
+  border:1px solid var(--line);border-radius:var(--r-md);background:rgba(255,255,255,.025);
+}
+.legal-toc h2{
+  margin:0 0 16px;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.58);
+}
+.legal-toc>div{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px}
+.legal-toc a{font-size:13px;line-height:1.35;text-decoration:none!important}
+.legal-toc a:hover{text-decoration:underline!important;text-underline-offset:3px}
+
+.legal-section{scroll-margin-top:100px}
+.legal-section address{
+  margin:20px 0 0;padding:18px 20px;
+  border:1px solid var(--line);border-radius:var(--r-md);background:var(--panel);
+  color:rgba(255,255,255,.78);font-size:14px;line-height:1.65;font-style:normal;
+}
+.legal-pricing{margin:22px 0 24px;border-top:1px solid var(--line)}
+.legal-pricing>div{display:grid;grid-template-columns:130px 1fr;gap:24px;padding:18px 0;border-bottom:1px solid var(--line)}
+.legal-pricing dt{font-size:15px;font-weight:850;color:#fff}
+.legal-pricing dd{margin:0;font-size:14px;line-height:1.58;color:rgba(255,255,255,.74)}
 
 .ganswer{
   margin-top:30px;padding:24px 26px;
@@ -91,5 +128,12 @@
 
 @media(max-width:560px){
   .gcol{width:calc(100% - 32px)}
-  .ganswer,.gcard,.gcta{padding-left:20px;padding-right:20px}
+  .ganswer,.gcard,.gcta,.legal-summary,.legal-toc{padding-left:20px;padding-right:20px}
+  .legal-toc>div{grid-template-columns:1fr;gap:9px}
+  .legal-pricing>div{grid-template-columns:1fr;gap:7px}
+}
+
+@media(max-width:360px){
+  .gcol{width:calc(100% - 28px)}
+  .gpage p,.gpage li{font-size:15px}
 }
