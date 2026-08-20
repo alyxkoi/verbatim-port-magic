@@ -10,6 +10,13 @@
 <meta content="We build systems with a purpose | Alyx Lab" property="og:title"/>
 <meta content="Your leads, bookings, payments, follow ups, reviews, and customer data, connected into one system." property="og:description"/>
 <meta content="website" property="og:type"/>
+<meta content="https://alyxlab.com/" property="og:url"/>
+<meta content="https://alyxlab.com/og-image.jpg" property="og:image"/>
+<meta content="1200" property="og:image:width"/>
+<meta content="630" property="og:image:height"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<meta content="https://alyxlab.com/og-image.jpg" name="twitter:image"/>
+<link href="/favicon.png" rel="icon" type="image/png"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
@@ -1918,10 +1925,30 @@ body.nav-compact .desktop-links a{font-size:10.5px}
         `${data.get("message")||""}`
       ];
       const business=(data.get("business")||"New project").toString().trim();
-      const subject=`Alyx Lab project | ${business}`;
       const status=document.getElementById("contactStatus");
-      if(status) status.textContent="Opening your email app with the details filled in...";
-      window.location.href=`mailto:alyxlabwork@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n"))}`;
+      const submitBtn=contactForm.querySelector('[type="submit"]');
+      if(status) status.textContent="Sending...";
+      if(submitBtn) submitBtn.disabled=true;
+      fetch("/api/public/lead-intake",{
+        method:"POST",
+        headers:{"content-type":"application/json"},
+        body:JSON.stringify({
+          business:business,
+          contact:(data.get("name")||"").toString(),
+          email:(data.get("email")||"").toString(),
+          vertical:(data.get("business_type")||"").toString(),
+          message:lines.join("\n"),
+          source:"Website"
+        })
+      }).then(response=>response.json().catch(()=>({ok:response.ok}))).then(result=>{
+        if(result&&result.ok===false) throw new Error(result.error||"Something went wrong.");
+        if(status) status.textContent="Got it. We read every message ourselves and will reply shortly.";
+        contactForm.reset();
+      }).catch(error=>{
+        if(status) status.textContent=(error&&error.message)||"Could not send. Email alyxlabwork@gmail.com and we will pick it up.";
+      }).finally(()=>{
+        if(submitBtn) submitBtn.disabled=false;
+      });
     });
   }
 
