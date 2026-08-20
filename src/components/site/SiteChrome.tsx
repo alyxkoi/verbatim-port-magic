@@ -1,99 +1,212 @@
 import { useEffect } from "react";
 
-/* Nav and footer for content pages. Same markup and classes as the home page,
-   with absolute hrefs so every link works from a /guides/... URL. */
+/* Header, mobile drawer and footer lifted from src/site/index.html so every page
+   uses the same chrome. Homepage section links are absolute (/#journey) because
+   those sections do not exist on a guide page. */
+
+const NAV = [
+  { href: "/#journey", label: "What we build" },
+  { href: "/#build", label: "How we work" },
+  { href: "/#work", label: "Our work" },
+  { href: "/#price", label: "Pricing" },
+];
 
 export function GuideNav() {
-  useEffect(() => {
-    const nav = document.getElementById("nav");
-    if (!nav) return;
-    let last = window.scrollY;
-    const onScroll = () => {
-      const y = window.scrollY;
-      if (y > 80 && y > last) nav.classList.add("hide");
-      else nav.classList.remove("hide");
-      last = y;
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   return (
-    <nav id="nav">
-      <div className="navbar">
-        <a className="mark" href="/" aria-label="Alyxlab home">
-          <img className="logo-img" src="/img/logo.png" alt="Alyxlab" width="1500" height="1500" />
-        </a>
-        <div className="nlinks">
-          <a href="/#gets">What you get</a>
-          <a href="/#work">Our work</a>
-          <a href="/#how">How it works</a>
-          <a href="/#price">Pricing</a>
-        </div>
-        <a className="nbtn" href="/#start">Get my free plan</a>
+    <>
+      <div aria-label="Primary navigation" className="desktop-header">
+        <nav className="desktop-nav">
+          <a className="nav-brand" href="/">
+            <img className="brand-logo" src="/img/logo-white.png" alt="Alyx Lab" width={1114} height={870} />
+          </a>
+          <div className="desktop-links">
+            {NAV.map((n) => (
+              <a key={n.href} href={n.href}>{n.label}</a>
+            ))}
+          </div>
+          <div className="nav-actions">
+            <a className="nav-cta" href="/#start">
+              <span className="full">Get my free plan</span>
+              <span className="short">Start</span>
+              <span>↗</span>
+            </a>
+          </div>
+        </nav>
       </div>
-    </nav>
+      <div className="mobile-header">
+        <div className="mobile-nav-shell">
+          <nav aria-label="Mobile navigation" className="mobile-nav">
+            <a className="nav-brand mobile-brand" href="/">
+              <img className="brand-logo" src="/img/logo-white.png" alt="Alyx Lab" width={1114} height={870} />
+            </a>
+            <button
+              aria-controls="mobileMenu"
+              aria-expanded="false"
+              aria-label="Open navigation"
+              className="mobile-menu-btn"
+              type="button"
+            >
+              <span></span><span></span><span></span>
+            </button>
+          </nav>
+          <div className="mobile-menu-backdrop" aria-hidden="true"></div>
+          <aside className="mobile-menu" id="mobileMenu" aria-label="Mobile menu">
+            <div className="mobile-menu-top"><span>Navigate</span></div>
+            <div className="mobile-menu-links">
+              {NAV.map((n, i) => (
+                <a key={n.href} href={n.href}>
+                  <span>{n.label}</span>
+                  <b>{`0${i + 1}`}</b>
+                </a>
+              ))}
+            </div>
+            <a className="mobile-menu-cta" href="/#start">
+              <span>Get my free plan</span>
+              <span>↗</span>
+            </a>
+          </aside>
+        </div>
+      </div>
+    </>
   );
+}
+
+/* Same nav behaviour as the homepage: scroll progress bar, compact-on-scroll,
+   and the drawer that fades the nav pill while open. */
+function useSiteNav() {
+  useEffect(() => {
+    const body = document.body;
+    const desktopNav = document.querySelector<HTMLElement>(".desktop-nav");
+    const mobileNav = document.querySelector<HTMLElement>(".mobile-nav");
+    const menuBtn = document.querySelector<HTMLButtonElement>(".mobile-menu-btn");
+    const backdrop = document.querySelector<HTMLElement>(".mobile-menu-backdrop");
+    let lastY = window.scrollY;
+    let ticking = false;
+
+    const closeMenu = () => {
+      body.classList.remove("mobile-menu-open");
+      if (menuBtn) {
+        menuBtn.setAttribute("aria-expanded", "false");
+        menuBtn.setAttribute("aria-label", "Open navigation");
+      }
+    };
+
+    const update = () => {
+      const y = window.scrollY;
+      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const progress = Math.min(1, Math.max(0, y / max));
+      desktopNav?.style.setProperty("--scroll-progress", String(progress));
+      mobileNav?.style.setProperty("--scroll-progress", String(progress));
+      if (y < 36) {
+        body.classList.remove("nav-scrolled", "nav-compact");
+      } else {
+        body.classList.add("nav-scrolled");
+        const delta = y - lastY;
+        if (!body.classList.contains("mobile-menu-open")) {
+          if (delta > 3 && y > 120) body.classList.add("nav-compact");
+          if (delta < -3) body.classList.remove("nav-compact");
+        }
+      }
+      lastY = y;
+      ticking = false;
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(update);
+        ticking = true;
+      }
+    };
+    const onBtn = () => {
+      const open = !body.classList.contains("mobile-menu-open");
+      body.classList.toggle("mobile-menu-open", open);
+      body.classList.remove("nav-compact");
+      menuBtn?.setAttribute("aria-expanded", String(open));
+      menuBtn?.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+    };
+    const onResize = () => { if (window.innerWidth > 760) closeMenu(); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") closeMenu(); };
+    const links = Array.from(document.querySelectorAll<HTMLAnchorElement>(".mobile-menu a"));
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize, { passive: true });
+    document.addEventListener("keydown", onKey);
+    menuBtn?.addEventListener("click", onBtn);
+    backdrop?.addEventListener("click", closeMenu);
+    links.forEach((a) => a.addEventListener("click", closeMenu));
+    update();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+      document.removeEventListener("keydown", onKey);
+      menuBtn?.removeEventListener("click", onBtn);
+      backdrop?.removeEventListener("click", closeMenu);
+      links.forEach((a) => a.removeEventListener("click", closeMenu));
+      body.classList.remove("mobile-menu-open", "nav-scrolled", "nav-compact");
+    };
+  }, []);
 }
 
 export function GuideFooter() {
   return (
-    <footer>
-      <div className="fgrid">
-        <div className="fcol fbrand">
-          <img className="logo-img" src="/img/logo.png" alt="Alyxlab" width="1500" height="1500" />
-          <p className="fline">Complete business systems for local businesses. One place that answers, books, takes the deposit, and asks for the review.</p>
-          <address className="fnap">
-            <strong>ALYXLAB</strong>
-            839 S Good Latimer Expy<br />
-            Dallas, TX 75226<br />
-            <a href="tel:+14699431560">(469) 943 1560</a><br />
-            <a href="mailto:alyxlabwork@gmail.com">alyxlabwork@gmail.com</a>
-          </address>
-        </div>
+    <footer className="footer footer-rich">
+      <div className="shell footer-shell">
+        <div className="footer-main">
+          <div className="footer-brand-col">
+            <a className="footer-mark" href="/" aria-label="Alyx Lab home">
+              <img className="footer-logo" src="/img/logo-white.png" alt="Alyx Lab" width={1114} height={870} />
+            </a>
+            <p className="footer-blurb">Complete business systems for local businesses. One place that answers, books, takes the deposit, and asks for the review.</p>
+            <div className="footer-company">
+              <strong>ALYXLAB</strong>
+              <span>839 S Good Latimer Expy</span>
+              <span>Dallas, TX 75226</span>
+              <a href="tel:+14699431560">(469) 943 1560</a>
+              <a href="mailto:alyxlabwork@gmail.com">alyxlabwork@gmail.com</a>
+            </div>
+          </div>
 
-        <div className="fcol">
-          <h3>The system</h3>
-          <ul>
-            <li><a href="/#gets">What you get</a></li>
-            <li><a href="/#work">Our work</a></li>
-            <li><a href="/#how">How it works</a></li>
-            <li><a href="/#price">Pricing</a></li>
-            <li><a href="/#start">Contact</a></li>
-          </ul>
-        </div>
+          <nav className="footer-col" aria-label="The system">
+            <h3>The system</h3>
+            <a href="/#journey">What we build</a>
+            <a href="/#build">How we work</a>
+            <a href="/#work">Our work</a>
+            <a href="/#price">Pricing</a>
+            <a href="/#start">Contact</a>
+          </nav>
 
-        <div className="fcol">
-          <h3>Guides</h3>
-          <ul>
-            <li><a href="/guides/booking-system-cost">What a booking system costs</a></li>
-            <li><a href="/guides/dallas-booking-system">Hiring someone in Dallas</a></li>
-            <li><a className="fall" href="/guides">All guides</a></li>
-          </ul>
-        </div>
+          <nav className="footer-col" aria-label="Guides">
+            <h3>Guides</h3>
+            <a href="/guides/what-a-booking-system-costs">What a booking system costs</a>
+            <a href="/guides/hiring-someone-in-dallas">Hiring someone in Dallas</a>
+            <a className="footer-accent-link" href="/guides">All guides</a>
+          </nav>
 
-        <div className="fcol fstart">
-          <h3>Get started</h3>
-          <a className="nbtn fbtn" href="/#start">Get my free plan</a>
-          <p className="fnote">A written plan for your business, usually within a day. No cost.</p>
-          <div className="creach freach">
-            <a href="tel:+14699431560">
-              <svg viewBox="0 0 24 24"><path d="M6.5 3h3l1.5 4.5-2 1.5a13 13 0 0 0 6 6l1.5-2 4.5 1.5v3a2 2 0 0 1-2.2 2A17.5 17.5 0 0 1 4.5 5.2 2 2 0 0 1 6.5 3z"/></svg>
-              (469) 943 1560</a>
-            <a href="mailto:alyxlabwork@gmail.com">
-              <svg viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="m4.5 8 7.5 5 7.5-5"/></svg>
-              alyxlabwork@gmail.com</a>
+          <div className="footer-cta-col">
+            <h3>Get started</h3>
+            <a className="footer-cta" href="/#start">Get my free plan</a>
+            <p>A written plan for your business, usually within a day. No cost.</p>
+            <div className="footer-contact-links">
+              <a href="tel:+14699431560" aria-label="Call Alyx Lab">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.7 3.8 9 3.2l2.1 5-1.8 1.5a14.3 14.3 0 0 0 5 5l1.5-1.8 5 2.1-.6 2.3c-.3 1.2-1.4 2-2.6 1.9C10.8 18.4 5.6 13.2 4.8 6.4c-.1-1.2.7-2.3 1.9-2.6Z" /></svg>
+                <span>(469) 943 1560</span>
+              </a>
+              <a href="mailto:alyxlabwork@gmail.com" aria-label="Email Alyx Lab">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5.5" width="17" height="13" rx="2" /><path d="m5 7 7 5 7-5" /></svg>
+                <span>alyxlabwork@gmail.com</span>
+              </a>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="fbar">
-        <span>© 2026 Alyxlab. One person. Complete systems. Dallas, TX.</span>
-        <div className="fbar-links">
-          <a href="/privacy">Privacy</a>
-          <a href="/terms">Terms</a>
-          <a href="/login">Operator login</a>
-
+        <div className="footer-bottom">
+          <span>© 2026 Alyxlab. One person. Complete systems. Dallas, TX.</span>
+          <nav aria-label="Legal">
+            <a href="/privacy">Privacy</a>
+            <a href="/terms">Terms</a>
+            <a href="/operator-login">Operator login</a>
+          </nav>
         </div>
       </div>
     </footer>
@@ -103,7 +216,7 @@ export function GuideFooter() {
 /* Subtle scroll reveal, same class and easing the home page uses. */
 export function useReveal() {
   useEffect(() => {
-    document.documentElement.classList.add("js");
+    document.documentElement.classList.add("motion-ready");
     const els = Array.from(document.querySelectorAll<HTMLElement>(".rv"));
     const io = new IntersectionObserver(
       (entries) => {
@@ -117,17 +230,20 @@ export function useReveal() {
       { rootMargin: "0px 0px -8% 0px", threshold: 0.05 },
     );
     els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    return () => {
+      io.disconnect();
+      document.documentElement.classList.remove("motion-ready");
+    };
   }, []);
 }
 
 export function GuideShell({ children }: { children: React.ReactNode }) {
+  useSiteNav();
   useReveal();
   return (
     <>
       <GuideNav />
       <main className="gpage">
-        <div className="grain" aria-hidden="true"></div>
         <div className="gcol">{children}</div>
       </main>
       <GuideFooter />
@@ -147,9 +263,9 @@ export function GuideCta({
   return (
     <div className="gcta rv">
       <p>{line}</p>
-      <a className="btn" href="/#start">
+      <a className="nav-cta gcta-btn" href="/#start">
         <span>Get my free plan</span>
-        <svg viewBox="0 0 24 24"><path d="M5 12h13M12 5.5 18.5 12 12 18.5"/></svg>
+        <span>↗</span>
       </a>
       <p className="gcta-alt">
         <a href={other}>{otherLabel}</a> · <a href="/guides">All guides</a>
