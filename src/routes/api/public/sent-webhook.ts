@@ -76,7 +76,7 @@ export const Route = createFileRoute("/api/public/sent-webhook")({
         }
 
         const body = String(data["text"] ?? data["body"] ?? "").trim();
-        const fromKey = phoneKey(data["from"] ?? data["sender"]);
+        const fromKey = phoneKey(String(data["from"] ?? data["sender"] ?? ""));
         if (!body || !fromKey) return ok({ ok: true, ignored: "nothing to record" });
 
         // Resolve the lead from the sending number.
