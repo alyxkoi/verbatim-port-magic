@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedConsoleRouteImport } from './routes/_authenticated/console'
 import { Route as GuidesIndexRouteImport } from './routes/guides.index'
 import { Route as GuidesBookingSystemCostRouteImport } from './routes/guides.booking-system-cost'
@@ -56,6 +57,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedConsoleRoute = AuthenticatedConsoleRouteImport.update({
@@ -172,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/console': typeof AuthenticatedConsoleRouteWithChildren
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
@@ -197,6 +204,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
   '/guides': typeof GuidesIndexRoute
@@ -223,6 +231,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/_authenticated/console': typeof AuthenticatedConsoleRouteWithChildren
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
@@ -250,6 +259,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacy'
     | '/sitemap.xml'
+    | '/terms'
     | '/console'
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
@@ -275,6 +285,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacy'
     | '/sitemap.xml'
+    | '/terms'
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
     | '/guides'
@@ -300,6 +311,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacy'
     | '/sitemap.xml'
+    | '/terms'
     | '/_authenticated/console'
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
@@ -327,6 +339,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TermsRoute: typeof TermsRoute
   GuidesBookingSystemCostRoute: typeof GuidesBookingSystemCostRoute
   GuidesDallasBookingSystemRoute: typeof GuidesDallasBookingSystemRoute
   GuidesIndexRoute: typeof GuidesIndexRoute
@@ -374,6 +387,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/console': {
@@ -554,6 +574,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TermsRoute: TermsRoute,
   GuidesBookingSystemCostRoute: GuidesBookingSystemCostRoute,
   GuidesDallasBookingSystemRoute: GuidesDallasBookingSystemRoute,
   GuidesIndexRoute: GuidesIndexRoute,
