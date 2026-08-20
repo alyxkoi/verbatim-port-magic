@@ -87,6 +87,26 @@ export const signIn = createServerFn({ method: "POST" })
       };
     }
 
+    const { data: operatorRole, error: roleError } = await auth
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", result.user.id)
+      .eq("role", "admin")
+      .maybeSingle();
+
+    if (roleError || !operatorRole) {
+      await auth.auth.signOut({ scope: "local" });
+      await supabaseAdmin
+        .from("login_attempt")
+        .insert({ email_key: data.email, ip, succeeded: false });
+      return {
+        ok: false as const,
+        locked: false as const,
+        retryAfter: 0,
+        attemptsLeft: Math.max(0, MAX_ATTEMPTS - (emailCount + 1)),
+      };
+    }
+
     await supabaseAdmin
       .from("login_attempt")
       .delete()

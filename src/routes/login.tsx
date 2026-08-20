@@ -26,13 +26,9 @@ function LoginPage() {
   const router = useRouter();
 
   useEffect(() => {
-    let cancelled = false;
-
-    void supabase.auth.getSession().then(({ data }) => {
-      if (!cancelled && data.session) {
-        void router.navigate({ to: "/console", replace: true });
-      }
-    });
+    // Opening the operator login is an explicit re-authentication boundary.
+    // Clear only this browser's session so the form always requires a password.
+    const sessionReset = supabase.auth.signOut({ scope: "local" }).catch(() => undefined);
 
     const form = document.getElementById("loginForm") as HTMLFormElement;
     const email = document.getElementById("email") as HTMLInputElement;
@@ -136,6 +132,7 @@ function LoginPage() {
       setBusy(true);
       let result: Awaited<ReturnType<typeof signIn>> | null = null;
       try {
+        await sessionReset;
         result = await signIn({ data: { email: email.value, password: password.value } });
       } catch {
         setBusy(false);
@@ -221,7 +218,6 @@ function LoginPage() {
     const raf = requestAnimationFrame(() => email.focus());
 
     return () => {
-      cancelled = true;
       cancelAnimationFrame(raf);
       if (lockTimer) clearTimeout(lockTimer);
       form.removeEventListener("submit", onSubmit);
@@ -302,16 +298,7 @@ function LoginPage() {
               </div>
             </div>
 
-            <div className="row">
-              <label className="remember" htmlFor="remember">
-                <input type="checkbox" id="remember" name="remember" />
-                <span className="box" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path d="M4 12.5 9.5 18 20 6.5" />
-                  </svg>
-                </span>
-                <span>Keep me signed in</span>
-              </label>
+            <div className="row row-forgot">
               <a className="link" href="#" id="forgot">
                 Forgot password
               </a>

@@ -206,8 +206,17 @@ export function GuideFooter() {
 /* Subtle scroll reveal, same class and easing the home page uses. */
 export function useReveal() {
   useEffect(() => {
-    document.documentElement.classList.add("motion-ready");
     const els = Array.from(document.querySelectorAll<HTMLElement>(".rv"));
+    const shouldSkipMotion = window.matchMedia(
+      "(max-width: 1080px), (pointer: coarse), (prefers-reduced-motion: reduce)",
+    ).matches;
+
+    if (shouldSkipMotion) {
+      els.forEach((el) => el.classList.add("in"));
+      return;
+    }
+
+    document.documentElement.classList.add("motion-ready");
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {

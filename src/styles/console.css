@@ -40,7 +40,7 @@
       overflow-x: hidden;
       background: var(--page);
       color: var(--text);
-      font-family: "Lufga", "Outfit", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+      font-family: "Lufga", "Geist", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
       font-size: 15px;
       line-height: 1.45;
       -webkit-font-smoothing: antialiased;
@@ -1559,7 +1559,7 @@
       background: #000000;
       background-attachment: fixed;
       color: var(--text);
-      font-family: "Lufga", "Outfit", -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
+      font-family: "Lufga", "Geist", -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
       font-weight: 400;
       letter-spacing: -.008em;
     }
@@ -4884,6 +4884,18 @@
     @media (max-width: 720px) {
       .acct-detail { grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); }
       .feature-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 1080px), (pointer: coarse) {
+      body { text-rendering: auto; }
+      .screen,
+      body[data-view="today"] .welcome-field,
+      body[data-view="today"] .counter-field,
+      body[data-view="today"] .focus-field,
+      body[data-view="today"] .action-card,
+      body[data-view="today"] .week-stack,
+      .live-dot { animation: none !important; }
+      .screen img { max-width: 100%; }
     }
 
     /* Blip draft inside the lead drawer. Same glass treatment as the drawer's

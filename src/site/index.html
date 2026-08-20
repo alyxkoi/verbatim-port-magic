@@ -17,7 +17,7 @@
 <meta content="summary_large_image" name="twitter:card"/>
 <meta content="https://alyxlab.com/og-image.jpg" name="twitter:image"/>
 <link href="/favicon.png" rel="icon" type="image/png"/>
-<link rel="preload" as="image" href="assets/011da0662ac4.webp" fetchpriority="high"/>
+<link rel="preload" as="image" href="assets/011da0662ac4-1200.webp" imagesrcset="assets/011da0662ac4-1200.webp 1200w, assets/011da0662ac4.webp 1672w" imagesizes="(max-width:1080px) 600px, 100vw" fetchpriority="high"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
@@ -1040,20 +1040,23 @@ html{scroll-behavior:auto}
 
 /* Mobile performance: retain the composition while avoiding continuous GPU
    work and large blur repaints during touch scrolling. */
-@media(max-width:760px){
-  .motion-ready .rv{filter:none;transition:opacity .62s var(--curve),transform .68s var(--curve)}
-  .motion-ready .hero h1.rv{filter:none;transition-duration:.72s,.76s}
-  .motion-ready .d1{transition-delay:.06s}
-  .motion-ready .d2{transition-delay:.12s}
-  .motion-ready .d3{transition-delay:.18s}
-  .hero-layer,.support-card,.support-icon-stage,.contact-pixel-cloud{will-change:auto}
-  .hero-icon{animation:none!important}
+@media(max-width:1080px){
+  .motion-ready .rv,.motion-ready .hero h1.rv{opacity:1;transform:none;filter:none;transition:none}
+  .motion-ready .d1,.motion-ready .d2,.motion-ready .d3{transition-delay:0s}
+  .hero-shader{display:none}
+  .hero-scene,.hero-layer,.support-card,.support-icon-stage,.contact-pixel-cloud,.system-card{will-change:auto}
+  .hero-icon,.motion-word,.system-bridge-arrow,.support-icon-img,.loss-title-glitch,
+  .contact-pixel-cloud,.footer.footer-rich::before,.footer.footer-rich::after{animation:none!important}
+  .hero .cta{background:#0a0b0c;box-shadow:0 10px 22px rgba(0,0,0,.2);text-shadow:none;filter:none}
+  .hero .cta::before,.hero .cta::after{content:none;display:none;animation:none}
+  .hero .cta svg{filter:none}
+  .layer-shot.shot-pending img{opacity:1;transition:none}
+  .layer-shot.shot-pending::after{display:none;animation:none}
   .mobile-nav{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(10,12,9,.88)}
   .support-card{-webkit-backdrop-filter:none;backdrop-filter:none}
   .contact-panel{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:rgba(8,26,70,.7)!important}
   .contact-form{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:rgba(255,255,255,.13)!important}
   .contact-panel::after{display:none!important}
-  .contact-pixel-cloud,.footer.footer-rich::before,.footer.footer-rich::after{animation:none!important;will-change:auto}
 }
 </style>
 </head>
@@ -1105,7 +1108,7 @@ html{scroll-behavior:auto}
 </div>
 </div>
 <div aria-hidden="true" class="hero-scene" id="heroScene">
-<div class="hero-layer layer-globe" data-depth="0.22"><img alt="" class="hero-globe" fetchpriority="high" src="assets/011da0662ac4.webp" width="1672" height="941"/></div>
+<div class="hero-layer layer-globe" data-depth="0.22"><img alt="" class="hero-globe" fetchpriority="high" src="assets/011da0662ac4.webp" srcset="assets/011da0662ac4-1200.webp 1200w, assets/011da0662ac4.webp 1672w" sizes="(max-width:1080px) 600px, 100vw" width="1672" height="941"/></div>
 <div class="hero-layer layer-cursor" data-depth="1.05"><img alt="" class="hero-icon" src="assets/42b8a98f053d.webp" width="394" height="394"/></div>
 <div class="hero-layer layer-envelope" data-depth="0.84"><img alt="" class="hero-icon" src="assets/69aa7471ca7e.webp" width="372" height="372"/></div>
 <div class="hero-layer layer-calendar" data-depth="0.92"><img alt="" class="hero-icon" src="assets/3022d1d9b112.webp" width="376" height="376"/></div>
@@ -1212,27 +1215,27 @@ html{scroll-behavior:auto}
 <div class="layer-stack">
 <article class="layer-stack-card layer-front" style="--stack:0;--layer-accent:#d7ff00">
 <div class="layer-stack-copy"><span>01</span><div><h3>Front door</h3><p>Website, offers, intake, and first contact turn attention into a lead you can actually work.</p></div></div>
-<div class="layer-shot sketch-stage sketch-front"><img loading="lazy" decoding="async" alt="Morrow Tattoo front door website hero shown inside a laptop mockup with cloud-themed branding and consultation intake" src="assets/2bb176f356d9.webp" width="1448" height="1086"/><div class="sketch-note sketch-a" style="--i:0"><span class="sketch-label">strong first impression</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-b" style="--i:1"><span class="sketch-label">lead captured here</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-c" style="--i:2"><span class="sketch-label">trust before booking</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div></div>
+<div class="layer-shot sketch-stage sketch-front"><img loading="lazy" decoding="async" alt="Morrow Tattoo front door website hero shown inside a laptop mockup with cloud-themed branding and consultation intake" src="assets/2bb176f356d9.webp" srcset="assets/2bb176f356d9-960.webp 960w, assets/2bb176f356d9.webp 1448w" sizes="(max-width:1080px) 480px, 88vw" width="1448" height="1086"/><div class="sketch-note sketch-a" style="--i:0"><span class="sketch-label">strong first impression</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-b" style="--i:1"><span class="sketch-label">lead captured here</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-c" style="--i:2"><span class="sketch-label">trust before booking</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div></div>
 <div class="layer-handoff"><span>Front door captures the lead.</span><strong>Then it hands the work to the Control center.</strong></div>
 </article>
 <article class="layer-stack-card layer-control" style="--stack:1;--layer-accent:#d7ff00">
 <div class="layer-stack-copy"><span>02</span><div><h3>Control center</h3><p>Pipeline, ownership, tasks, and customer history live in one operational view instead of scattered tabs.</p></div></div>
-<div class="layer-shot sketch-stage sketch-control"><img loading="lazy" decoding="async" alt="Morrow Tattoo control center dashboard showing studio activity, appointments, requests, and consultation intake" src="assets/e426dcff5b6c.webp" width="1448" height="1086"/><div class="sketch-note sketch-a" style="--i:0"><span class="sketch-label">weekly snapshot</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-b" style="--i:1"><span class="sketch-label">today at a glance</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-c" style="--i:2"><span class="sketch-label">new lead → system</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div></div>
+<div class="layer-shot sketch-stage sketch-control"><img loading="lazy" decoding="async" alt="Morrow Tattoo control center dashboard showing studio activity, appointments, requests, and consultation intake" src="assets/e426dcff5b6c.webp" srcset="assets/e426dcff5b6c-960.webp 960w, assets/e426dcff5b6c.webp 1448w" sizes="(max-width:1080px) 480px, 88vw" width="1448" height="1086"/><div class="sketch-note sketch-a" style="--i:0"><span class="sketch-label">weekly snapshot</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-b" style="--i:1"><span class="sketch-label">today at a glance</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-c" style="--i:2"><span class="sketch-label">new lead → system</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div></div>
 <div class="layer-handoff"><span>Control center keeps the team aligned.</span><strong>Then the customer moves into Booking + money.</strong></div>
 </article>
 <article class="layer-stack-card layer-booking" style="--stack:2;--layer-accent:#d7ff00">
 <div class="layer-stack-copy"><span>03</span><div><h3>Booking + money</h3><p>Calendar, reminders, deposits, checkout, and payment status stay attached to the same customer.</p></div></div>
-<div class="layer-shot sketch-stage sketch-booking"><img loading="lazy" decoding="async" alt="Morrow Tattoo booking and money dashboard showing weekly schedule, deposits, payments, and upcoming sessions" src="assets/427de7daa43b.webp" width="1448" height="1086"/><div class="sketch-note sketch-a" style="--i:0"><span class="sketch-label">live schedule</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-b" style="--i:1"><span class="sketch-label">money tracked</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-c" style="--i:2"><span class="sketch-label">quick booking</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div></div>
+<div class="layer-shot sketch-stage sketch-booking"><img loading="lazy" decoding="async" alt="Morrow Tattoo booking and money dashboard showing weekly schedule, deposits, payments, and upcoming sessions" src="assets/427de7daa43b.webp" srcset="assets/427de7daa43b-960.webp 960w, assets/427de7daa43b.webp 1448w" sizes="(max-width:1080px) 480px, 88vw" width="1448" height="1086"/><div class="sketch-note sketch-a" style="--i:0"><span class="sketch-label">live schedule</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-b" style="--i:1"><span class="sketch-label">money tracked</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-c" style="--i:2"><span class="sketch-label">quick booking</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div></div>
 <div class="layer-handoff"><span>The booking is secured and the money is tracked.</span><strong>Then Follow-through keeps the relationship moving.</strong></div>
 </article>
 <article class="layer-stack-card layer-follow" style="--stack:3;--layer-accent:#d7ff00">
 <div class="layer-stack-copy"><span>04</span><div><h3>Follow-through</h3><p>Replies, reminders, review requests, nurture, and return-customer flows happen because of what the customer did.</p></div></div>
-<div class="layer-shot sketch-stage sketch-follow"><img loading="lazy" decoding="async" alt="Morrow Tattoo follow-through dashboard showing replies, reminders, reviews, retention, and quick follow-up" src="assets/7d8f58cfc0e3.webp" width="1448" height="1086"/><div class="sketch-note sketch-a" style="--i:0"><span class="sketch-label">follow-up trend</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-b" style="--i:1"><span class="sketch-label">nothing gets forgotten</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-c" style="--i:2"><span class="sketch-label">next touch in seconds</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div></div>
+<div class="layer-shot sketch-stage sketch-follow"><img loading="lazy" decoding="async" alt="Morrow Tattoo follow-through dashboard showing replies, reminders, reviews, retention, and quick follow-up" src="assets/7d8f58cfc0e3.webp" srcset="assets/7d8f58cfc0e3-960.webp 960w, assets/7d8f58cfc0e3.webp 1448w" sizes="(max-width:1080px) 480px, 88vw" width="1448" height="1086"/><div class="sketch-note sketch-a" style="--i:0"><span class="sketch-label">follow-up trend</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-b" style="--i:1"><span class="sketch-label">nothing gets forgotten</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-c" style="--i:2"><span class="sketch-label">next touch in seconds</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div></div>
 <div class="layer-handoff"><span>Follow-through protects the relationship.</span><strong>The Logic layer keeps every handoff behaving correctly.</strong></div>
 </article>
 <article class="layer-stack-card layer-logic" style="--stack:4;--layer-accent:#d7ff00">
 <div class="layer-stack-copy"><span>05</span><div><h3>Logic layer</h3><p>Rules, automations, permissions, integrations, and AI coordinate the work underneath every screen.</p></div></div>
-<div class="layer-shot sketch-stage sketch-logic"><img loading="lazy" decoding="async" alt="Morrow Tattoo logic layer dashboard showing automations, trigger activity, performance, and automation creation" src="assets/107d30260b23.webp" width="1448" height="1086"/><div class="sketch-note sketch-a" style="--i:0"><span class="sketch-label">rules running quietly</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-b" style="--i:1"><span class="sketch-label">watch the system work</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-c" style="--i:2"><span class="sketch-label">change the logic anytime</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div></div>
+<div class="layer-shot sketch-stage sketch-logic"><img loading="lazy" decoding="async" alt="Morrow Tattoo logic layer dashboard showing automations, trigger activity, performance, and automation creation" src="assets/107d30260b23.webp" srcset="assets/107d30260b23-960.webp 960w, assets/107d30260b23.webp 1448w" sizes="(max-width:1080px) 480px, 88vw" width="1448" height="1086"/><div class="sketch-note sketch-a" style="--i:0"><span class="sketch-label">rules running quietly</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-b" style="--i:1"><span class="sketch-label">watch the system work</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-c" style="--i:2"><span class="sketch-label">change the logic anytime</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div></div>
 <div class="layer-handoff final"><span>Five layers working as one system.</span><strong>You stop holding the business together. <em>The system does.</em></strong></div>
 </article>
 </div>
@@ -1409,7 +1412,7 @@ html{scroll-behavior:auto}
 (() => {
   "use strict";
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const mobilePerformanceMode = matchMedia("(max-width: 760px), (pointer: coarse)").matches;
+  const mobilePerformanceMode = matchMedia("(max-width: 1080px), (pointer: coarse)").matches;
 
   // Critical motion setup runs before any visual effects. Content remains
   // visible unless this observer is successfully initialized.
@@ -1417,7 +1420,7 @@ html{scroll-behavior:auto}
   window.addEventListener("error",clearMotionGate);
   window.addEventListener("unhandledrejection",clearMotionGate);
   const revealEls=[...document.querySelectorAll(".rv")];
-  if(reduce){
+  if(reduce||mobilePerformanceMode){
     revealEls.forEach(el=>el.classList.add("in"));
   }else if("IntersectionObserver" in window){
     const revealObserver=new IntersectionObserver((entries)=>{
@@ -1488,12 +1491,13 @@ html{scroll-behavior:auto}
     sketchTick=requestAnimationFrame(updateSketchFocus);
   };
 
-  if(reduce){
-    sketchStages.forEach(stage=>stage.classList.add("annotate-live"));
+  if(reduce||mobilePerformanceMode){
+    sketchStages.forEach(stage=>stage.classList.add("annotate-active","annotate-live"));
+  }else{
+    addEventListener("scroll",scheduleSketchFocus,{passive:true});
+    addEventListener("resize",scheduleSketchFocus,{passive:true});
+    requestAnimationFrame(updateSketchFocus);
   }
-  addEventListener("scroll",scheduleSketchFocus,{passive:true});
-  addEventListener("resize",scheduleSketchFocus,{passive:true});
-  requestAnimationFrame(updateSketchFocus);
 
   const initHeroShader = () => {
     const canvas = document.getElementById("heroShader");
@@ -1638,7 +1642,9 @@ html{scroll-behavior:auto}
     resize();requestDraw();
   };
 
-  try { initHeroShader(); } catch (err) { console.warn("Hero shader disabled", err); }
+  if(!mobilePerformanceMode){
+    try { initHeroShader(); } catch (err) { console.warn("Hero shader disabled", err); }
+  }
 
 
 
@@ -1891,28 +1897,32 @@ html{scroll-behavior:auto}
   const requestLossUpdate=()=>{
     if(!lossTicking){lossTicking=true;requestAnimationFrame(updateLossTimeline);}
   };
-  if(lossList){
+  if(lossList&&!mobilePerformanceMode){
     window.addEventListener("scroll",requestLossUpdate,{passive:true});
     window.addEventListener("resize",requestLossUpdate,{passive:true});
     requestLossUpdate();
+  }else if(lossList){
+    lossItems.forEach(item=>item.classList.add("active"));
   }
 
   // Leak videos: play once when meaningfully in view, pause when scrolled away,
   // and hold on the final frame permanently after completion.
   // Videos are ~1.35 MB and sit well below the fold. Hold the bytes back until
   // the reader is roughly one screen away, then buffer so playback is ready.
-  const videoPreloader = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      const video = entry.target;
-      if (video.preload !== "auto") {
-        video.preload = "auto";
-        video.load();
-      }
-      videoPreloader.unobserve(video);
-    });
-  }, { rootMargin: "150% 0px" });
-  document.querySelectorAll(".loss-video").forEach((v) => videoPreloader.observe(v));
+  if(!mobilePerformanceMode){
+    const videoPreloader = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const video = entry.target;
+        if (video.preload !== "auto") {
+          video.preload = "auto";
+          video.load();
+        }
+        videoPreloader.unobserve(video);
+      });
+    }, { rootMargin: "150% 0px" });
+    document.querySelectorAll(".loss-video").forEach((v) => videoPreloader.observe(v));
+  }
   const lossVideos=[...document.querySelectorAll(".loss-video")];
   const holdLossVideoEnd=(video)=>{
     if(!Number.isFinite(video.duration)||video.duration<=0) return;
@@ -1931,7 +1941,9 @@ html{scroll-behavior:auto}
     video.addEventListener("ended",()=>holdLossVideoEnd(video));
   });
   if(lossVideos.length){
-    if(reduce){
+    if(mobilePerformanceMode){
+      lossVideos.forEach(video=>{video.preload="none";video.pause();});
+    }else if(reduce){
       lossVideos.forEach(video=>{
         const showEnd=()=>holdLossVideoEnd(video);
         if(video.readyState>=1) showEnd();
@@ -2296,7 +2308,7 @@ html{scroll-behavior:auto}
         warmImage(entry.target);
         imageWarmup.unobserve(entry.target);
       });
-    },{rootMargin:"125% 0px"});
+    },{rootMargin:mobilePerformanceMode?"250% 0px":"125% 0px"});
     lazyImages.forEach((img)=>imageWarmup.observe(img));
   }else{
     lazyImages.forEach(warmImage);

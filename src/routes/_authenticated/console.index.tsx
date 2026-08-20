@@ -26,7 +26,8 @@ function TodayScreen() {
     const timer = setInterval(() => setNow(new Date()), 30000);
     return () => clearInterval(timer);
   }, []);
-  const greeting = greetingForDaypart(daypartForNow(now));
+  const daypart = daypartForNow(now);
+  const greeting = greetingForDaypart(daypart);
 
   return (
     <section className="screen" aria-label="Today overview">
@@ -34,26 +35,8 @@ function TodayScreen() {
         <article className="welcome-field">
           <div className="sky-art" aria-hidden="true">
             <img
-              className="sky-scene sky-scene-morning"
-              src="/img/sky/morning.webp"
-              alt=""
-              decoding="async"
-            />
-            <img
-              className="sky-scene sky-scene-afternoon"
-              src="/img/sky/afternoon.webp"
-              alt=""
-              decoding="async"
-            />
-            <img
-              className="sky-scene sky-scene-evening"
-              src="/img/sky/evening.webp"
-              alt=""
-              decoding="async"
-            />
-            <img
-              className="sky-scene sky-scene-night"
-              src="/img/sky/night.webp"
+              className={`sky-scene sky-scene-${daypart}`}
+              src={`/img/sky/${daypart}.webp`}
               alt=""
               decoding="async"
             />

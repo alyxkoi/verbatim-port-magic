@@ -24,13 +24,7 @@ export const Route = createFileRoute("/_authenticated/console")({
       },
     ],
     links: [
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "" },
       { rel: "preconnect", href: "https://xlpclvovydtuxbssetga.supabase.co" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap",
-      },
       { rel: "stylesheet", href: consoleCss },
     ],
   }),
@@ -77,7 +71,7 @@ function ConsoleShell() {
   async function handleSignOut() {
     await queryClient.cancelQueries();
     queryClient.clear();
-    await supabase.auth.signOut();
+    await supabase.auth.signOut({ scope: "local" });
     void router.navigate({ to: "/login", replace: true });
   }
 
