@@ -1119,6 +1119,13 @@ body{animation:alyxPageEnter .42s var(--curve) both}
   .leaks-effects{background-image:linear-gradient(180deg,#050607 0%,#080a0d 18%,#0c1014 42%,#14191f 68%,#262c33 86%,#41474f 100%);background-size:100% 100%;background-repeat:no-repeat;background-blend-mode:normal}
   .leaks-blur,.leaks-grain,.leaks-dot-overlay{display:none}
 }
+@media(max-width:1080px){
+  .loss-label-row{box-sizing:border-box;width:max-content;max-width:100%;padding:10px 15px 10px 12px;border:1px solid transparent;border-radius:999px;background-color:transparent;box-shadow:none;transform:scale(.985);transform-origin:left center;transition:background-color .32s var(--curve),border-color .32s var(--curve),box-shadow .32s var(--curve),transform .32s var(--curve)}
+  .loss-index,.loss-label h3{transition:color .32s var(--curve)}
+  .loss-item.active .loss-label-row{background-color:var(--lime);border-color:rgba(255,255,255,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.48),0 10px 26px rgba(0,0,0,.22);transform:scale(1)}
+  .loss-item.active .loss-index{color:#1f54d5}
+  .loss-item.active .loss-label h3{color:#11150d}
+}
 @media(max-width:760px){
   .loss-label{position:sticky;top:82px;z-index:4;padding:10px 0 18px}
 }
