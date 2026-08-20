@@ -12,11 +12,16 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as OperatorLoginRouteImport } from './routes/operator-login'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AuthenticatedConsoleRouteImport } from './routes/_authenticated/console'
 import { Route as GuidesIndexRouteImport } from './routes/guides.index'
 import { Route as GuidesBookingSystemCostRouteImport } from './routes/guides.booking-system-cost'
 import { Route as GuidesDallasBookingSystemRouteImport } from './routes/guides.dallas-booking-system'
+import { Route as GuidesHiringSomeoneInDallasRouteImport } from './routes/guides.hiring-someone-in-dallas'
+import { Route as GuidesWhatABookingSystemCostsRouteImport } from './routes/guides.what-a-booking-system-costs'
 import { Route as AuthenticatedConsoleIndexRouteImport } from './routes/_authenticated/console.index'
 import { Route as AuthenticatedConsoleBlipRouteImport } from './routes/_authenticated/console.blip'
 import { Route as AuthenticatedConsoleCalendarRouteImport } from './routes/_authenticated/console.calendar'
@@ -47,9 +52,24 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OperatorLoginRoute = OperatorLoginRouteImport.update({
+  id: '/operator-login',
+  path: '/operator-login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedConsoleRoute = AuthenticatedConsoleRouteImport.update({
@@ -71,6 +91,18 @@ const GuidesDallasBookingSystemRoute =
   GuidesDallasBookingSystemRouteImport.update({
     id: '/guides/dallas-booking-system',
     path: '/guides/dallas-booking-system',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const GuidesHiringSomeoneInDallasRoute =
+  GuidesHiringSomeoneInDallasRouteImport.update({
+    id: '/guides/hiring-someone-in-dallas',
+    path: '/guides/hiring-someone-in-dallas',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const GuidesWhatABookingSystemCostsRoute =
+  GuidesWhatABookingSystemCostsRouteImport.update({
+    id: '/guides/what-a-booking-system-costs',
+    path: '/guides/what-a-booking-system-costs',
     getParentRoute: () => rootRouteImport,
   } as any)
 const AuthenticatedConsoleIndexRoute =
@@ -164,10 +196,15 @@ const ApiPublicStripePlatformWebhookRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/operator-login': typeof OperatorLoginRoute
+  '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/console': typeof AuthenticatedConsoleRouteWithChildren
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
+  '/guides/hiring-someone-in-dallas': typeof GuidesHiringSomeoneInDallasRoute
+  '/guides/what-a-booking-system-costs': typeof GuidesWhatABookingSystemCostsRoute
   '/guides/': typeof GuidesIndexRoute
   '/console/blip': typeof AuthenticatedConsoleBlipRoute
   '/console/calendar': typeof AuthenticatedConsoleCalendarRoute
@@ -188,9 +225,14 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/operator-login': typeof OperatorLoginRoute
+  '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
+  '/guides/hiring-someone-in-dallas': typeof GuidesHiringSomeoneInDallasRoute
+  '/guides/what-a-booking-system-costs': typeof GuidesWhatABookingSystemCostsRoute
   '/guides': typeof GuidesIndexRoute
   '/console/blip': typeof AuthenticatedConsoleBlipRoute
   '/console/calendar': typeof AuthenticatedConsoleCalendarRoute
@@ -213,10 +255,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/login': typeof LoginRoute
+  '/operator-login': typeof OperatorLoginRoute
+  '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/_authenticated/console': typeof AuthenticatedConsoleRouteWithChildren
   '/guides/booking-system-cost': typeof GuidesBookingSystemCostRoute
   '/guides/dallas-booking-system': typeof GuidesDallasBookingSystemRoute
+  '/guides/hiring-someone-in-dallas': typeof GuidesHiringSomeoneInDallasRoute
+  '/guides/what-a-booking-system-costs': typeof GuidesWhatABookingSystemCostsRoute
   '/guides/': typeof GuidesIndexRoute
   '/_authenticated/console/blip': typeof AuthenticatedConsoleBlipRoute
   '/_authenticated/console/calendar': typeof AuthenticatedConsoleCalendarRoute
@@ -239,10 +286,15 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/operator-login'
+    | '/privacy'
     | '/sitemap.xml'
+    | '/terms'
     | '/console'
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
+    | '/guides/hiring-someone-in-dallas'
+    | '/guides/what-a-booking-system-costs'
     | '/guides/'
     | '/console/blip'
     | '/console/calendar'
@@ -263,9 +315,14 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/operator-login'
+    | '/privacy'
     | '/sitemap.xml'
+    | '/terms'
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
+    | '/guides/hiring-someone-in-dallas'
+    | '/guides/what-a-booking-system-costs'
     | '/guides'
     | '/console/blip'
     | '/console/calendar'
@@ -287,10 +344,15 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/login'
+    | '/operator-login'
+    | '/privacy'
     | '/sitemap.xml'
+    | '/terms'
     | '/_authenticated/console'
     | '/guides/booking-system-cost'
     | '/guides/dallas-booking-system'
+    | '/guides/hiring-someone-in-dallas'
+    | '/guides/what-a-booking-system-costs'
     | '/guides/'
     | '/_authenticated/console/blip'
     | '/_authenticated/console/calendar'
@@ -313,9 +375,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   LoginRoute: typeof LoginRoute
+  OperatorLoginRoute: typeof OperatorLoginRoute
+  PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TermsRoute: typeof TermsRoute
   GuidesBookingSystemCostRoute: typeof GuidesBookingSystemCostRoute
   GuidesDallasBookingSystemRoute: typeof GuidesDallasBookingSystemRoute
+  GuidesHiringSomeoneInDallasRoute: typeof GuidesHiringSomeoneInDallasRoute
+  GuidesWhatABookingSystemCostsRoute: typeof GuidesWhatABookingSystemCostsRoute
   GuidesIndexRoute: typeof GuidesIndexRoute
   ApiPublicDailyMaintenanceRoute: typeof ApiPublicDailyMaintenanceRoute
   ApiPublicLeadIntakeRoute: typeof ApiPublicLeadIntakeRoute
@@ -349,11 +416,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/operator-login': {
+      id: '/operator-login'
+      path: '/operator-login'
+      fullPath: '/operator-login'
+      preLoaderRoute: typeof OperatorLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/console': {
@@ -382,6 +470,20 @@ declare module '@tanstack/react-router' {
       path: '/guides/dallas-booking-system'
       fullPath: '/guides/dallas-booking-system'
       preLoaderRoute: typeof GuidesDallasBookingSystemRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/hiring-someone-in-dallas': {
+      id: '/guides/hiring-someone-in-dallas'
+      path: '/guides/hiring-someone-in-dallas'
+      fullPath: '/guides/hiring-someone-in-dallas'
+      preLoaderRoute: typeof GuidesHiringSomeoneInDallasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/what-a-booking-system-costs': {
+      id: '/guides/what-a-booking-system-costs'
+      path: '/guides/what-a-booking-system-costs'
+      fullPath: '/guides/what-a-booking-system-costs'
+      preLoaderRoute: typeof GuidesWhatABookingSystemCostsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/console/': {
@@ -532,9 +634,14 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   LoginRoute: LoginRoute,
+  OperatorLoginRoute: OperatorLoginRoute,
+  PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TermsRoute: TermsRoute,
   GuidesBookingSystemCostRoute: GuidesBookingSystemCostRoute,
   GuidesDallasBookingSystemRoute: GuidesDallasBookingSystemRoute,
+  GuidesHiringSomeoneInDallasRoute: GuidesHiringSomeoneInDallasRoute,
+  GuidesWhatABookingSystemCostsRoute: GuidesWhatABookingSystemCostsRoute,
   GuidesIndexRoute: GuidesIndexRoute,
   ApiPublicDailyMaintenanceRoute: ApiPublicDailyMaintenanceRoute,
   ApiPublicLeadIntakeRoute: ApiPublicLeadIntakeRoute,
