@@ -125,7 +125,7 @@ export const Route = createFileRoute("/api/public/lead-intake")({
           })
           .select("id")
           .single();
-        if (error) { console.error("LEADDBG insert", error); return json({ ok: false, error: "Could not save the request." }, 500); }
+        if (error) return json({ ok: false, error: "Could not save the request." }, 500);
 
         if (parsed.message) {
           const { error: messageError } = await supabaseAdmin.from("message").insert({
