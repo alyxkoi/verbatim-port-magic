@@ -1042,19 +1042,40 @@ body.nav-compact .desktop-links a{font-size:10.5px}
 /* 6. Anchor clicks used to animate through every expensive section on the way
    past. They now jump; the scroll handler below applies the nav offset. */
 html{scroll-behavior:auto}
+@view-transition{navigation:auto}
+@keyframes alyxPageEnter{from{opacity:0}to{opacity:1}}
+@keyframes alyxPageExit{to{opacity:0}}
+body{animation:alyxPageEnter .42s var(--curve) both}
+::view-transition-old(root){animation:alyxPageExit .16s ease both}
+::view-transition-new(root){animation:alyxPageEnter .36s var(--curve) both}
+@media(prefers-reduced-motion:reduce){body,::view-transition-old(root),::view-transition-new(root){animation:none!important}}
 /* The two widest blur radii cost the most per frame and read the same smaller. */
 .contact-panel::after{filter:blur(38px)!important}
 .mobile-menu::before,.mobile-menu::after{filter:blur(26px)}
 
-/* Mobile performance: retain the composition while avoiding continuous GPU
-   work and large blur repaints during touch scrolling. */
+@keyframes heroBobLite{0%,100%{transform:translate3d(0,0,0) rotate(0deg)}50%{transform:translate3d(0,-6px,0) rotate(.8deg)}}
+
+/* Mobile performance: keep one-shot motion and a small hero float while
+   avoiding continuous shaders, blur repaints, and media work. */
 @media(max-width:1080px){
-  .motion-ready .rv,.motion-ready .hero h1.rv{opacity:1;transform:none;filter:none;transition:none}
-  .motion-ready .d1,.motion-ready .d2,.motion-ready .d3{transition-delay:0s}
+  html.motion-ready.motion-lite .rv{opacity:0;transform:translate3d(0,16px,0);filter:none;transition:opacity .48s var(--curve),transform .54s var(--curve)}
+  html.motion-ready.motion-lite .rv.in{opacity:1;transform:translate3d(0,0,0);filter:none}
+  html.motion-ready.motion-lite .d1{transition-delay:.05s}
+  html.motion-ready.motion-lite .d2{transition-delay:.10s}
+  html.motion-ready.motion-lite .d3{transition-delay:.15s}
+  html.motion-ready.motion-lite .hero h1.rv{transform:translate3d(0,20px,0);filter:none;transition-duration:.56s,.62s}
+  html.motion-ready.motion-lite .hero h1.rv.in{transform:translate3d(0,0,0)}
   .hero-shader{display:none}
   .hero-scene,.hero-layer,.support-card,.support-icon-stage,.contact-pixel-cloud,.system-card{will-change:auto}
-  .hero-icon,.motion-word,.system-bridge-arrow,.support-icon-img,.loss-title-glitch,
-  .contact-pixel-cloud,.footer.footer-rich::before,.footer.footer-rich::after{animation:none!important}
+  .hero-icon{animation-name:heroBobLite!important;animation-duration:9s!important;animation-play-state:paused!important}
+  .hero.hero-motion-active .hero-icon{animation-play-state:running!important}
+  .motion-word{animation:none;will-change:auto}
+  .rv.in .motion-word{animation:motionShimmer 2.2s ease-out .1s 1 both}
+  .system-bridge-arrow{animation:none}
+  .system-bridge.in .system-bridge-arrow{animation:systemBridgeArrow .9s ease-in-out .2s 2}
+  .support-icon-img{animation:none}
+  .support-card.in .support-icon-img{animation:supportIconFloat .9s ease-out .1s 2}
+  .loss-title-glitch,.contact-pixel-cloud,.footer.footer-rich::before,.footer.footer-rich::after{animation:none!important}
   .hero .cta{background:#0a0b0c;box-shadow:0 10px 22px rgba(0,0,0,.2);text-shadow:none;filter:none}
   .hero .cta::before,.hero .cta::after{content:none;display:none;animation:none}
   .hero .cta svg{filter:none}
@@ -1424,22 +1445,40 @@ html{scroll-behavior:auto}
 
   // Critical motion setup runs before any visual effects. Content remains
   // visible unless this observer is successfully initialized.
-  const clearMotionGate=()=>document.documentElement.classList.remove("motion-ready");
-  window.addEventListener("error",clearMotionGate);
-  window.addEventListener("unhandledrejection",clearMotionGate);
   const revealEls=[...document.querySelectorAll(".rv")];
-  if(reduce||mobilePerformanceMode){
+  const showRevealContent=()=>{
+    revealEls.forEach(el=>el.classList.add("in"));
+    document.documentElement.classList.remove("motion-ready","motion-lite");
+  };
+  if(reduce){
     revealEls.forEach(el=>el.classList.add("in"));
   }else if("IntersectionObserver" in window){
-    const revealObserver=new IntersectionObserver((entries)=>{
-      entries.forEach(entry=>{
-        if(!entry.isIntersecting)return;
-        entry.target.classList.add("in");
-        revealObserver.unobserve(entry.target);
-      });
-    },{rootMargin:"0px 0px -7% 0px",threshold:.05});
-    revealEls.forEach(el=>revealObserver.observe(el));
-    document.documentElement.classList.add("motion-ready");
+    try{
+      const revealObserver=new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>{
+          if(!entry.isIntersecting)return;
+          entry.target.classList.add("in");
+          revealObserver.unobserve(entry.target);
+        });
+      },mobilePerformanceMode?{rootMargin:"0px 0px 12% 0px",threshold:.01}:{rootMargin:"0px 0px -7% 0px",threshold:.05});
+      revealEls.forEach(el=>revealObserver.observe(el));
+      if(mobilePerformanceMode)document.documentElement.classList.add("motion-lite");
+      document.documentElement.classList.add("motion-ready");
+    }catch(error){
+      showRevealContent();
+    }
+  }else{
+    showRevealContent();
+  }
+
+  if(mobilePerformanceMode&&"IntersectionObserver" in window){
+    const performanceHero=document.querySelector(".hero");
+    if(performanceHero){
+      const heroMotionObserver=new IntersectionObserver((entries)=>{
+        entries.forEach(entry=>entry.target.classList.toggle("hero-motion-active",entry.isIntersecting));
+      },{threshold:.08});
+      heroMotionObserver.observe(performanceHero);
+    }
   }
 
   // Hand-drawn diagram annotations for the five system mockups.
@@ -1499,7 +1538,19 @@ html{scroll-behavior:auto}
     sketchTick=requestAnimationFrame(updateSketchFocus);
   };
 
-  if(reduce||mobilePerformanceMode){
+  if(reduce){
+    sketchStages.forEach(stage=>stage.classList.add("annotate-active","annotate-live"));
+  }else if(mobilePerformanceMode&&"IntersectionObserver" in window){
+    const sketchObserver=new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(!entry.isIntersecting)return;
+        entry.target.classList.add("annotate-active");
+        requestAnimationFrame(()=>entry.target.classList.add("annotate-live"));
+        sketchObserver.unobserve(entry.target);
+      });
+    },{rootMargin:"0px 0px -10% 0px",threshold:.12});
+    sketchStages.forEach(stage=>sketchObserver.observe(stage));
+  }else if(mobilePerformanceMode){
     sketchStages.forEach(stage=>stage.classList.add("annotate-active","annotate-live"));
   }else{
     addEventListener("scroll",scheduleSketchFocus,{passive:true});
@@ -1905,10 +1956,23 @@ html{scroll-behavior:auto}
   const requestLossUpdate=()=>{
     if(!lossTicking){lossTicking=true;requestAnimationFrame(updateLossTimeline);}
   };
-  if(lossList&&!mobilePerformanceMode){
+  if(lossList&&!mobilePerformanceMode&&!reduce){
     window.addEventListener("scroll",requestLossUpdate,{passive:true});
     window.addEventListener("resize",requestLossUpdate,{passive:true});
     requestLossUpdate();
+  }else if(lossList&&mobilePerformanceMode&&!reduce&&"IntersectionObserver" in window){
+    let mobileLossProgress=0;
+    const lossObserver=new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(!entry.isIntersecting)return;
+        const index=lossItems.indexOf(entry.target);
+        entry.target.classList.add("active");
+        mobileLossProgress=Math.max(mobileLossProgress,index/Math.max(1,lossItems.length-1));
+        lossList.style.setProperty("--loss-progress",mobileLossProgress.toFixed(4));
+        lossObserver.unobserve(entry.target);
+      });
+    },{rootMargin:"0px 0px -12% 0px",threshold:.16});
+    lossItems.forEach(item=>lossObserver.observe(item));
   }else if(lossList){
     lossItems.forEach(item=>item.classList.add("active"));
   }

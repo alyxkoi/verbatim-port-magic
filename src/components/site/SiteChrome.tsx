@@ -207,15 +207,15 @@ export function GuideFooter() {
 export function useReveal() {
   useEffect(() => {
     const els = Array.from(document.querySelectorAll<HTMLElement>(".rv"));
-    const shouldSkipMotion = window.matchMedia(
-      "(max-width: 1080px), (pointer: coarse), (prefers-reduced-motion: reduce)",
-    ).matches;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const lightweightMotion = window.matchMedia("(max-width: 1080px), (pointer: coarse)").matches;
 
-    if (shouldSkipMotion) {
+    if (reducedMotion) {
       els.forEach((el) => el.classList.add("in"));
       return;
     }
 
+    document.documentElement.classList.toggle("motion-lite", lightweightMotion);
     document.documentElement.classList.add("motion-ready");
     const io = new IntersectionObserver(
       (entries) => {
@@ -226,12 +226,14 @@ export function useReveal() {
           }
         });
       },
-      { rootMargin: "0px 0px -8% 0px", threshold: 0.05 },
+      lightweightMotion
+        ? { rootMargin: "0px 0px 12% 0px", threshold: 0.01 }
+        : { rootMargin: "0px 0px -8% 0px", threshold: 0.05 },
     );
     els.forEach((el) => io.observe(el));
     return () => {
       io.disconnect();
-      document.documentElement.classList.remove("motion-ready");
+      document.documentElement.classList.remove("motion-ready", "motion-lite");
     };
   }, []);
 }

@@ -4888,12 +4888,6 @@
 
     @media (max-width: 1080px), (pointer: coarse) {
       body { text-rendering: auto; }
-      .screen,
-      body[data-view="today"] .welcome-field,
-      body[data-view="today"] .counter-field,
-      body[data-view="today"] .focus-field,
-      body[data-view="today"] .action-card,
-      body[data-view="today"] .week-stack,
       .live-dot { animation: none !important; }
       .screen img { max-width: 100%; }
     }

@@ -142,3 +142,34 @@
     color: var(--color-foreground);
   }
 }
+
+@view-transition {
+  navigation: auto;
+}
+
+@keyframes alyx-page-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes alyx-page-exit {
+  to { opacity: 0; }
+}
+
+body {
+  animation: alyx-page-enter 420ms cubic-bezier(.22, .9, .28, 1) both;
+}
+
+::view-transition-old(root) {
+  animation: alyx-page-exit 160ms ease both;
+}
+
+::view-transition-new(root) {
+  animation: alyx-page-enter 360ms cubic-bezier(.22, .9, .28, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body,
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none !important; }
+}
