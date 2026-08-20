@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import alyxlabCss from "@/styles/alyxlab.css?url";
 import { GuideShell, GuideCta } from "@/components/site/SiteChrome";
 
 const TITLE = "Hiring Someone to Build a Booking System in Dallas";
@@ -19,7 +18,7 @@ export const Route = createFileRoute("/guides/dallas-booking-system")({
       { property: "og:url", content: "https://alyxlab.com/guides/dallas-booking-system" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "stylesheet", href: alyxlabCss }, { rel: "canonical", href: "https://alyxlab.com/guides/dallas-booking-system" }],
+    links: [{ rel: "stylesheet", href: "/site.css" }, { rel: "stylesheet", href: "/guide.css" }, { rel: "canonical", href: "https://alyxlab.com/guides/dallas-booking-system" }],
     scripts: [
       {
         type: "application/ld+json",

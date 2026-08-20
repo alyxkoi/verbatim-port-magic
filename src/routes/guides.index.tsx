@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import alyxlabCss from "@/styles/alyxlab.css?url";
 import { GuideShell } from "@/components/site/SiteChrome";
 
 export const Route = createFileRoute("/guides/")({
@@ -27,7 +26,7 @@ export const Route = createFileRoute("/guides/")({
       { property: "og:url", content: "https://alyxlab.com/guides" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "stylesheet", href: alyxlabCss }, { rel: "canonical", href: "https://alyxlab.com/guides" }],
+    links: [{ rel: "stylesheet", href: "/site.css" }, { rel: "stylesheet", href: "/guide.css" }, { rel: "canonical", href: "https://alyxlab.com/guides" }],
   }),
   component: GuidesIndex,
 });

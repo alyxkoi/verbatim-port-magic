@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import alyxlabCss from "@/styles/alyxlab.css?url";
 import { GuideShell } from "@/components/site/SiteChrome";
 
 const TITLE = "Terms of Service | ALYXLAB";
@@ -17,7 +16,7 @@ export const Route = createFileRoute("/terms")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
-      { rel: "stylesheet", href: alyxlabCss },
+      { rel: "stylesheet", href: "/site.css" }, { rel: "stylesheet", href: "/guide.css" },
       { rel: "canonical", href: "https://alyxlab.com/terms" },
     ],
   }),
