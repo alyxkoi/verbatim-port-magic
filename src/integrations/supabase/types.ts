@@ -527,7 +527,6 @@ export type Database = {
           contact: string | null
           created_at: string
           email: string | null
-          email_consent_at: string | null
           engagement_state: string
           id: string
           last_inbound_at: string | null
@@ -538,7 +537,6 @@ export type Database = {
           pillars: Json
           qualification_state: string
           screening_state: string
-          sms_consent_requested_at: string | null
           source: string | null
           stage: string
           tags: string[]
@@ -552,7 +550,6 @@ export type Database = {
           contact?: string | null
           created_at?: string
           email?: string | null
-          email_consent_at?: string | null
           engagement_state?: string
           id?: string
           last_inbound_at?: string | null
@@ -563,7 +560,6 @@ export type Database = {
           pillars?: Json
           qualification_state?: string
           screening_state?: string
-          sms_consent_requested_at?: string | null
           source?: string | null
           stage?: string
           tags?: string[]
@@ -577,7 +573,6 @@ export type Database = {
           contact?: string | null
           created_at?: string
           email?: string | null
-          email_consent_at?: string | null
           engagement_state?: string
           id?: string
           last_inbound_at?: string | null
@@ -588,7 +583,6 @@ export type Database = {
           pillars?: Json
           qualification_state?: string
           screening_state?: string
-          sms_consent_requested_at?: string | null
           source?: string | null
           stage?: string
           tags?: string[]
