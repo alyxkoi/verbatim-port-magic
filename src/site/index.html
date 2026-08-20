@@ -1659,7 +1659,16 @@ body.nav-compact .desktop-links a{font-size:10.5px}
     };
     const onPointerLeave = () => { targetX = 0; targetY = 0; };
 
+    /* Round 3 perf: the parallax loop used to run for the life of the page, even
+       with the hero far off screen. It now only runs while the hero is visible
+       and the tab is active, and it parks itself once the scene has settled. */
+    let heroRaf = 0;
+    let heroInView = true;
+    let docVisible = document.visibilityState === "visible";
+    let lastDrift = null;
+
     const renderHeroScene = () => {
+      heroRaf = 0;
       pointerX += (targetX - pointerX) * 0.08;
       pointerY += (targetY - pointerY) * 0.08;
       const rect = hero.getBoundingClientRect();
@@ -1670,15 +1679,34 @@ body.nav-compact .desktop-links a{font-size:10.5px}
         layer.style.setProperty("--mx", `${(pointerX * depth).toFixed(2)}px`);
         layer.style.setProperty("--my", `${((pointerY * depth) + (scrollDrift * depth * 0.9)).toFixed(2)}px`);
       });
-      requestAnimationFrame(renderHeroScene);
+      const settled = Math.abs(targetX - pointerX) < 0.02 && Math.abs(targetY - pointerY) < 0.02 && lastDrift !== null && Math.abs(scrollDrift - lastDrift) < 0.02;
+      lastDrift = scrollDrift;
+      if (!settled) requestHeroFrame();
     };
 
-    hero.addEventListener("pointermove", onPointerMove);
-    hero.addEventListener("pointerleave", onPointerLeave);
-    window.addEventListener("resize", updateHeroRect, { passive: true });
-    window.addEventListener("scroll", updateHeroRect, { passive: true });
+    const requestHeroFrame = () => {
+      if (!heroRaf && heroInView && docVisible) heroRaf = requestAnimationFrame(renderHeroScene);
+    };
+    const stopHeroFrame = () => { if (heroRaf) { cancelAnimationFrame(heroRaf); heroRaf = 0; } };
+
+    hero.addEventListener("pointermove", (e) => { onPointerMove(e); requestHeroFrame(); });
+    hero.addEventListener("pointerleave", () => { onPointerLeave(); requestHeroFrame(); });
+    window.addEventListener("resize", () => { updateHeroRect(); requestHeroFrame(); }, { passive: true });
+    window.addEventListener("scroll", () => { updateHeroRect(); requestHeroFrame(); }, { passive: true });
+    document.addEventListener("visibilitychange", () => {
+      docVisible = document.visibilityState === "visible";
+      if (docVisible) requestHeroFrame(); else stopHeroFrame();
+    });
+    if ("IntersectionObserver" in window) {
+      const heroIO = new IntersectionObserver(([entry]) => {
+        heroInView = entry.isIntersecting;
+        if (heroInView) requestHeroFrame(); else stopHeroFrame();
+      }, { rootMargin: "10% 0px" });
+      heroIO.observe(hero);
+    }
     updateHeroRect();
-    renderHeroScene();
+    requestHeroFrame();
+
   }
 
   const body = document.body;
