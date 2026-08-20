@@ -1,0 +1,2 @@
+DELETE FROM public.event_log WHERE entity = 'lead' AND entity_id IN (SELECT id FROM public.lead WHERE email IN ('cli@example.com','pwtest@example.com'));
+DELETE FROM public.lead WHERE email IN ('cli@example.com','pwtest@example.com');
