@@ -339,16 +339,7 @@ function SettingsScreen() {
         </div>
 
         <div className="settings-column">
-          <article
-            className={`surface settings-card ${open.notifications ? "" : "is-mobile-collapsed"}`}
-            data-settings-section-card="notifications"
-          >
-            {cardHead(
-              "Text notifications",
-              "Only events requiring a decision should interrupt the day.",
-              "notifications",
-              notifState,
-            )}
+          <article className="surface settings-card" data-settings-section-card="notifications">
             <div className="settings-card-body" id="settings-body-notifications">
               {NOTIFICATION_ROWS.map(([key, title, subtitle, optional]) => (
                 <div
