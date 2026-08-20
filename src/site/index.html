@@ -1631,7 +1631,7 @@ body.nav-compact .desktop-links a{font-size:10.5px}
         entries.forEach(entry => {
           if (!entry.isIntersecting) return;
           typeTimelineTitle();
-          startFlow();
+          
           observer.unobserve(entry.target);
         });
       }, {threshold:.28, rootMargin:"0px 0px -8% 0px"});
