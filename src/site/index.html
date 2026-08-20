@@ -1592,39 +1592,11 @@ body.nav-compact .desktop-links a{font-size:10.5px}
 
 
 
-  const flow = document.querySelector(".timeline-flow");
-  const flowNodes = flow ? [...flow.querySelectorAll(".flow-node")] : [];
   const typeTitle = document.querySelector(".type-title");
   const typedText = typeTitle?.querySelector(".typed-text");
-  const FLOW_DURATION = 10800;
-  const FLOW_START = FLOW_DURATION * 0.17;
-  const FLOW_END = FLOW_DURATION * 0.72;
-  let flowLoop = null;
-  let flowTimers = [];
+  /* Round 3: the connector line and its travelling orb are gone at every width,
+     so the sequencing loop that pulsed the icons along it is gone too. */
 
-  const clearFlowTimers = () => {
-    flowTimers.forEach(clearTimeout);
-    flowTimers = [];
-  };
-
-  const triggerFlowNodes = () => {
-    clearFlowTimers();
-    if (!flowNodes.length) return;
-    flowNodes.forEach((node, index) => {
-      const hitAt = FLOW_START + ((FLOW_END - FLOW_START) * index / Math.max(1, flowNodes.length - 1));
-      flowTimers.push(setTimeout(() => {
-        node.classList.add("flow-hit");
-        setTimeout(() => node.classList.remove("flow-hit"), 560);
-      }, hitAt));
-    });
-  };
-
-  const startFlow = () => {
-    if (!flow || reduce || flow.classList.contains("flow-active")) return;
-    flow.classList.add("flow-active");
-    triggerFlowNodes();
-    flowLoop = setInterval(triggerFlowNodes, FLOW_DURATION);
-  };
 
   const typeTimelineTitle = () => {
     if (!typeTitle || !typedText || typeTitle.dataset.typed === "true") return;
