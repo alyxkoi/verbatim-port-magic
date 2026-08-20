@@ -1019,6 +1019,9 @@ body.nav-compact .desktop-links a{font-size:10.5px}
   .layer-calendar{right:12%;bottom:61%;width:106px}
   .layer-phone{right:18%;bottom:27%;width:112px}
   .layer-analytics{bottom:20%;width:132px}
+  .timeline-copy h3{width:100%;max-width:13ch;font-size:clamp(56px,7.2vw,76px);text-wrap:balance}
+  .glass-seq-icon{width:clamp(108px,11.5vw,118px);height:clamp(108px,11.5vw,118px)}
+  .flow-grid{column-gap:12px;row-gap:24px}
 }
 
 /* 3. Three annotations above 1080px; tablet and mobile keep only the top-left
@@ -1113,6 +1116,11 @@ body{animation:alyxPageEnter .42s var(--curve) both}
   .contact-panel{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:rgba(8,26,70,.7)!important}
   .contact-form{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:rgba(255,255,255,.13)!important}
   .contact-panel::after{display:none!important}
+  .leaks-effects{background-image:linear-gradient(180deg,#050607 0%,#080a0d 18%,#0c1014 42%,#14191f 68%,#262c33 86%,#41474f 100%);background-size:100% 100%;background-repeat:no-repeat;background-blend-mode:normal}
+  .leaks-blur,.leaks-grain,.leaks-dot-overlay{display:none}
+}
+@media(max-width:760px){
+  .loss-label{position:sticky;top:82px;z-index:4;padding:10px 0 18px;background:#090b0a;border-bottom:1px solid rgba(255,255,255,.06)}
 }
 @media(max-width:1080px) and (prefers-reduced-motion:reduce){
   .hero-icon,.hero .rv,.timeline-wrap .flow-node{animation:none!important;opacity:1!important;transform:none!important}
@@ -1952,57 +1960,80 @@ body{animation:alyxPageEnter .42s var(--curve) both}
   const lossList=document.getElementById("lossList");
   const lossItems=lossList?[...lossList.querySelectorAll(".loss-item")]:[];
   const lossNodes=lossList?[...lossList.querySelectorAll(".loss-node")]:[];
-  const lossRail=lossList?.querySelector(".loss-rail");
-  const lossRailFill=document.getElementById("lossRailFill");
   let lossTicking=false;
+  let lossMeasureTick=0;
+  let lossListPageTop=0;
+  let lossNodeCenters=[];
+  let lossLabelTops=[];
+  let lossActiveIndex=-1;
+  let lossProgress=-1;
 
   const updateLossTimeline=()=>{
-    if(!lossList||!lossNodes.length){lossTicking=false;return;}
-    const listRect=lossList.getBoundingClientRect();
-    const nodeCenters=lossNodes.map(node=>{
-      const r=node.getBoundingClientRect();
-      return (r.top+r.height/2)-listRect.top;
-    });
-    const first=nodeCenters[0];
-    const last=nodeCenters[nodeCenters.length-1];
-    lossList.style.setProperty("--rail-top",`${first}px`);
-    lossList.style.setProperty("--rail-height",`${Math.max(1,last-first)}px`);
-
-    const target=window.innerHeight*.44-listRect.top;
+    if(!lossList||!lossNodeCenters.length){lossTicking=false;return;}
+    const first=lossNodeCenters[0];
+    const last=lossNodeCenters[lossNodeCenters.length-1];
+    const target=window.scrollY+(window.innerHeight*.44)-lossListPageTop;
     const progress=Math.max(0,Math.min(1,(target-first)/Math.max(1,last-first)));
-    lossList.style.setProperty("--loss-progress",progress.toFixed(4));
+    if(Math.abs(progress-lossProgress)>.001){
+      lossProgress=progress;
+      lossList.style.setProperty("--loss-progress",progress.toFixed(4));
+    }
 
     let activeIndex=0;
-    for(let i=0;i<nodeCenters.length-1;i++){
-      const midpoint=(nodeCenters[i]+nodeCenters[i+1])/2;
-      if(target>=midpoint)activeIndex=i+1;
+    if(window.innerWidth<=760&&lossLabelTops.length){
+      const stickyTarget=window.scrollY+96-lossListPageTop;
+      lossLabelTops.forEach((top,index)=>{if(stickyTarget>=top)activeIndex=index;});
+    }else{
+      for(let i=0;i<lossNodeCenters.length-1;i++){
+        const midpoint=(lossNodeCenters[i]+lossNodeCenters[i+1])/2;
+        if(target>=midpoint)activeIndex=i+1;
+      }
     }
-    lossItems.forEach((item,index)=>item.classList.toggle("active",index===activeIndex));
+    if(activeIndex!==lossActiveIndex){
+      lossActiveIndex=activeIndex;
+      lossItems.forEach((item,index)=>item.classList.toggle("active",index===activeIndex));
+    }
     lossTicking=false;
   };
 
   const requestLossUpdate=()=>{
     if(!lossTicking){lossTicking=true;requestAnimationFrame(updateLossTimeline);}
   };
-  if(lossList&&!mobilePerformanceMode&&!reduce){
-    window.addEventListener("scroll",requestLossUpdate,{passive:true});
-    window.addEventListener("resize",requestLossUpdate,{passive:true});
+
+  const measureLossTimeline=()=>{
+    lossMeasureTick=0;
+    if(!lossList||!lossNodes.length)return;
+    const listRect=lossList.getBoundingClientRect();
+    const pageTop=window.scrollY;
+    lossListPageTop=listRect.top+pageTop;
+    lossNodeCenters=lossNodes.map(node=>{
+      const rect=node.getBoundingClientRect();
+      return (rect.top+pageTop+(rect.height/2))-lossListPageTop;
+    });
+    lossLabelTops=lossItems.map(item=>{
+      const label=item.querySelector(".loss-label");
+      return item.offsetTop+label.offsetTop;
+    });
+    const first=lossNodeCenters[0];
+    const last=lossNodeCenters[lossNodeCenters.length-1];
+    lossList.style.setProperty("--rail-top",`${first}px`);
+    lossList.style.setProperty("--rail-height",`${Math.max(1,last-first)}px`);
     requestLossUpdate();
-  }else if(lossList&&mobilePerformanceMode&&!reduce&&"IntersectionObserver" in window){
-    let mobileLossProgress=0;
-    const lossObserver=new IntersectionObserver((entries)=>{
-      entries.forEach(entry=>{
-        if(!entry.isIntersecting)return;
-        const index=lossItems.indexOf(entry.target);
-        entry.target.classList.add("active");
-        mobileLossProgress=Math.max(mobileLossProgress,index/Math.max(1,lossItems.length-1));
-        lossList.style.setProperty("--loss-progress",mobileLossProgress.toFixed(4));
-        lossObserver.unobserve(entry.target);
-      });
-    },{rootMargin:"0px 0px -12% 0px",threshold:.16});
-    lossItems.forEach(item=>lossObserver.observe(item));
+  };
+
+  const requestLossMeasure=()=>{
+    if(!lossMeasureTick)lossMeasureTick=requestAnimationFrame(measureLossTimeline);
+  };
+
+  if(lossList&&!reduce){
+    window.addEventListener("scroll",requestLossUpdate,{passive:true});
+    window.addEventListener("resize",requestLossMeasure,{passive:true});
+    if("ResizeObserver" in window)new ResizeObserver(requestLossMeasure).observe(lossList);
+    if(document.fonts?.ready)document.fonts.ready.then(requestLossMeasure);
+    requestLossMeasure();
   }else if(lossList){
     lossItems.forEach(item=>item.classList.add("active"));
+    lossList.style.setProperty("--loss-progress","1");
   }
 
   // Leak videos: play once when meaningfully in view, pause when scrolled away,
@@ -2350,6 +2381,7 @@ body{animation:alyxPageEnter .42s var(--curve) both}
 /* Offset anchor navigation plus a placeholder state for the five layer shots. */
 (function(){
   const reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const mobilePerformanceMode=window.matchMedia("(max-width: 1080px), (pointer: coarse)").matches;
   let anchorFrame=0;
   const navOffset=()=>{
     const pill=document.querySelector(".desktop-nav")||document.querySelector(".mobile-nav");
