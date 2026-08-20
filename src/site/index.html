@@ -997,6 +997,58 @@ body.nav-compact .desktop-links a{font-size:10.5px}
 .footer-mark{width:auto;height:32px}
 .footer-mark .footer-logo{height:32px;width:auto;display:block}
 .footer-mark::before,.footer-mark::after{display:none}
+
+/* ---------- round 3 fixes ---------- */
+/* 1. Connector line + travelling orb removed at every width. Below 1080px the row
+   wrapped to two rows and the line only spanned the first, reading as a bug. The
+   numbered labels carry the sequence on their own. */
+.timeline-flow::before,.timeline-flow::after{content:none!important;display:none!important;animation:none!important}
+
+/* 2. Tablet hero. 761-1080px previously inherited desktop percentages tuned for a
+   much wider canvas, so the icons bunched toward the centre. */
+@media(min-width:761px) and (max-width:1080px){
+  .hero{padding:106px 0 0}
+  .hero .shell{padding-bottom:clamp(240px,32vw,300px)}
+  .hero-scene{height:clamp(400px,44vw,520px);bottom:0;width:min(1180px,116%)}
+  .layer-globe{width:min(122vw,1080px);bottom:-22%}
+  .layer-cursor{left:2.5%;bottom:54%;width:124px}
+  .layer-envelope{left:8.5%;bottom:20%;width:118px}
+  .layer-calendar{right:2.5%;bottom:53%;width:120px}
+  .layer-phone{right:8.5%;bottom:19%;width:126px}
+  .layer-analytics{bottom:11%;width:148px}
+}
+
+/* 3. One annotation per screenshot at every width, matching what mobile already
+   did. The second and third arrows pointed at nothing and cluttered the frame. */
+.sketch-note.sketch-b,.sketch-note.sketch-c{display:none!important}
+.blueprint .sketch-stage .sketch-a{left:3.5%;right:auto;top:7%;bottom:auto;text-align:left;--rot:-3deg;--fx:1;--fy:1;--ax:62%;--ay:26px;--aw:132px;--ah:62px;--ar:15deg}
+.blueprint .sketch-control .sketch-a{top:9%}
+.blueprint .sketch-booking .sketch-a{top:8%;--ay:28px}
+.blueprint .sketch-follow .sketch-a{top:8%;--ar:17deg}
+.blueprint .sketch-logic .sketch-a{top:9%;--ar:13deg}
+
+/* 4. No black flash while a screenshot loads: the stage carries a placeholder in
+   the section's own blues, and each image fades in when it decodes. */
+.layer-shot{background:linear-gradient(150deg,#132e63 0%,#0d1f45 52%,#091733 100%)}
+.layer-shot.shot-pending img{opacity:0}
+.layer-shot.shot-loading img,.layer-shot.shot-pending img{transition:opacity .34s ease}
+.layer-shot.shot-pending::after{content:"";position:absolute;inset:0;border-radius:28px;background:linear-gradient(100deg,rgba(255,255,255,0) 32%,rgba(255,255,255,.07) 50%,rgba(255,255,255,0) 68%);background-size:220% 100%;animation:shotPending 1.5s linear infinite;pointer-events:none;z-index:1}
+@keyframes shotPending{0%{background-position:120% 0}100%{background-position:-120% 0}}
+
+/* 5. Tablet pricing: no layout exception for Operations. All three cards stack in
+   document order, so it reads $97, $249, $499 top to bottom. */
+@media(max-width:1050px){
+  .price-cards{grid-template-columns:1fr}
+  .price-card,.price-card.operations{grid-column:auto;grid-row:auto;min-height:0}
+  .price-card.operations .price-features{grid-template-columns:1fr 1fr;column-gap:26px}
+}
+
+/* 6. Anchor clicks used to animate through every expensive section on the way
+   past. They now jump; the scroll handler below applies the nav offset. */
+html{scroll-behavior:auto}
+/* The two widest blur radii cost the most per frame and read the same smaller. */
+.contact-panel::after{filter:blur(38px)!important}
+.mobile-menu::before,.mobile-menu::after{filter:blur(26px)}
 </style>
 </head>
 <body>
@@ -1154,7 +1206,7 @@ body.nav-compact .desktop-links a{font-size:10.5px}
 <div class="layer-stack">
 <article class="layer-stack-card layer-front" style="--stack:0;--layer-accent:#d7ff00">
 <div class="layer-stack-copy"><span>01</span><div><h3>Front door</h3><p>Website, offers, intake, and first contact turn attention into a lead you can actually work.</p></div></div>
-<div class="layer-shot sketch-stage sketch-front"><img loading="lazy" decoding="async" alt="Morrow Tattoo front door website hero shown inside a laptop mockup with cloud-themed branding and consultation intake" src="assets/2bb176f356d9.webp" width="1448" height="1086"/><div class="sketch-note sketch-a" style="--i:0"><span class="sketch-label">strong first impression</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-b" style="--i:1"><span class="sketch-label">lead captured here</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-c" style="--i:2"><span class="sketch-label">trust before booking</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div></div>
+<div class="layer-shot sketch-stage sketch-front"><img fetchpriority="high" decoding="async" alt="Morrow Tattoo front door website hero shown inside a laptop mockup with cloud-themed branding and consultation intake" src="assets/2bb176f356d9.webp" width="1448" height="1086"/><div class="sketch-note sketch-a" style="--i:0"><span class="sketch-label">strong first impression</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-b" style="--i:1"><span class="sketch-label">lead captured here</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div><div class="sketch-note sketch-c" style="--i:2"><span class="sketch-label">trust before booking</span><svg class="sketch-arrow" viewBox="0 0 180 90" aria-hidden="true"><path pathLength="1" d="M8 16 C58 6 112 26 164 70"></path><path pathLength="1" d="M147 62 L164 70 L157 52"></path></svg></div></div>
 <div class="layer-handoff"><span>Front door captures the lead.</span><strong>Then it hands the work to the Control center.</strong></div>
 </article>
 <article class="layer-stack-card layer-control" style="--stack:1;--layer-accent:#d7ff00">
@@ -2178,6 +2230,39 @@ body.nav-compact .desktop-links a{font-size:10.5px}
   width = cards[0]?.offsetWidth || 1;
   updateDetail(0);
   paint();
+})();
+</script>
+
+
+<script>
+/* Round 3: fast anchor jumps and a placeholder state for the five layer shots. */
+(function(){
+  const navOffset=()=>{
+    const pill=document.querySelector(".desktop-nav")||document.querySelector(".mobile-nav");
+    return pill?Math.round(pill.getBoundingClientRect().height)+18:80;
+  };
+  document.addEventListener("click",(e)=>{
+    const link=e.target.closest('a[href^="#"]');
+    if(!link)return;
+    const id=link.getAttribute("href").slice(1);
+    if(!id)return;
+    const target=document.getElementById(id);
+    if(!target)return;
+    e.preventDefault();
+    const top=Math.max(0,target.getBoundingClientRect().top+window.scrollY-navOffset());
+    window.scrollTo({top,behavior:"auto"});
+    if(history.replaceState)history.replaceState(null,"","#"+id);
+  });
+
+  document.querySelectorAll(".layer-shot").forEach((stage)=>{
+    const img=stage.querySelector("img");
+    if(!img)return;
+    const done=()=>{stage.classList.remove("shot-pending");};
+    if(img.complete&&img.naturalWidth)return;
+    stage.classList.add("shot-pending");
+    img.addEventListener("load",done,{once:true});
+    img.addEventListener("error",done,{once:true});
+  });
 })();
 </script>
 
