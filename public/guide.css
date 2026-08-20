@@ -46,13 +46,13 @@
 }
 .gpage li::marker{color:var(--lime)}
 .gpage strong{color:#fff;font-weight:800}
-.gpage a:not(.gback):not(.nav-cta){
+.gpage a:not(.gback):not(.nav-cta):not(.gcard){
   color:var(--lime);
   text-decoration:underline;text-underline-offset:3px;
   text-decoration-color:rgba(215,255,0,.42);
   transition:text-decoration-color .22s ease;
 }
-.gpage a:not(.gback):not(.nav-cta):hover{text-decoration-color:var(--lime)}
+.gpage a:not(.gback):not(.nav-cta):not(.gcard):hover{text-decoration-color:var(--lime)}
 
 .gmeta{
   margin:0 0 18px;
