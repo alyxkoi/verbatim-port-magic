@@ -1,0 +1,2 @@
+ALTER TABLE public.message DROP CONSTRAINT message_authored_by_check;
+ALTER TABLE public.message ADD CONSTRAINT message_authored_by_check CHECK (authored_by = ANY (ARRAY['blip'::text, 'alyx'::text, 'lead'::text]));
