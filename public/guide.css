@@ -1,0 +1,95 @@
+/* Guide / legal article typography. Uses the homepage tokens from site.css only. */
+
+.gpage{
+  position:relative;
+  background:var(--black);
+  color:var(--bone);
+  padding:clamp(120px,13vw,178px) 0 clamp(80px,9vw,132px);
+}
+.gcol{
+  width:min(760px,calc(100% - 48px));
+  margin-inline:auto;
+}
+
+.gback{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:10.5px;font-weight:800;letter-spacing:.075em;text-transform:uppercase;
+  color:#b5baae;margin-bottom:30px;
+  transition:color .22s ease,transform .22s var(--curve);
+}
+.gback:hover{color:#fff;transform:translateX(-2px)}
+.gback svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.gpage h1{
+  margin:0;
+  font-size:clamp(38px,5.4vw,66px);
+  line-height:.94;letter-spacing:-.055em;font-weight:900;color:#fff;
+  max-width:22ch;
+}
+.gpage h2{
+  margin:clamp(44px,5vw,62px) 0 14px;
+  font-size:clamp(23px,2.4vw,30px);
+  line-height:1.08;letter-spacing:-.038em;font-weight:850;color:#fff;
+}
+.gpage p{
+  margin:0 0 16px;
+  font-size:15.5px;line-height:1.62;color:rgba(255,255,255,.78);
+}
+.gpage .lede{
+  margin-top:20px;
+  font-size:18px;line-height:1.5;color:rgba(255,255,255,.86);max-width:52ch;
+}
+.gpage ul{margin:6px 0 18px;padding-left:20px}
+.gpage li{
+  margin-bottom:10px;
+  font-size:15.5px;line-height:1.58;color:rgba(255,255,255,.78);
+}
+.gpage li::marker{color:var(--lime)}
+.gpage strong{color:#fff;font-weight:800}
+.gpage a:not(.gback):not(.nav-cta){
+  color:var(--lime);
+  text-decoration:underline;text-underline-offset:3px;
+  text-decoration-color:rgba(215,255,0,.42);
+  transition:text-decoration-color .22s ease;
+}
+.gpage a:not(.gback):not(.nav-cta):hover{text-decoration-color:var(--lime)}
+
+.gmeta{
+  margin:0 0 18px;
+  font-size:10px;font-weight:900;letter-spacing:.085em;text-transform:uppercase;
+  color:rgba(255,255,255,.44);
+}
+
+.ganswer{
+  margin-top:30px;padding:24px 26px;
+  border:1px solid var(--line);border-radius:var(--r-md);
+  background:var(--panel);
+}
+.ganswer h2{margin:0 0 10px;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--lime);font-weight:900}
+.ganswer p{margin:0;color:rgba(255,255,255,.86)}
+
+.glist{margin-top:38px;display:grid;gap:16px}
+.gcard{
+  display:block;padding:26px 26px 22px;
+  border:1px solid var(--line);border-radius:var(--r-md);
+  background:var(--panel);
+  transition:transform .3s var(--curve),border-color .3s ease,background .3s ease;
+}
+.gcard:hover{transform:translateY(-3px);border-color:rgba(215,255,0,.34);background:var(--panel-2)}
+.gcard h2{margin:0 0 10px;font-size:clamp(20px,2vw,25px)}
+.gcard p{margin:0 0 14px}
+.gcard .gmeta{margin:0}
+
+.gcta{
+  margin-top:clamp(52px,6vw,76px);padding:30px 28px;
+  border:1px solid var(--line);border-radius:var(--r-lg);
+  background:var(--panel);
+}
+.gcta>p:first-child{margin:0 0 18px;font-size:16.5px;color:#fff;max-width:46ch}
+.gcta-btn{text-decoration:none}
+.gcta-alt{margin:18px 0 0;font-size:13px;color:rgba(255,255,255,.6)}
+
+@media(max-width:560px){
+  .gcol{width:calc(100% - 32px)}
+  .ganswer,.gcard,.gcta{padding-left:20px;padding-right:20px}
+}
