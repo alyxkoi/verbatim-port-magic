@@ -867,7 +867,9 @@ body.nav-compact .mobile-nav,body.nav-scrolled .mobile-nav{height:58px;border-ra
 .consent-group legend{padding:0 0 2px;font-size:11px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.68)}
 .consent-choice{display:grid;grid-template-columns:20px minmax(0,1fr);gap:12px;align-items:start;padding:14px;border:1px solid rgba(255,255,255,.18);border-radius:15px;background:rgba(4,14,38,.2);cursor:pointer;transition:border-color .2s ease,background-color .2s ease}
 .consent-choice:hover,.consent-choice:focus-within{border-color:rgba(215,255,0,.68);background:rgba(4,14,38,.3)}
-.consent-choice input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--lime);cursor:pointer}
+.consent-choice input{-webkit-appearance:none;appearance:none;width:18px;height:18px;margin:2px 0 0;border:1.5px solid rgba(255,255,255,.35);border-radius:5px;background:transparent;cursor:pointer;transition:background-color .2s ease,border-color .2s ease}
+.consent-choice input:checked{background:var(--lime);border-color:var(--lime);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%2308080c' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' d='M3 8l3.5 3.5L13 4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center;background-size:12px}
+.consent-choice input:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
 .consent-choice span{display:grid;gap:5px;min-width:0}
 .consent-choice strong{font-size:12.5px;line-height:1.35;color:#fff}
 .consent-choice small{font-size:11.5px;line-height:1.5;color:rgba(255,255,255,.7)}
@@ -1439,7 +1441,6 @@ body{animation:alyxPageEnter .42s var(--curve) both}
 <div class="field"><label for="contactBusinessType">Business type</label><input id="contactBusinessType" name="business_type" placeholder="Tattoo shop, plumbing company, dealership..." required type="text"></div>
 <div class="field full"><label for="contactMessage">What feels harder than it should?</label><textarea id="contactMessage" name="message" placeholder="Tell us what happens now and what you wish happened instead." required></textarea></div>
 <fieldset class="consent-group full">
-<legend>Optional communication preferences</legend>
 <label class="consent-choice" for="smsConsent"><input id="smsConsent" name="sms_consent" type="checkbox"><span><strong>Customer care text messages</strong><small id="smsConsentCopy">By checking this box, I consent to receive customer care text messages from Alyxlab at the phone number provided regarding my inquiry, appointments, service details, and project updates. Message frequency varies. Message and data rates may apply. Reply HELP for help or STOP to unsubscribe. Consent is not a condition of purchase.</small></span></label>
 <label class="consent-choice" for="emailConsent"><input id="emailConsent" name="email_consent" type="checkbox"><span><strong>Customer care emails</strong><small>By checking this box, I consent to receive customer care emails from Alyxlab regarding my inquiry, appointments, service details, and project updates. I can unsubscribe at any time.</small></span></label>
 <p class="consent-links">Both choices are optional. Review our <a href="/privacy">Privacy Policy</a> and <a href="/terms">Terms of Service</a>.</p>
