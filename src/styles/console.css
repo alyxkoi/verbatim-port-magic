@@ -4920,3 +4920,178 @@
       font-size: 12.5px;
       color: var(--faint);
     }
+
+    /* Console identity and session controls. The compact rail stays icon-first;
+       the wide workstation rail spells out the destructive session action. */
+    .console-rail-logo {
+      display: block;
+      width: 30px;
+      height: auto;
+      object-fit: contain;
+    }
+    .console-heading { min-width: 0; }
+    .console-brand-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .wordmark { display: flex; align-items: center; }
+    .console-topbar-logo { display: block; width: auto; height: 23px; }
+    .rail-profile .icon { width: 18px; height: 18px; }
+    .rail-logout { position: relative; }
+    .rail-logout::after {
+      content: "Log out";
+      position: absolute;
+      top: 50%;
+      left: calc(100% + 14px);
+      z-index: 3;
+      padding: 7px 10px;
+      transform: translate(-5px, -50%);
+      border-radius: 9px;
+      background: #fff;
+      color: #000;
+      font-size: 12px;
+      font-weight: 650;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 150ms var(--curve), transform 150ms var(--curve);
+      white-space: nowrap;
+    }
+    .rail-logout:hover::after,
+    .rail-logout:focus-visible::after { opacity: 1; transform: translate(0, -50%); }
+    .rail-logout-text {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .topbar-logout {
+      display: none;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 14px;
+      border: 1px solid rgba(255, 255, 255, .11);
+      border-radius: 14px;
+      background: #1a1b16;
+      color: rgba(255, 255, 255, .78);
+      font-size: 11px;
+      font-weight: 650;
+      transition: border-color 180ms var(--curve), background-color 180ms var(--curve), color 180ms var(--curve);
+    }
+    .topbar-logout:hover { border-color: rgba(255, 255, 255, .2); background: #22241c; color: #fff; }
+    .topbar-logout .icon { width: 17px; height: 17px; }
+
+    /* Fast visual scanning for the four settings domains. */
+    .settings-title-line { display: flex; align-items: center; gap: 11px; }
+    .settings-card-head .settings-title-line h2 { color: var(--lime); }
+    .settings-section-icon {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      flex: 0 0 34px;
+      place-items: center;
+      border: 1px solid rgba(215, 255, 0, .19);
+      border-radius: 11px;
+      background: rgba(215, 255, 0, .08);
+      color: var(--lime);
+    }
+    .settings-section-icon .icon { width: 17px; height: 17px; }
+    .settings-card-heading > p { padding-left: 45px; }
+
+    /* Radix keeps focus trapped, returns it to the trigger, and handles Escape.
+       These styles keep the confirmation native to the console on every width. */
+    .console-logout-dialog {
+      width: min(440px, calc(100vw - 28px));
+      max-width: 440px;
+      gap: 20px;
+      padding: 25px;
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: 26px;
+      background: #141510;
+      box-shadow: 0 28px 90px rgba(0, 0, 0, .62);
+      color: #fff;
+    }
+    .console-logout-dialog-icon {
+      display: grid;
+      width: 44px;
+      height: 44px;
+      margin: 0 auto 10px;
+      place-items: center;
+      border-radius: 14px;
+      background: rgba(215, 255, 0, .1);
+      color: var(--lime);
+    }
+    .console-logout-dialog-icon .icon { width: 20px; height: 20px; }
+    .console-logout-dialog h2 { margin: 0; color: #fff; font-size: 23px; font-weight: 620; letter-spacing: -.035em; line-height: 1.08; }
+    .console-logout-description { color: rgba(255, 255, 255, .58); line-height: 1.5; }
+    .console-logout-error { margin: -4px 0 0; color: #ff9aa5; font-size: 12px; text-align: center; }
+    .console-logout-actions {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin: 0 !important;
+    }
+    .console-logout-cancel,
+    .console-logout-confirm {
+      min-height: 48px;
+      justify-content: center;
+      margin: 0 !important;
+      border-radius: 15px;
+      font-size: 12px;
+      font-weight: 680;
+    }
+    .console-logout-cancel { border-color: rgba(255, 255, 255, .12); background: #20221b; color: #fff; }
+    .console-logout-confirm {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 0;
+      background: var(--lime);
+      color: #080900;
+    }
+    .console-logout-confirm .icon { width: 16px; height: 16px; }
+
+    @media (min-width: 1840px) {
+      .console-rail-logo { width: auto; height: 27px; }
+      .rail-profile.rail-logout {
+        display: flex;
+        width: 100%;
+        height: 50px;
+        align-self: auto;
+        justify-content: flex-start;
+        gap: 12px;
+        margin: 0;
+        padding: 0 16px;
+        border-radius: 16px;
+      }
+      .rail-logout-text {
+        position: static;
+        width: auto;
+        height: auto;
+        overflow: visible;
+        clip: auto;
+        clip-path: none;
+        font-size: 13px;
+      }
+      .rail-logout::after { content: none; }
+    }
+
+    @media (min-width: 761px) {
+      .topbar .wordmark { display: none; }
+    }
+
+    @media (max-width: 760px) {
+      .topbar-logout { display: inline-flex; }
+      .console-topbar-logo { height: 22px; }
+      .settings-title-line { gap: 9px; }
+      .settings-section-icon { width: 32px; height: 32px; flex-basis: 32px; border-radius: 10px; }
+      .settings-card-heading > p { padding-left: 41px; }
+      .console-logout-dialog { padding: 22px; border-radius: 23px; }
+    }
+
+    @media (max-width: 430px) {
+      .console-logout-actions { grid-template-columns: 1fr; }
+      .console-logout-cancel { order: 2; }
+      .console-logout-confirm { order: 1; }
+    }

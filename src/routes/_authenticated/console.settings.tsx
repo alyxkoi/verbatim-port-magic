@@ -38,6 +38,13 @@ const NOTIFICATION_ROWS: Array<[string, string, string, boolean]> = [
 
 type Section = "timing" | "notifications" | "quiet" | "qualification";
 
+const SECTION_ICONS: Record<Section, string> = {
+  timing: "clock",
+  notifications: "bell",
+  quiet: "moon",
+  qualification: "pillars",
+};
+
 function SettingsScreen() {
   const queryClient = useQueryClient();
   const fetchSettings = useServerFn(getConsoleSettings);
@@ -142,8 +149,13 @@ function SettingsScreen() {
     status: string,
   ) => (
     <header className="settings-card-head">
-      <div>
-        <h2>{title}</h2>
+      <div className="settings-card-heading">
+        <div className="settings-title-line">
+          <span className="settings-section-icon" aria-hidden="true">
+            <Icon name={SECTION_ICONS[section]} />
+          </span>
+          <h2>{title}</h2>
+        </div>
         <p>{description}</p>
       </div>
       <button

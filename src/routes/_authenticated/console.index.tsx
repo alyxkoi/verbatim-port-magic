@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { EmptyState } from "@/components/console/EmptyState";
 import { Icon } from "@/components/console/icons";
 import { daypartForNow, greetingForDaypart } from "@/components/console/nav";
-import { listUsageWarnings } from "@/lib/clients.functions";
+import { listClients, listUsageWarnings } from "@/lib/clients.functions";
 
 export const Route = createFileRoute("/_authenticated/console/")({
   component: TodayScreen,
@@ -21,6 +21,11 @@ const COUNTERS = [
 ] as const;
 
 function TodayScreen() {
+  const fetchClients = useServerFn(listClients);
+  const { data: clientRoster } = useQuery({
+    queryKey: ["clients"],
+    queryFn: () => fetchClients(),
+  });
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 30000);
@@ -28,6 +33,7 @@ function TodayScreen() {
   }, []);
   const daypart = daypartForNow(now);
   const greeting = greetingForDaypart(daypart);
+  const activeClients = clientRoster?.clients.length ?? 0;
 
   return (
     <section className="screen" aria-label="Today overview">
@@ -66,11 +72,11 @@ function TodayScreen() {
           <div className="welcome-foot">
             <div>
               <span>Active clients</span>
-              <strong>12</strong>
+              <strong>{activeClients}</strong>
             </div>
             <div>
               <span>Capacity open</span>
-              <strong>8</strong>
+              <strong>0</strong>
             </div>
             <div>
               <span>Response health</span>
