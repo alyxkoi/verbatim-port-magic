@@ -1053,22 +1053,43 @@ body{animation:alyxPageEnter .42s var(--curve) both}
 .contact-panel::after{filter:blur(38px)!important}
 .mobile-menu::before,.mobile-menu::after{filter:blur(26px)}
 
-@keyframes heroBobLite{0%,100%{transform:translate3d(0,0,0) rotate(0deg)}50%{transform:translate3d(0,-6px,0) rotate(.8deg)}}
+@keyframes heroCopyEnterLite{from{opacity:0;transform:translate3d(0,14px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes heroIconEnterLite{from{opacity:0;transform:translate3d(0,12px,0) scale(.98)}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}
+@keyframes timelineNodeEnterLite{from{opacity:0;transform:translate3d(0,10px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
 
-/* Mobile performance: keep one-shot motion and a small hero float while
-   avoiding continuous shaders, blur repaints, and media work. */
+/* Mobile performance: the first two sections animate once, settle, and stay
+   painted. This prevents scroll-back from restarting their GPU layers. */
 @media(max-width:1080px){
   html.motion-ready.motion-lite .rv{opacity:0;transform:translate3d(0,16px,0);filter:none;transition:opacity .48s var(--curve),transform .54s var(--curve)}
   html.motion-ready.motion-lite .rv.in{opacity:1;transform:translate3d(0,0,0);filter:none}
   html.motion-ready.motion-lite .d1{transition-delay:.05s}
   html.motion-ready.motion-lite .d2{transition-delay:.10s}
   html.motion-ready.motion-lite .d3{transition-delay:.15s}
-  html.motion-ready.motion-lite .hero h1.rv{transform:translate3d(0,20px,0);filter:none;transition-duration:.56s,.62s}
-  html.motion-ready.motion-lite .hero h1.rv.in{transform:translate3d(0,0,0)}
+  html.motion-ready.motion-lite .hero .rv{opacity:1;transform:none;filter:none;transition:none}
+  html.motion-ready.motion-lite .hero h1.rv.in{animation:heroCopyEnterLite .58s var(--curve) both}
+  html.motion-ready.motion-lite .hero .hero-sub.rv.in{animation:heroCopyEnterLite .5s var(--curve) .08s both}
+  html.motion-ready.motion-lite .hero .hero-actions.rv.in{animation:heroCopyEnterLite .5s var(--curve) .14s both}
   .hero-shader{display:none}
   .hero-scene,.hero-layer,.support-card,.support-icon-stage,.contact-pixel-cloud,.system-card{will-change:auto}
-  .hero-icon{animation-name:heroBobLite!important;animation-duration:9s!important;animation-play-state:paused!important}
-  .hero.hero-motion-active .hero-icon{animation-play-state:running!important}
+  .hero::before{filter:none}
+  .hero-globe{filter:drop-shadow(0 24px 38px rgba(80,98,0,.16))}
+  .hero-icon{filter:drop-shadow(0 16px 24px rgba(66,78,0,.16));animation:heroIconEnterLite .52s var(--curve) both!important}
+  .layer-cursor .hero-icon{animation-delay:.05s!important}
+  .layer-envelope .hero-icon{animation-delay:.11s!important}
+  .layer-calendar .hero-icon{animation-delay:.16s!important}
+  .layer-phone .hero-icon{animation-delay:.21s!important}
+  .layer-analytics .hero-icon{animation-delay:.26s!important}
+  html.motion-ready.motion-lite .timeline-wrap .flow-node{opacity:0;transform:translate3d(0,10px,0)}
+  html.motion-ready.motion-lite .timeline-wrap.in .flow-node{animation:timelineNodeEnterLite .38s var(--curve) both}
+  html.motion-ready.motion-lite .timeline-wrap.in .flow-node:nth-child(2){animation-delay:.04s}
+  html.motion-ready.motion-lite .timeline-wrap.in .flow-node:nth-child(3){animation-delay:.08s}
+  html.motion-ready.motion-lite .timeline-wrap.in .flow-node:nth-child(4){animation-delay:.12s}
+  html.motion-ready.motion-lite .timeline-wrap.in .flow-node:nth-child(5){animation-delay:.16s}
+  html.motion-ready.motion-lite .timeline-wrap.in .flow-node:nth-child(6){animation-delay:.20s}
+  html.motion-ready.motion-lite .timeline-wrap.in .flow-node:nth-child(7){animation-delay:.24s}
+  html.motion-ready.motion-lite .timeline-wrap.in .flow-node:nth-child(8){animation-delay:.28s}
+  .seq-glass-img{filter:grayscale(1) contrast(1.24) drop-shadow(0 7px 10px rgba(0,0,0,.24));transition:none}
+  .flow-node:hover .seq-glass-img,.flow-node.flow-hit .seq-glass-img{filter:grayscale(1) contrast(1.28) drop-shadow(0 7px 10px rgba(0,0,0,.26))}
   .motion-word{animation:none;will-change:auto}
   .rv.in .motion-word{animation:motionShimmer 2.2s ease-out .1s 1 both}
   .system-bridge-arrow{animation:none}
@@ -1086,6 +1107,9 @@ body{animation:alyxPageEnter .42s var(--curve) both}
   .contact-panel{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:rgba(8,26,70,.7)!important}
   .contact-form{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:rgba(255,255,255,.13)!important}
   .contact-panel::after{display:none!important}
+}
+@media(max-width:1080px) and (prefers-reduced-motion:reduce){
+  .hero-icon,.hero .rv,.timeline-wrap .flow-node{animation:none!important;opacity:1!important;transform:none!important}
 }
 </style>
 </head>
@@ -1446,6 +1470,12 @@ body{animation:alyxPageEnter .42s var(--curve) both}
   // Critical motion setup runs before any visual effects. Content remains
   // visible unless this observer is successfully initialized.
   const revealEls=[...document.querySelectorAll(".rv")];
+  const observedRevealEls=mobilePerformanceMode
+    ?revealEls.filter(el=>!el.closest(".hero"))
+    :revealEls;
+  if(mobilePerformanceMode){
+    revealEls.filter(el=>el.closest(".hero")).forEach(el=>el.classList.add("in"));
+  }
   const showRevealContent=()=>{
     revealEls.forEach(el=>el.classList.add("in"));
     document.documentElement.classList.remove("motion-ready","motion-lite");
@@ -1461,7 +1491,7 @@ body{animation:alyxPageEnter .42s var(--curve) both}
           revealObserver.unobserve(entry.target);
         });
       },mobilePerformanceMode?{rootMargin:"0px 0px 12% 0px",threshold:.01}:{rootMargin:"0px 0px -7% 0px",threshold:.05});
-      revealEls.forEach(el=>revealObserver.observe(el));
+      observedRevealEls.forEach(el=>revealObserver.observe(el));
       if(mobilePerformanceMode)document.documentElement.classList.add("motion-lite");
       document.documentElement.classList.add("motion-ready");
     }catch(error){
@@ -1469,16 +1499,6 @@ body{animation:alyxPageEnter .42s var(--curve) both}
     }
   }else{
     showRevealContent();
-  }
-
-  if(mobilePerformanceMode&&"IntersectionObserver" in window){
-    const performanceHero=document.querySelector(".hero");
-    if(performanceHero){
-      const heroMotionObserver=new IntersectionObserver((entries)=>{
-        entries.forEach(entry=>entry.target.classList.toggle("hero-motion-active",entry.isIntersecting));
-      },{threshold:.08});
-      heroMotionObserver.observe(performanceHero);
-    }
   }
 
   // Hand-drawn diagram annotations for the five system mockups.
@@ -1717,7 +1737,7 @@ body{animation:alyxPageEnter .42s var(--curve) both}
     if (!typeTitle || !typedText || typeTitle.dataset.typed === "true") return;
     const full = typeTitle.dataset.text || "";
     typeTitle.dataset.typed = "true";
-    if (reduce) {
+    if (reduce || mobilePerformanceMode) {
       typedText.textContent = full;
       typeTitle.classList.add("typed");
       return;
@@ -1749,7 +1769,9 @@ body{animation:alyxPageEnter .42s var(--curve) both}
           
           observer.unobserve(entry.target);
         });
-      }, {threshold:.28, rootMargin:"0px 0px -8% 0px"});
+      }, mobilePerformanceMode
+        ?{threshold:.01,rootMargin:"0px 0px 55% 0px"}
+        :{threshold:.28,rootMargin:"0px 0px -8% 0px"});
       timelineIO.observe(timelineWrap);
     }
   }
@@ -2372,7 +2394,26 @@ body{animation:alyxPageEnter .42s var(--curve) both}
     img.loading="eager";
     if(typeof img.decode==="function") void img.decode().catch(()=>{});
   };
-  const lazyImages=[...document.querySelectorAll('img[loading="lazy"]')];
+  const timelineIcons=[...document.querySelectorAll(".seq-glass-img")];
+  const lazyImages=[...document.querySelectorAll('img[loading="lazy"]:not(.seq-glass-img)')];
+  const warmTimelineIcons=()=>{
+    timelineIcons.forEach((img,index)=>{
+      setTimeout(()=>warmImage(img),index*36);
+    });
+  };
+  if(timelineIcons.length){
+    const timelineTarget=document.querySelector(".timeline-wrap");
+    if(timelineTarget&&"IntersectionObserver" in window){
+      const timelineWarmup=new IntersectionObserver((entries)=>{
+        if(!entries.some(entry=>entry.isIntersecting))return;
+        warmTimelineIcons();
+        timelineWarmup.disconnect();
+      },{rootMargin:mobilePerformanceMode?"70% 0px":"125% 0px",threshold:.01});
+      timelineWarmup.observe(timelineTarget);
+    }else{
+      warmTimelineIcons();
+    }
+  }
   if("IntersectionObserver" in window){
     const imageWarmup=new IntersectionObserver((entries)=>{
       entries.forEach((entry)=>{
